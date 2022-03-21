@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>GVRS for Image Processing</title>
+        <link rel="stylesheet" href="css/text.css" />
+        <link rel="stylesheet" href="css/layout.css" />
+    </head>
+
+
+    <body>
+        <div id="notescontainer">
+            <div id="notesheader">
+                <ul class="link-bar">
+                    <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
+                    <li>|</li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li>|</li>
+                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">User Notes</a></li>
+                    <li>|</li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour/wiki/A-GVRS-FAQ">The GVRS FAQ</a></li>
+                    <li>|</li>
+                </ul>
+                <p>&nbsp;</p>
+            </div>
+
+            <div id="notescontent">
+
+                <div class="titleblock">
+                    <p class="blocktitle">
+                        Using Gridfour for Image Processing, Storge,<br> and Data Compression
+                    </p>
+                    <p class="blockauthor">by G.W. Lucas</p>
+                </div>
+
+                <p><b>Under Construction: Additions and improvements coming soon</b></p>
+
+                <h1 id="introduction">Introduction</h1>
+                <p>
+                    The Gridfour Virtual Raster Store (GVRS) helps Java applications manage
+                    raster (grid) products in situations where the size of the data exceeds
+                    what could reasonably be kept in memory. It also provides a file-based
+                    API for the persistent storage of data between application sessions.</p>
+
+                <p>Ordinarily, GVRS focuses on numerical and geophysical information.
+                    Of course, there is another kind of data that a lot of people care
+                    about: images.</p>
+
+                <p>Recently, I used the GVRS API to support work on a project that involved aerial photographs
+                    taken at high resolution over an area in central Pennsylvania.
+                    The photographs were stored as images with sizes in the 100 megapixel range.
+                    Rather than keeping an entire image in memory, I took advantage of the GVRS virtual
+                    raster storage capabilities. Using GVRS, I was able to perform runtime image
+                    processing on hefty sized images without consuming an unreasonable amount
+                    of memory. In this article, I will provide a simple example showing how to
+                    set up a GVRS file to support image processing.</p>
+
+                <p>One of the other goals of the Gridfour Software Project is to explore
+                    techniques for lossless data compression. So having identified GVRS as a viable
+                    tool for supporting image processing, I thought it would be interesting to
+                    see how well GVRS would do performing data compression on image data products.
+                    The results and some sample code are provided below I also discuss some of
+                    the algorithmic considerations involved in using GVRS to compress image data.</p>
+
+                <p class="blockquote"><b>Note:</b> &nbsp; &nbsp;Discussions of the GVRS data compression techniques are
+                    available at <a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">The Gridfour user notes page</a>.
+                    The source code for the application used for this article is available at the
+                    <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a> in the file
+                    <a href="https://github.com/gwlucastrig/gridfour/blob/master/demo/src/main/java/org/gridfour/demo/imaging/ExperimentalImageStorage.java">ExperimentalImageStorage.java</a>.
+
+
+                <h1 id="the_test_data">The test data</h1>
+                <p>The figure below shows a down-sampled version of the source image I used
+                    for the test described in this article. To fit on this page, the original 10000-by-10000 pixel image was reduced
+                    by a factor of 15-to-1. The pixel spacing in the original image scale was 1 foot (0.3 meter) per pixel.
+                    The paved area and structures at the lower-left corner of the image belong to University Park Airport
+                    near The Pennsylvania State University. The source data was stored in a geo-referenced TIFF image
+                    (e.g. a "GeoTIFF") and included metadata that would allow it to be displayed on map-based applications.
+
+
+                <figure>
+                    <img src="images/GVRS_ImageCompression/AerialPhoto26001840pan.jpg">
+                    <figcaption>Figure 1 &ndash; Aerial photograph taken over central Pennsylvania (source PAMAP, file 26001840pan.tif).</figcaption>
+                </figure>
+
+
+                <h1 id="processing">Processing Image Data using GVRS</h1>
+                <p>One of the most common ways to represent pixels is to store them as a four-byte integer.
+                    And because the GVRS API implements an integer data format, it seems a natural for storing
+                    pixel values. The example code that follows uses the Apache Commons Imaging library to
+                    load data from the source image and then stores it in a GVRS file. Once the data is transcribed
+                    to a GVRS file, it is available for access in whatever application code or image-processing
+                    implementations are desired. Although the code example omits the image-processing logic, it
+                    illustrates how to set up a virtual raster data store for custom processing.</p>
+
+                <p>If you would like a more detailed explanation of how to use the GVRS API, see the
+                    <a href="https://github.com/gwlucastrig/gridfour/wiki/GVRS-Jump-Start-01_Reading-GVRS-files">GVRS Jump Start Guide</a>
+                <pre>
+    // Load the image and obtain its dimensions
+    File input = new File("26001940pan.tif");
+    BufferedImage bImage = Imaging.getBufferedImage(input);
+    int width   = bImage.getWidth();
+    int height  = bImage.getHeight();
+    int nPixels = width * height;
+    int nRows   = height; // GVRS API uses row, column as grid coordinates
+    int nCols   = width;
+
+    // Use the standard Java API to get the pixel values from the image
+    // and store it in an integer array
+    int[] argb = new int[width * height];
+    bImage.getRGB(0, 0, width, height, argb, 0, width);
+
+    // Create a GVRS file and transcribe the image data to the GvrsFile.
+    // Here we do not specify a specific file for output, so the GVRS API
+    // creates a temporary file which will be discarded when it is closed.
+    // We specify a four-byte integer element named "pixel" for storing
+    // pixel data, and then transcribe values from the input file into
+    // the GVRS file store.
+    GvrsFileSpecification fSpec    = new GvrsFileSpecification(nRows, nCols);
+    GvrsElementSpecification pSpec = new GvrsElementSpecificationInt("pixel");
+    fSpec.addElementSpecification(pSpec);
+
+    // Access the GVRS file in a Java try-with-resources block
+    try (GvrsFile gvrs = new GvrsFile(fSpec)) {
+      gvrs.setTileCacheSize(GvrsCacheSize.Large);
+      GvrsElement pixel = gvrs.getElement("pixel");
+      for (int iRow = 0; iRow &lt; nRows; iRow++) {
+        for (int iCol = 0; iCol &lt; nCols; iCol++) {
+          int index = iRow * nCols + iCol;
+          pixel.writeValueInt(iRow, iCol, argb[index]);
+        }
+      }
+      // At this point, the image is now stored in the virtual raster data store
+      // and can be used for subsequent processing.
+      //     IMAGE PROCESSING CODE OMITTED.
+    }catch(IOException){}
+                </pre>
+
+                <h2 id="data_compression">Data compression</h2>
+                <p>The GVRS virtual raster stores data in a backing file. In many cases, an application
+                    explicitly specifies the reference for the file to be stored. But, in the example above,
+                    the output-file specification was deliberately ommited. Because no output file was specified,
+                    the GvrsFile constructor created a temporary file. This temporary file was used while the
+                    application was processing data and then automatically
+                    deleted when the application closed the file. Because the code example used
+                    the Java try-with-resources block, the file was closed when the code.
+                </p>
+
+                <p>What if we wanted to preserve the GVRS data file for use in future application runs?
+                    We could do so by simply adding a specific output file to the GvrsFile constructor.
+                    Since the data was stored in the form of four-byte integers for each pixel, the
+                    output file would have been about 4x10000x10000, or 400 megabytes.
+                    We could reduce that storage size by using the GVRS data compression. The following
+                    code snippet shows how that might be done. Note that the data compression must
+                    be specified as part of the GVRS file specification before the output file is created.</p>
+
+                <pre>
+    fSpec.setDataCompressionEnabled(true);
+    File output = new File("ExampleOutputFile.gvrs");
+    try (GvrsFile gvrs = new GvrsFile(output, fSpec)) {
+      // Additional code omitted
+    }
+                </pre>
+
+                <p>In the current GVRS implementation, we have a number of different ways of using
+                    data compression options to adjust the size of the output file.
+                    In the rest of this article, we will explore three approaches:</p>
+
+                <ol>
+                    <li>Activate the standard data compression options supported through GVRS file settings (as shown above)</li>
+                    <li>Improve data compression ratios by separating pixel values into their separate RGB values</li>
+                    <li>Further improve compression ratios by mapping RGB values to an alternate color space using the YCoCg-R model</li>
+                </ol>
+
+
+                <p>The data-compression logic provided by GVRS is primarily suited for numerical data such
+                    as temperature and elevation data. In practice, the current GVRS approach is not a great fit
+                    for photographic imagery such as the Pennsylvania sample shown above. Better support for
+                    imagery may be included in future versions of the API. But for now, we can still
+                    get good compression results using a bit of extra code. For example, we can
+                    improve data compression ratios by separating the pixel values into their RGB components
+                    and storing them separately. Compressing each sequence of components individually
+                    reduces the size of the output by a substantial margin. We can also gain some reduction
+                    in output size by mapping the RGB components to an alternate color space based on the YCoCg-R system.<p>
+
+                <p>We will look at these two techniques in more detail below. Before we do, let's take
+                    a sneak preview of what kind of results we can expect. The table gives storage size and
+                    time required to store data for two conventional image formats (JPEG and PNG) as well
+                    as the three GVRS variations.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variation</th>
+                            <th>File Size<br>in Megabytes</th>
+                            <th>Bits/Pixel</th>
+                            <th>Time to Store Data<br>in Seconds</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GVRS Uncompressed</td>
+                            <td>382</td>
+                            <td>32.01</td>
+                            <td>2.4</td>
+                        </tr>
+                        <tr>
+                            <td>GVRS Standard Compression</td>
+                            <td>312</td>
+                            <td>26.15</td>
+                            <td>39.6</td>
+                        </tr>
+                        <tr>
+                            <td>RGB Separate Components</td>
+                            <td>153 </td>
+                            <td>12.86</td>
+                            <td>54.0</td>
+                        </tr>
+                        <tr>
+                            <td>YCoCg-R Color Space</td>
+                            <td>116</td>
+                            <td>9.76</td>
+                            <td>72.9</td>
+                        </tr>
+                        <tr>
+                            <td>Standard PNG</td>
+                            <td>247</td>
+                            <td>20.7</td>
+                            <td>15.0</td>
+                        </tr>
+                        <tr>
+                            <td>Standard JPEG</td>
+                            <td>15</td>
+                            <td>1.27</td>
+                            <td>15.2</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+                <p>While the JPEG variation is substatially smaller than all of the others, it obtains that reduction
+                    by discarding detail from the source image. JPEG is a <i>lossy</i> data format.
+                    Both the PNG and GVRS formats are <i>lossless</i>.
+                    They faithfully preserve the full precision of the RGB values from the source image.</p>
+
+                <p>The direct GVRS compression option does reduce the data size, but the results are
+                    not as good as those of the PNG variation. Both the separated RGB components and the YCoCg-R color
+                    space options reduce the data to a size smaller than PNG. But they do so at a cost.
+                    The processing required for data compression increases the time to store the data</p>
+
+                <h1 id="why_rgb">How separating RGB componets improves compression</h1>
+
+                <p>GVRS data compression algorithms detect trends in data and use that information
+                    to predict values of adjacent raster cells. Because the predicted values are generally close to
+                    the actual sample values, the compressed sequence only has to account for the small differences
+                    between the two. This approach reduces the amount of information that needs to be encoded
+                    into the compressor's output. One of the underlying assumptions of that approach
+                    is that data values represent a continuous or approximately continuous surface.</p>
+
+                <p>Individually, the red, green, and blue components of a pixel field may fit that assumption,
+                    at least over subsections of an image. But the act of combining those pixels into an integer
+                    representation tends to obscure trends in the data. By separating the components and compressing
+                    the R, G, and B values separately, we bring them more in line with the way GVRS works.</p>
+
+                <p>The code snippet below illustrates how the RGB components from the source image were
+                    separated and stored in a GVRS file. The code specifies three separate GVRS elements, one for each
+                    data field. These are populated and stored separately. Later, when data is read from the file they
+                    can be reconstructed with some simple byte-shift operations.</p>
+                <pre>
+    GvrsFileSpecifiction fSpec = new GvrsFileSpecification(nRows, nCols);
+    fSpec.setDataCompressionEnabled(true);
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("r"));
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("g"));
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("b"));
+
+    File output2 = new File("PixelsCompRGB.gvrs");
+    try (GvrsFile gvrs = new GvrsFile(output2, fSpec)) {
+      gvrs.setTileCacheSize(GvrsCacheSize.Large);
+      GvrsElement rElem = gvrs.getElement("r");
+      GvrsElement gElem = gvrs.getElement("g");
+      GvrsElement bElem = gvrs.getElement("b");
+      for (int iRow = 0; iRow &lt; nRows; iRow++) {
+        for (int iCol = 0; iCol &lt; nCols; iCol++) {
+          int rgb = argb[iRow * nCols + iCol];
+          int r = (rgb &gt;&gt; 16) & 0xff;
+          int g = (rgb &gt;&gt; 8) & 0xff;
+          int b = rgb & 0xff;
+          rElem.writeValueInt(iRow, iCol, r);
+          gElem.writeValueInt(iRow, iCol, g);
+          bElem.writeValueInt(iRow, iCol, b);
+        }
+      }
+    }
+                </pre>
+
+                <p>While the code is effective, it is a little inconvenient. Future work
+                    on the GVRS library will look at ways to streamline the API when
+                    working with pixel-based formats.</p>
+
+                <p>For more information on how Gridfour handles data compression for raster products, see
+                    <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">
+                        Gridfour Raster Data Compression Algorithms</a>.</p>
+
+                <h1 id="why_YCoCg">Improving compression using the YCoCg-R color space</h1>
+                <p>In effect, data compression schemes reduce the storage size for a product
+                    by exploiting redundancies in the content. Sometimes, though, the redundancy
+                    is a data set is not immediately apparent to conventional compressors.
+                    In such cases, it is possible that transforming the data to an alternate
+                    form may expose redundancy that would otherwise be hidden.
+                    That is exactly what is accomplished by mapping the RGB values for each pixel
+                    into the YCoCg-R color space.</p>
+
+                <p>The YCoCg-R color space was introduced in 2003 as a way of reducing
+                    the size of image representations (Malvar & Sullivan, 2003). In its integer
+                    form, the transformation is fully reversible. RGB can be mapped to Y, Co, and Cg
+                    and YCoCg can be mapped back to the original RGB. Using integer values,
+                    the transformation is defined as follows (Wikipedia, 2022): </p>
+                <pre>
+    // Given integer r, g, and b
+    int Co = r - b;
+    int tmp = b + Co/2;
+    int Cg = g - tmp;
+    int Y = tmp + Cg/2;
+
+    // Given integer Y, Co, and Cg
+    int tmp = Y - Cg/2;
+    int g = Cg + tmp;
+    int b = tmp - Co/2;
+    int r = b + Co;
+                </pre>
+
+                <p>In visual terms, the Y component represents the approximate intensity (e.g. the <i>gamma</i>) of a pixel.
+                    It has a range of values from 0 to 255 and can be stored in a single byte. The Co and Cg components
+                    represent color and have a range of values from -255 to 255 and require 9 bits for storage.
+                    Co is roughly related to orange (thus the letter "o" in its designation).
+                    Cg is roughly related to green. As shown in the figure below, most of the information in
+                    the image is encoded into the Y component, which gives intensity values.</p>
+
+                <figure>
+                    <img src="images/GVRS_ImageCompression/SeparatedYCoCg.png">
+                    <figcaption>Figure 2 &ndash; Extracted Y (left panel) and CoCg (right) components from image 26001840pan.tif.</figcaption>
+                </figure>
+
+                <p>When the pixels from the source image were compressed using GVRS,
+                    the overall compressed image averaged approximately
+                    9.76 bits per pixel.  The Y component averaged 4.27 bits per pixel. The Co and Cg components averaged
+                    2.88 and 2.61 bits per pixel respectively. The ratios represent the relative information content and compressibility
+                    of the three YCoCg color channels.</p>
+
+                <p>The code used to store the image data in GVRS is shown below:</p>
+                <pre>
+    GvrsFileSpecification fSpec = new GvrsFileSpecification(nRows, nCols);
+    fSpec.setDataCompressionEnabled(true);
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("Y"));
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("Co"));
+    fSpec.addElementSpecification(new GvrsElementSpecificationInt("Cg"));
+
+    File output3 = new File("PixelsCompYCoCg.gvrs");
+    try (GvrsFile gvrs = new GvrsFile(output3, fSpec)) {
+      gvrs.setTileCacheSize(GvrsCacheSize.Large);
+      GvrsElement YElem  = gvrs.getElement("Y");
+      GvrsElement CoElem = gvrs.getElement("Co");
+      GvrsElement CgElem = gvrs.getElement("Cg");
+      for (int iRow = 0; iRow &lt; nRows; iRow++) {
+        for (int iCol = 0; iCol &lt; nCols; iCol++) {
+          int rgb = argb[iRow * nCols + iCol];
+          int r = (rgb &gt;&gt; 16) & 0xff;
+          int g = (rgb &gt;&gt; 8) & 0xff;
+          int b = rgb & 0xff;
+          int Co  = r - b;
+          int tmp = b + (Co &gt;&gt; 1);  // Co&gt;&gt;1 is equivalent to Co/2
+          int Cg  = g - tmp;
+          int Y   = tmp + (Cg &gt;&gt; 1);
+          YElem.writeValueInt( iRow, iCol, Y);
+          CoElem.writeValueInt(iRow, iCol, Co);
+          CgElem.writeValueInt(iRow, iCol, Cg);
+        }
+      }
+    }
+
+                </pre>
+
+                <h1 id="conclusion">Conclusion</h1>
+                <p>This article presented results from a preliminary investigation into using GVRS to
+                    process photographic imagery. While this effort barely scratches the surface of
+                    the deep topic that is image processing, it demonstrates the feasible of further investigations.<p>
+
+                <p>In future work, the Gridfour project will explore improvements to the API to make it
+                    more convenient for application developers to encode image data in a GVRS file.</p>
+
+                <h1 id="references">References</h1>
+                <p>Malvar, Henrique & Sullivan, Gary (2003), "YCoCg-R: A color space with RGB reversibility and low dynamic range".
+                    Moving Picture Experts Group and Video Coding Experts Group document JVT-I014,
+                    JVT PExt Ad Hoc Group Meeting: Trondheim, Norway, July 2003.</p>
+
+                <p>Wikipedia contributors. (2021, August 20). YCoCg. In Wikipedia, The Free Encyclopedia.
+                    Retrieved March 20, 2022, from https://en.wikipedia.org/w/index.php?title=YCoCg&oldid=1039665480</p>
+
+
+            </div>
+        </div>
+    </body>
+</html>

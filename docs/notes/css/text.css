@@ -25,7 +25,23 @@ p.title {
 	margin-left: 30px;
 	margin-bottom: 90px;
 }
+ 
+div.titleblock {
+	font:16px/1.1  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
+	font-weight: bold;
+	color: #4F81BD;
+	margin-top: 60px;
+	margin-left: 30px;
+	margin-bottom: 30px;
+}
 
+p.blocktitle {
+	 font-size: 32px;
+}
+p.blockauthor {
+	margin-top: 10px;
+	 font-size: 16px;
+} 
 
 
 hr {
