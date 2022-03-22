@@ -259,10 +259,12 @@
                     into the compressor's output. One of the underlying assumptions of that approach
                     is that data values represent a continuous or approximately continuous surface.</p>
 
-                <p>Individually, the red, green, and blue components of a pixel field may fit that assumption,
-                    at least over subsections of an image. But the act of combining those pixels into an integer
-                    representation tends to obscure trends in the data. By separating the components and compressing
-                    the R, G, and B values separately, we bring them more in line with the way GVRS works.</p>
+                <p>Individually, the red, green, and blue components of a pixel field may fit the assumption of approximate continuity,
+                    at least over subsections of an image. But packing component values for pixels into
+                    an integer data type changes the numerical relationships between adjacent raster cells.
+                    The packed representation obscures trends in the data and reduces the software’s ability
+                    to predict values for neighboring pixels. By separating the components and compressing the R, G,
+                    and B values separately, we bring them more in line with the way GVRS works.</p>
 
                 <p>The code snippet below illustrates how the RGB components from the source image were
                     separated and stored in a GVRS file. The code specifies three separate GVRS elements, one for each
