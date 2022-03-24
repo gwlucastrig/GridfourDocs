@@ -52,9 +52,21 @@
                     The photographs were stored as images with sizes in the 100 megapixel range.
                     Rather than keeping an entire image in memory, I took advantage of the GVRS virtual
                     raster storage capabilities. Using GVRS, I was able to perform runtime image
-                    processing on hefty sized images without consuming an unreasonable amount
-                    of memory. In this article, I will provide a simple example showing how to
-                    set up a GVRS file to support image processing.</p>
+                    processing on hefty images without consuming excessive memory.</p>
+
+                <p>The aerial photograph project required a bit of improvisation.  The GVRS API does
+                    not provide direct support for image formats. I was able to accomplish what I needed
+                    to do by treating pixels as simple integers.  Based on that experience, I am thinking about
+                    the desirability of having GVRS provide a pixel-based data format for use by application code.
+                    I am not proposing to create a new graphics format. There are plenty of excellent imaging formats
+                    out there already (JPEG, PNG, GIF, TIFF, etc.). But I do think that there is a niche for a software
+                    module that can help applications process image-related data and, perhaps, preserve it in a local
+                    file store before eventually exporting to conventional image formats.</p>
+
+                <p>Currently, I am in the process of collecting requirements and reviewing design issues.
+                    In this article, I describe a few techniques I applied to use the existing GVRS API
+                    to the problem of image processing.  I hope some of the ideas that presented themselves
+                    during the investigation will help illustrate how to use GVRS for working with graphics data.</p>
 
                 <p>One of the other goals of the Gridfour Software Project is to explore
                     techniques for lossless data compression. So having identified GVRS as a viable
@@ -144,7 +156,7 @@
                     the GvrsFile constructor created a temporary file. This temporary file was used while the
                     application was processing data and then automatically
                     deleted when the application closed the file. Because the code example used
-                    the Java try-with-resources block, the file was closed when the code.
+                    the Java try-with-resources block, the file was closed when the code exited the block.
                 </p>
 
                 <p>What if we wanted to preserve the GVRS data file for use in future application runs?
@@ -345,8 +357,7 @@
                     <figcaption>Figure 2 &ndash; Extracted Y (left panel) and CoCg (right) components from image 26001840pan.tif.</figcaption>
                 </figure>
 
-                <p>When the pixels from the source image were compressed using GVRS,
-                    the overall compressed image averaged approximately
+                <p>When the pixels from the source image were compressed using GVRS, the overall output size averaged approximately
                     9.76 bits per pixel.  The Y component averaged 4.27 bits per pixel. The Co and Cg components averaged
                     2.88 and 2.61 bits per pixel respectively. The ratios represent the relative information content and compressibility
                     of the three YCoCg color channels.</p>
@@ -396,8 +407,8 @@
                 <p>Malvar, Henrique & Sullivan, Gary (2003), "YCoCg-R: A color space with RGB reversibility and low dynamic range".
                     Moving Picture Experts Group and Video Coding Experts Group document JVT-I014,
                     JVT PExt Ad Hoc Group Meeting: Trondheim, Norway, July 2003.</p>
-					
-				<p>Pennsylvania, Commonwealth of, Department of Conservation and
+
+                <p>Pennsylvania, Commonwealth of, Department of Conservation and
                     Natural Resources, Bureau of Topographic and Geologic Survey (2007).
                     PAMAP Program -- Color Orthophotos Cycle 2 (2007-2008 DCNR PAMAP Program).<br>
                     Accessed March 2022 from
