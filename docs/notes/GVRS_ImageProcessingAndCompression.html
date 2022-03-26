@@ -142,22 +142,19 @@
                 </pre>
 
                 <h2 id="data_compression">Data compression</h2>
-                <p>The GVRS virtual raster stores data in a backing file. In many cases, an application
-                    explicitly specifies the reference for the file to be stored. But, in the example above,
-                    the output-file specification was deliberately ommited. Because no output file was specified,
-                    the GvrsFile constructor created a temporary file. This temporary file was used while the
-                    application was processing data and then automatically
-                    deleted when the application closed the file. Because the code example used
-                    the Java try-with-resources block, the file was closed when the code exited the block.
-                </p>
+                <p>The GVRS virtual raster stores data in a backing file. The example above used a temporary
+				file that was deleted when the code exited the try-with-resources block. If an application
+				needed to preserve that file from run-to-run, it could have done so by specifying an explicit
+				file reference.</p>
+				
+				<p>Of course, storing a 100 megapixel image using four-byte integers requires 400 megabytes
+				of disk space. What if we needed to reduce that? For example, if we were retaining a 
+				large number of images or transmitting data across the Internet, smaller files would be better.
+				To save storage space, an application could use GVRS optional data compression.</p>
 
-                <p>What if we wanted to preserve the GVRS data file for use in future application runs?
-                    We could do so by simply adding a specific output file to the GvrsFile constructor.
-                    Since the data was stored in the form of four-byte integers for each pixel, the
-                    output file would have been about 4&nbsp;x&nbsp;10000&nbsp;x&nbsp;10000, or 400 megabytes.
-                    We could reduce that storage size by using the GVRS data compression. The following
-                    code snippet shows how that might be done. Note that the data compression must
-                    be specified as part of the GVRS file specification before the output file is created.</p>
+				 <p>The following code snippet shows how data compression is enabled using the GVRS API.
+				 Note that the data compression option must  be specified as part of the GVRS file specification
+				 before the output file is created.</p>
 
                 <pre>
     fSpec.setDataCompressionEnabled(true);
