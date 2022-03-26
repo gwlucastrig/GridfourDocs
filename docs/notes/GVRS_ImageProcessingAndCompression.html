@@ -29,7 +29,7 @@
 
                 <div class="titleblock">
                     <p class="blocktitle">
-                        An Investigation using Gridfour for Image Processing, Storge, and Data Compression
+                        An Investigation using Gridfour for Image Processing, Storage, and Data Compression
                     </p>
                     <p class="blockauthor">by G.W. Lucas</p>
                 </div>
@@ -239,7 +239,7 @@
 
 
 
-                <p>While the JPEG variation is substatially smaller than all of the others, it obtains that reduction
+                <p>While the JPEG variation is substantially smaller than all of the others, it obtains that reduction
                     by discarding low-significance detail from the source image. JPEG is a <i>lossy</i> data format.
                     Both the PNG and GVRS formats are <i>lossless</i>.
                     They faithfully preserve the full precision of the RGB values from the source image.</p>
@@ -249,7 +249,7 @@
                     space options reduce the data to a size smaller than PNG. But they do so at a cost.
                     The processing required for data compression increases the time to store the data</p>
 
-                <h1 id="why_rgb">How separating RGB componets improves compression</h1>
+                <h1 id="why_rgb">How separating RGB components improves compression</h1>
 
                 <p>GVRS data compression algorithms detect trends in data and use that information
                     to predict values of adjacent raster cells. Because the predicted values are generally close to
@@ -264,7 +264,7 @@
 
                 <p>The image below consists of two labeled regions, both of which are filled with a dark shade of red.
                     Their RGB values are as labeled (128, 0, 0) and (129, 0, 0).
-                    So two regions vary by a single unit of intensity in their red components.
+                    So the two regions vary by a single unit of intensity in their red components.
                     The two shades are so close together that they are indistinguishable on most display surfaces.</p>
 
                 <img class="imageCentered" src="images/GVRS_ImageCompression/RGBContrast.png">
@@ -353,7 +353,7 @@
                 </pre>
 
                 <p>In visual terms, the Y component represents the approximate visual intensity of a pixel
-                    (the term <i>gamma</i> is sometimes used to refer to pixel intensity and occassionally
+                    (the term <i>gamma</i> is sometimes used to refer to pixel intensity and occasionally
                     represented by the lowercase Greek letter &#947;).
                     It has a range of values from 0 to 255 and can be stored in a single byte. The Co and Cg components
                     represent color and have a range of values from -255 to 255 and require 9 bits for storage.
