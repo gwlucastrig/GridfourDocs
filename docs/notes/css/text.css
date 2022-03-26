@@ -129,6 +129,12 @@ p.mathtext {
 img.mathimage {
 	vertical-align: middle;
 }
+
+img.imageCentered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
  
 li.spaciousList {
     padding-bottom:13px;
