@@ -56,17 +56,9 @@
 
                 <p>The aerial photograph project required a bit of improvisation.  The GVRS API does
                     not provide direct support for image formats. I was able to accomplish what I needed
-                    to do by treating pixels as simple integers.  Based on that experience, I am thinking about
-                    the desirability of having GVRS provide a pixel-based data format for use by application code.
-                    I am not proposing to create a new graphics format. There are plenty of excellent imaging formats
-                    out there already (JPEG, PNG, GIF, TIFF, etc.). But I do think that there is a niche for a software
-                    module that can help applications process image-related data and, perhaps, preserve it in a local
-                    file store before eventually exporting to conventional image formats.</p>
-
-                <p>Currently, I am in the process of collecting requirements and reviewing design issues.
-                    In this article, I describe a few techniques I applied to use the existing GVRS API
-                    to the problem of image processing.  I hope some of the ideas that presented themselves
-                    during the investigation will help illustrate how to use GVRS for working with graphics data.</p>
+                    to do by treating pixels as simple integers. While this solution was not ideal,
+                    it produced satisfactory results. This article will describe some of the techniques I used
+                    and provide background on a few concepts from image processing.</p>
 
                 <p>One of the other goals of the Gridfour Software Project is to explore
                     techniques for lossless data compression. So having identified GVRS as a viable
@@ -162,7 +154,7 @@
                 <p>What if we wanted to preserve the GVRS data file for use in future application runs?
                     We could do so by simply adding a specific output file to the GvrsFile constructor.
                     Since the data was stored in the form of four-byte integers for each pixel, the
-                    output file would have been about 4x10000x10000, or 400 megabytes.
+                    output file would have been about 4&nbsp;x&nbsp;10000&nbsp;x&nbsp;10000, or 400 megabytes.
                     We could reduce that storage size by using the GVRS data compression. The following
                     code snippet shows how that might be done. Note that the data compression must
                     be specified as part of the GVRS file specification before the output file is created.</p>
@@ -345,11 +337,13 @@
     int r = b + Co;
                 </pre>
 
-                <p>In visual terms, the Y component represents the approximate intensity (e.g. the <i>gamma</i>) of a pixel.
+                <p>In visual terms, the Y component represents the approximate visual intensity of a pixel
+                    (the term <i>gamma</i> is sometimes used to refer to pixel intensity and occassionally
+                    represented by the lowercase Greek letter &#947;).
                     It has a range of values from 0 to 255 and can be stored in a single byte. The Co and Cg components
                     represent color and have a range of values from -255 to 255 and require 9 bits for storage.
                     Co is roughly related to orange (thus the letter "o" in its designation).
-                    Cg is roughly related to green. As shown in the figure below, most of the information in
+                    Cg is roughly related to green (thus the letter "g"). As shown in the figure below, most of the information in
                     the image is encoded into the Y component, which gives intensity values.</p>
 
                 <figure>
