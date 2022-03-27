@@ -49,8 +49,8 @@
                     taken at high resolution over an area in central Pennsylvania.
                     The photographs were stored as images with sizes in the 100 megapixel range.
                     Rather than keeping an entire image in memory, I took advantage of the GVRS virtual
-                    raster storage capabilities. Using GVRS, I was able to perform runtime image
-                    processing on hefty images without consuming excessive memory.</p>
+                    raster storage capabilities. Using GVRS, I was able to process hefty images
+					without consuming excessive memory.</p>
 
                 <p>The aerial photograph project required a bit of improvisation.  The GVRS API does
                     not provide direct support for image formats. I was able to accomplish what I needed
@@ -62,7 +62,7 @@
                     techniques for lossless data compression. So having identified GVRS as a viable
                     tool for supporting image processing, I thought it would be interesting to
                     see how well GVRS would do performing data compression on image data products.
-                    The results and some sample code are provided below I also discuss some of
+                    The results and some sample code are provided below. I also discuss some of
                     the algorithmic considerations involved in using GVRS to compress image data.</p>
 
                 <p class="blockquote"><b>Note:</b> &nbsp; &nbsp;Discussions of the GVRS data compression techniques are
@@ -168,7 +168,7 @@
 
                 <ol>
                     <li>Activate the standard data compression options supported through GVRS file settings (as shown above)</li>
-                    <li>Improve data compression ratios by separating pixel values into their separate RGB values</li>
+                    <li>Improve data compression ratios by decoding integer pixel values into their separate RGB components</li>
                     <li>Further improve compression ratios by mapping RGB values to an alternate color space using the YCoCg-R model</li>
                 </ol>
 
@@ -352,8 +352,8 @@
     int r = b + Co;
                 </pre>
 
-                <p>In visual terms, the Y component represents the approximate visual intensity of a pixel
-                    (the term <i>gamma</i> is sometimes used to refer to pixel intensity and occasionally
+                <p>The Y component represents the approximate visual intensity of a pixel
+                    (in image processing, the term <i>gamma</i> is sometimes used to refer to pixel intensity and occasionally
                     represented by the lowercase Greek letter &#947;).
                     It has a range of values from 0 to 255 and can be stored in a single byte. The Co and Cg components
                     represent color and have a range of values from -255 to 255 and require 9 bits for storage.
