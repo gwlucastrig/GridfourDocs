@@ -1,0 +1,12 @@
+org.gridfour.compress
+org.gridfour.coordinates
+org.gridfour.gvrs
+org.gridfour.imaging
+org.gridfour.imaging.palette
+org.gridfour.imaging.util
+org.gridfour.interpolation
+org.gridfour.io
+org.gridfour.lsop
+org.gridfour.util
+org.gridfour.util.concurrent
+org.gridfour.util.jama
