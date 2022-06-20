@@ -74,62 +74,65 @@
                     that outperform Gridfour. Improving the Gridfour data compression ratios is an area of continuing research.</p>
 
                 <table>
-                    <tr>
-                        <th>Data Set</th>
-                        <th>Format</th>
-                        <th>Entropy (bps)</th>
-                        <th>Source size (bps)</th>
-                        <th>Gridfour Compressed (bps)</th>
-                    <tr>
+                    <thead>
+                        <tr>
+                            <th>Data Set</th>
+                            <th>Format</th>
+                            <th>Entropy (bps)</th>
+                            <th>Source size (bps)</th>
+                            <th>Gridfour Compressed (bps)</th>
+                        </tr>
+                    </thead>
 
-                    <tr>
-                        <td> State College, PA</td>
-                        <td>TIFF</td>
-                        <td>23.9</td>
-                        <td>24.4</td>
-                        <td>17.2</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td> State College, PA</td>
+                            <td>TIFF</td>
+                            <td>23.9</td>
+                            <td>24.4</td>
+                            <td>17.2</td>
+                        </tr>
 
-                    <tr>
-                        <td>Ann Arbor, MI</td>
-                        <td>TIFF</td>
-                        <td>21.7</td>
-                        <td>21.3</td>
-                        <td>14.9</td>
-                    </tr>
+                        <tr>
+                            <td>Ann Arbor, MI</td>
+                            <td>TIFF</td>
+                            <td>21.7</td>
+                            <td>21.3</td>
+                            <td>14.9</td>
+                        </tr>
 
-                    <tr>
-                        <td>Columbus, OH</td>
-                        <td>TIFF</td>
-                        <td>22.6</td>
-                        <td>24.5</td>
-                        <td>17.7</td>
-                    </tr>
+                        <tr>
+                            <td>Columbus, OH</td>
+                            <td>TIFF</td>
+                            <td>22.6</td>
+                            <td>24.5</td>
+                            <td>17.7</td>
+                        </tr>
 
-                    <tr>
-                        <td>Mt. Washington, NH</td>
-                        <td>TIFF</td>
-                        <td>23.8</td>
-                        <td>23.8</td>
-                        <td>17.7</td>
-                    </tr>
+                        <tr>
+                            <td>Mt. Washington, NH</td>
+                            <td>TIFF</td>
+                            <td>23.8</td>
+                            <td>23.8</td>
+                            <td>17.7</td>
+                        </tr>
 
-                    <tr>
-                        <td>Newport News, VA</td>
-                        <td>TIFF</td>
-                        <td>17.7</td>
-                        <td>17.4</td>
-                        <td>12.6</td>
-                    </tr>
+                        <tr>
+                            <td>Newport News, VA</td>
+                            <td>TIFF</td>
+                            <td>17.7</td>
+                            <td>17.4</td>
+                            <td>12.6</td>
+                        </tr>
 
-                    <tr>
-                        <td>GEBCO_2019</td>
-                        <td>NetCDF</td>
-                        <td>24.7</td>
-                        <td>25.1</td>
-                        <td>15.4</td>
-                    </tr>
-
+                        <tr>
+                            <td>GEBCO_2019</td>
+                            <td>NetCDF</td>
+                            <td>24.7</td>
+                            <td>25.1</td>
+                            <td>15.4</td>
+                        </tr>
+                    </tbody>
                 </table>
 
 
@@ -205,17 +208,17 @@
                     values (Adobe, 2005).</p>
 
                 <p>As we discuss bits and byte layouts, we will use the following conventions:
-				<ol>
+                <ol>
                     <li>Bits are numbered according to their power of 2.  So the low-order
-                    bit in a 32-bit integer or floating-point value is bit 0.  The
-                    high order bit is bit 31.</li>
+                        bit in a 32-bit integer or floating-point value is bit 0.  The
+                        high order bit is bit 31.</li>
                     <li>Bytes are numbered starting with 0 for the low-order byte and 3
-                    for the high-order byte.</li>
+                        for the high-order byte.</li>
                     <li>The numbering schemes have nothing to do with byte ordering (little-endian
-                    versus big-endian orders). They refer to the numeric positions of the
-                    bits or bytes within the value being discussed.  Byte ordering is a necessary
-                    consideration in implementation, but is not considered in this discussion of general idea.</li>
-				</ol>
+                        versus big-endian orders). They refer to the numeric positions of the
+                        bits or bytes within the value being discussed.  Byte ordering is a necessary
+                        consideration in implementation, but is not considered in this discussion of general idea.</li>
+                </ol>
 
 
                 <p>The TIFF differencing proceeds as follows. For each row, the set of high-order bytes
@@ -357,7 +360,7 @@
                         https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format</a>
 
                 <h2>Notes</h2>
-                <p><a name="note1">&#91;1&#93;</a>
+                <p><a id="note1">&#91;1&#93;</a>
                     While the 2019 GEBCO data set featured non-integral data
                     given in the form of floats, the 2020 version released 28 April 2020, uses short (2-byte) integers.
                     With this change, the product now reports elevation and depth data rounded to the nearest 1 meter.
@@ -366,7 +369,7 @@
                     a computed entropy of 12.9 bits per sample. The Gridfour integer data compression reduced the size of this set
                     down to 3.12 bits per sample.</p>
 
-                <p><a name="note2">&#91;2&#93;</a>
+                <p><a id="note2">&#91;2&#93;</a>
                     The USGS Cloud Optimized GeoTIFF files contain multiple
                     raster data products including a full-resolution source data set and 4 or 5 lower-resolution
                     "overview" data sets.  The bit counts cited above are based solely on the full-resolution product.</p>
