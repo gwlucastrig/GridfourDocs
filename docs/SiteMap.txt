@@ -1,0 +1,10 @@
+https://gwlucastrig.github.io/GridfourDocs/notes/index.html
+https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html
+https://gwlucastrig.github.io/GridfourDocs/notes/LosslessCompressionForFloatingPointData.html
+https://gwlucastrig.github.io/GridfourDocs/notes/CompressionUsingOptimalPredictors.html
+https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_Introduction.html
+https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_Performance.html
+https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_ImageProcessingAndCompression.html
+https://gwlucastrig.github.io/GridfourDocs/notes/How-to-Extract-Data-from-a-NetCDF-File/index.html
+https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html
+https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html
