@@ -34,9 +34,11 @@
                 <p>The primary design goal for Gridfour&#39;s GVRS module was to create an API that would
                     provide a simple and reliable interface for working with grid-based data sources.
                     And, in designing the GVRS file format, we sought to develop a specification
-                    that would be stable across future versions, portable across different operating environments
-                    and implementation languages, and suitable for long-term archiving of data.</p>
+                    that would be stable across future versions, portable across different operating environments,
+                    and suitable for long-term archiving of data.</p>
+
                 <p>None of that would matter if the GVRS software did not provide acceptable performance.</p>
+
                 <p>This document describes the results of performance tests for the GVRS software that were
                     aimed at assessing the usefulness of the implementation. The tests involved
                     performing various patterns of data access on two medium-to-large raster
@@ -225,7 +227,7 @@
                             <tr>
                                 <td>ETOPO1</td>
                                 <td>10800x21600</td>
-                                <td>890 MB</td>
+                                <td>456 MB</td>
                                 <td>4.6 sec.</td>
                             </tr>
                             <tr>
@@ -237,6 +239,13 @@
                         </tbody>
                     </table>
 
+                    <p>Here, one clarification is in order. In the table above, the file size for the non-compressed ETOPO1
+                       is half that of the original NetCDF formatted file (which was quoted as 980 MB above). 
+                       The authors of the original data file chose to store
+                       their data using 4-byte integers. But the range of depths and elevations for
+                       the data fits within the capacity of a two-byte, short integer. So we chose to store the data
+                       in that form. NetCDF also supports short-integer formats. The selection of the larger or smaller
+                       representations were matters of convenience and do not reflect on the capabilities of either product.</p>
 
                     <h2 id="reading-the-data">Reading the Data</h2>
                     <p>Both of the test data products are distributed in the well-known NetCDF data format.
@@ -290,14 +299,14 @@
                             <tr>
                                 <td>Blocks of One Row</td>
                                 <td>0.53</td>
-                                <td>3.12</td>
+                                <td>3.50</td>
                                 <td>65.3</td>
                                 <td>69.6</td>
                             </tr>
                             <tr>
                                 <td>Blocks of Full Tile</td>
                                 <td>0.65</td>
-                                <td>3.18</td>
+                                <td>3.52</td>
                                 <td>29.4</td>
                                 <td>67.9</td>
                             </tr>
@@ -342,7 +351,7 @@
 </code></pre>
 
                     <p>The advantage of the row block operation is that it performs
-                        for fewer data access operations than would be required
+                        far fewer data access operations than would be required
                         for reading values for the source one grid cell at a time.
                         However, it is worth noting that the GvrsFile is designed
                         to support both patterns of access efficiently.  Internally,
