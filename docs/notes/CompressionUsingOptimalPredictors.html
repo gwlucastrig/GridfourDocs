@@ -652,7 +652,7 @@
     min value: -37
     max value: 329
     Entropy for input data:                 6.64 bits/sample
-    Minimum nbmber of bits to encode range: 9 bits
+    Minimum number of bits to encode range: 9 bits
                 </pre>
 
                 <h3 id="floating-point">Floating-point Operations</h3>
@@ -665,7 +665,8 @@
                     arithmetic needed for the Optimal Predictor be reproducible in a consistent manner.</p>
 
                 <p>In order to ensure consistency, LSOP uses 4-byte, single-precision floating point arithmetic for
-                    its predictor. The Java classes related to Optimal Predictors are implemented using Java's <i>strictfp</i> keyword.
+                    its predictor. The Java classes related to Optimal Predictors are implemented using Java's <i>strictfp</i>
+					keyword.<sup><a href="#note1">[1]</a></sup>
                     All floating-point to integer conversions are all performed using Java's StrictMath.round() function.
                     Similar capabilities are available for most modern development environments and programming languages.</p>
 
@@ -826,6 +827,11 @@
                 <p>Smith, Derek H., &#38; Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.<br>
                     <i>Computers &#38; Geosciences, Volume 20, Issues 7-8,</i> August-October 1994, 1137-1141
                 </p>
+
+                <h1>Notes</h1>
+                <p><a id="note1">&#91;1&#93;</a> As of Java version 17, the strictfp is considered obsolute. All floating-point
+                computations are performed using strict semantics.</p>
+
 
             </div>
         </div>
