@@ -101,8 +101,8 @@
 
                 <h2 id="predictors">Predictors and Data Compression</h2>
                 <p>The idea of using a predictor to improve data compression is a well known concept.
-                    Basically, we consider that if we had a function that could predict the values in a
-                    data set with perfect accuracy, we could represent its content with almost no
+                    Basically, we consider that a function which could predict the values in a
+                    data set with perfect accuracy could represent its content with almost no
                     storage space at all. In most cases, of course, the best we can hope for is a predictor
                     that offers a <i>good approximation</i> of the values in a data set. But, armed with
                     such a predictor, we don't need to store the data itself. Instead, we store a set of correction
@@ -572,7 +572,7 @@
                 <p>The Gridfour implementation of the Smith and Lewis algorithm begins processing by using
                     its simpler predictors to prepopulate the first two rows and first two columns of the grid.
                     It then applies Optimal Predictors to populate the interior. The last two columns
-                    in the grid are also unreachable. So as each row is processed using Optimal Predictors,
+                    in the grid are also uncovered. So as each row is processed using Optimal Predictors,
                     the last two columns in that row are processed using the Triangle Predictor.
                     The steps are as follows:</p>
                 <ol>
@@ -582,7 +582,7 @@
                         The Triangle predictor itself requires an initialization, which is why the first step
                         in the process depends on the Differencing predictor to populate the first row and column</li>
                     <li>The Triangle predictor is used to finish the last two columns
-                        of the grid (which were unreachable to the Optimal Predictor).</li>
+                        of the grid (which were not covered by the Optimal Predictor).</li>
                     <li>The Optimal Predictor is used to populate the interior of the grid.</li>
                 </ol>
 
@@ -621,7 +621,7 @@
                     harder it will be for a data compressor to reduce the size of the input.
                     The fact that the entropy values for the outer rows and columns of grid cells
                     are higher than for the interior is due to the use of
-                    the simpler and less effective predictors in the "unreachable" sections of the grid.</p>
+                    the simpler and less effective predictors in the "uncovered" sections of the grid.</p>
 
                 <p>The overall entropy for the source data is given at the bottom of the printout.
                     This value, 6.64, represents the state of the data before the predictors are applied.
@@ -705,7 +705,7 @@
                     in data size due to better predictors would be degraded by the additional overhead due required
                     for the 24-point predictor. The requirement for 24 predictor coefficients, rather than the 12 used by
                     the current implementation, would add 48 additional bytes of overhead. Additionally, the larger
-                    predictor has a larger number of unreachable grid cells and would require 3 rows and 6 columns
+                    predictor has a larger number of uncovered grid cells and would require 3 rows and 6 columns
                     of initialization cells. Since the initialization cells compress less effectively than the interior,
                     that larger initialization set would add more overhead than the smaller set used by the 12-point predictor.
                     In view of these considerations, the question arises of whether the savings obtained from the
@@ -829,7 +829,7 @@
                 </p>
 
                 <h1>Notes</h1>
-                <p><a id="note1">&#91;1&#93;</a> As of Java version 17, the strictfp is considered obsolute. All floating-point
+                <p><a id="note1">&#91;1&#93;</a> As of Java version 17, the strictfp is considered obsolete. All floating-point
                 computations are performed using strict semantics.</p>
 
 
