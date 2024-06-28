@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Virtual Raster Memory Management</title>
+        <link rel="stylesheet" href="css/text.css" />
+        <link rel="stylesheet" href="css/layout.css" />
+    </head>
+
+
+    <body>
+        <div id="notescontainer">
+            <div id="notesheader">
+                <ul class="link-bar">
+                    <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
+                    <li>|</li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li>|</li>
+                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Application Notes</a></li>
+                    <li>|</li>
+                </ul>
+                <p>&nbsp;</p>
+            </div>
+
+            <div id="notescontent">
+
+                <div class="titleblock">
+                    <p class="blocktitle">
+                        Managing a Virtual Raster using<br> a Tile-Cache Algorithm
+                    </p>
+                    <p class="blockauthor">by G.W. Lucas</p>
+                </div>
+
+                <h1>Introduction</h1>
+
+                <p>
+                    A virtual raster management system provides a way of reducing the memory requirement for
+                    processing large and very large grid-based data sets. The idea of a virtual raster
+                    is similar to that of the well-established techniques of virtual memory managment
+                    used in many operating system implementations. When a raster data set is too large
+                    to be kept in available memory, it is divided into smaller pieces that can be swapped
+                    between active memory and a supporting storage system such as a fixed disk or solid-state
+                    drive (SSD) device. When an application requires access to a particular part of the
+                    overall grid, that subsection is read into memory for processing, then written back
+                    to the backing storage system. This approach represents a compromise between performance
+                    and available resources. Memory provides rapid access to data, but is subject to limits
+                    in terms of its size. File-based storage is slower than memory, but provides
+                    much more capacity for storing data.</p>
+
+                <p>An effective virtual raster management system provides
+                    an efficient way of managing the exchange of data between these fast memory and
+                    slower mass-storage devices. To achieve efficiency, the GVRS implementation
+                    maintains a caching mechanism.  The cache follows an applications pattern of access
+                    to overall main grid, retains data for the sections of the grid that are currently
+                    being used, loads other sections on-demand, and discards sections of the
+                    grid that are no longer required.</p>
+                <p>
+                    These notes describe the algorithms used by the Gridfour Virtual Raster Store (GVRS)
+                    software API to manage grid-based data.
+                </p>
+
+                <h1>Concepts</h1>
+                <h2>Raster data</h2>
+                <p>
+                    In computer programming, the term <i>raster</i> refers to any grid-based data set. There are
+                    many different kinds of raster products. The most common kind of raster is a digital image.
+                    A digital image is essentially a grid of data cells (pixels) each of which is assigned
+                    a numerical value, usually light or color intensity codes.
+                    But raster products also include mathematical objects such as matrices and geospatial grid products such as elevation data sets.
+                    While many of the examples used in the GVRS documentation are based on geospatial data,
+                    the API is designed to support the broader set of products.</p>
+
+                <h2>The tiling scheme</h2>
+
+                <p>The basic idea of tiling a grid can be seen in the image below. In this case,
+                    a grid consisting of six rows and nine columns is divided into six 3-by-3 tiles.</p>
+
+
+                <figure>
+                    <img src="images/General/TilingScheme.png">
+                    <figcaption>Figure 1 &ndash; A tiling scheme divides a master grid into uniformly sized sub-gribs.</figcaption>
+                </figure>
+
+                <p>The size of tiles are arbitrary. The GVRS API assumes that all tiles must be of
+                    a uniform size, though other API's may use non-uniform specifications.
+                    Applications are free to specify tile sizes according
+                    to their needs. In this case,
+                    a 2-by-9 tile would have worked just fine. In fact, a 4-by-5 tile size would
+                    also work, even though the tiles would not evenly divide
+                    the 6-by-9 master grid. The GVRS API handles any extra cells
+                    internally and their management is transparent to the application.</p>
+
+                <p>The figure below illustrates how a tiling scheme works.  It illustrates
+                    the data for one kind of raster product, a collection of surface
+                    elevation and bathymetry.  data could be divided into regular
+                    tiles ten-degrees across. An application requiring access to
+                    information in Europe would load the relevant tiles without needing
+                    to access information from South America.</p>
+
+                <figure>
+                    <img src="images/PackingData/TileScheme.png">
+                    <figcaption>Figure 2 &ndash; A global data set divided into 10-degree tiles.</figcaption>
+                </figure>
+
+                <h2>The tile cache</h2>
+                <p>
+                    When an entire grid is too large to be maintained in memory, a caching mechanism may implement
+                    a strategy for keeping the data that is most likely to be needed while deferring access
+                    to that part of the grid that is not immediately required. The GVRS stragegy is based on the
+                    assumption that when an application accesses one cell in a grid, there is a high probability
+                    that the next access will be to another cell in the proximity of the first. And, in many cases,
+                    the subsequent access of grid cells occur within the bounds of a single tile. This assumption
+                    is often applicable whether a raster product has a spatial basis (geophysical data)
+                    or not (image data, matrices).
+                </p>
+                <p>The tile cache is implemented as an ordered list of tile elements. The list is configured to
+                    an arbitrary maximum size based on desired memory use. Figure 3 below shows an example
+                    of a virtual raster consisting of a set of 3 rows and 3 columns of tiles. The tile
+                    cache is configured to store up to 3 tiles.
+                </p>
+                <figure>
+                    <img src="VirtualRaster_files/cache.png">
+                    <figcaption>Figure 3 &ndash; A virtual raster and an empty tile cache.</figcaption>
+                </figure>
+
+
+                <p>
+                    The design of the cache algorithm is based on the assumption that memory is limited
+                    and that there is a significant performance cost in reading a tile from the
+                    associated high-capacity storage device. So the primary objective of the cache
+                    is to minimize redundant access to the backing storage device and to
+                    to provide a high likelihood that when a particular tile is needed,
+                    it will already be in memory. To address these goals
+                    the tile-cache algorithm applies the following steps:</p>
+                <ol>
+                    <li>Compute the index for the desired tile based on the grid row and column</li>
+                    <li>Search the list to determine whether the target tile is already in the cache</li>
+                    <li>If the tile is already in the cache.
+                        <ul>
+                            <li>If necessary, move the target to the first position in the list.</li>
+                            <li>All other tiles are shifted to the right.</li>
+                        </ul>
+                    <li>If the tile is not in the cache</li>
+                    <ul>
+                        <li>If the cache is full, discard the rightmost tile to make room for the target tile</li>
+                        <li>Read the target tile from the backing storage device (<i>i.e.</i> a file)
+                            and insert at the head of the list.</li>
+                        <li>All other tiles are shifted to the right</li>
+                    </ul>
+                </ol>
+
+                <p>
+                    The figure below shows the results after three tiles have been accessed and added to the cache in the order: A, B, and C.
+                    The first tile, A, is also the least-recently accessed. Thus, it is shifted to the right most position.</p>
+
+                <figure>
+                    <img src="VirtualRaster_files/cacheCBA.png">
+                    <figcaption>Figure 4 &ndash; The cache, after inserting tiles A, B, and C.</figcaption>
+                </figure>
+
+                <p>If the application were to access tile A again, it would be shifted to the head of the list,
+                    resulting in the tile order A, C, and B. If the application then accessed tile D, the least-recently
+                    accessed tile, B, would be discarded. The resulting cache would include tiles in the order D, A, and C.</p>
+                <figure>
+                    <img src="VirtualRaster_files/cacheACB_DAC.png">
+                    <figcaption>Figure 5 &ndash; The cache, after accessing tile A and inserting tile D.</figcaption>
+                </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <h1>References</h1>
+                <p>Adobe Systems Inc.,  1992.<i>TIFF Revision 6.0, Final-June 3, 1992</i>.  Accessed December 2019
+                    from <a href="https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf">https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf</a></p>
+
+                <p>General Bathymetric Chart of the Oceans [GEBCO], 2019.<i>GEBCO Gridded Bathymetry Data</i>.
+                    Accessed December 2019 from <a href="https://www.gebco.net/data_and_products/gridded_bathymetry_data">
+                        https://www.gebco.net/data_and_products/gridded_bathymetry_data</a></p>
+
+                <p>National Oceanographic and Atmospheric Administration [NOAA], 2019.
+                    <i>ETOPO1 Global Relief Model</i>. Accessed December 2019 from <a href="https://www.ngdc.noaa.gov/mgg/global/">https://www.ngdc.noaa.gov/mgg/global/</a></p>
+
+                <p>Sonalysts, Inc., 2019.<i>wXstation</i>. Accessed December 2019 from
+                    <a href="http://www.sonalysts.com/products/wxstation/">http://www.sonalysts.com/products/wxstation/</a></p>
+
+                <p>University Corporation for Atmospheric Research [UCAR], 2019.<i>NetCDF-Java Library</i>
+                    Accessed December 2019 from <a href="https://www.unidata.ucar.edu/software/netcdf-java/current/">https://www.unidata.ucar.edu/software/netcdf-java/current/</a>
+                </p>
+
+            </div>
+        </div>
+    </body>
+
+</html>
