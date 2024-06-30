@@ -54,7 +54,7 @@
                     exchange of data efficiently.  The decision of when to load or discard a particular
                     subsection of the grid should be based on the patterns-of-access for the calling
                     application and should attempt to minimize the frequency with which data is
-                    transfered between memory and backing storage.</p>
+                    transferred between memory and backing storage.</p>
 
                 <p>In Gridfour, the exchange of raster subsections (tiles) is managed using a <i>tile-caching</i>
                     algorithm. Details of this algorithm are descibed below.</p>
@@ -81,20 +81,20 @@
                     <figcaption>Figure 1 &ndash; A tiling scheme divides a master grid into uniformly sized sub-gribs.</figcaption>
                 </figure>
 
-                <p>The size of tiles are arbitrary. The GVRS API assumes that all tiles must be of
-                    a uniform size, though other API's may use non-uniform specifications.
+                <p>The size of tiles is arbitrary. The Gridfour software libraries assume that all tiles must be of
+                    a uniform size, though other APIs may use non-uniform specifications.
                     Applications are free to specify tile sizes according
                     to their needs. In this case,
                     a 2-by-9 tiling scheme would have worked just fine. In fact, a 4-by-5 tile size would
                     also work, even though the tiles would not evenly divide
-                    the 6-by-9 master grid. The GVRS API handles any extra cells
+                    the 6-by-9 master grid. The Gridfour APIs handle any extra cells
                     internally and their management is transparent to the application.</p>
 
                 <h2>The tile cache</h2>
                 <p>
                     When an entire grid is too large to be maintained in memory, a caching mechanism may implement
                     a strategy for keeping the data that is most likely to be needed while deferring access
-                    to that part of the grid that is not immediately required. The GVRS stragegy is based on the
+                    to that part of the grid that is not immediately required. The Gridfour strategy is based on the
                     assumption that when an application accesses one cell in a grid, there is a high probability
                     that the next access will be to another cell in the proximity of the first. And, in many cases,
                     the subsequent access of grid cells occur within the bounds of a single tile. This assumption
@@ -175,19 +175,23 @@
                 <p>The tile queue is implemented using a doubly linked list. The tile cache maintains pointers
                     to both the head and tail of the linked list. The doubly linked list structure provides a
                     convenient way for the cache to move a tile to the head of queue when it is accessed by the application code.
-                    It also allows the API to identify the least-recently used tile and discard it when the application
+                    And because the API can access the linked list from its tail end, the list-based implementation allows
+                    the code to identify the least-recently used tile and discard it when the application
                     needs to insert a new tile into the queue.</p>
 
                 <h2>A hash table expedites searching the queue</h2>
                 <p>When the application requires access to a tile, it could perform a sequential search of the
-                    tile queue. However, if the queue is configured to hold a large number of tiles, there could be a substantial
+                    tile queue. However, if the queue is configured to hold a large number of tiles, there could be a significant
                     performance cost for the search. To expedite tile searches, the Gridfour API implements a hash table
                     that maps a tile index to a node within the linked list. The table is implemented using an integer hash key
                     which is computed directly from the tile index. For the Gridfour C implementation, a simple hash table
                     is implemented in custom code.</p>
                 <p>Note that operations on the hash table and linked list structures must be coordinated. When a tile is
-                    added or removed from the list, it must also be added or removed from the hash table. However, the hash table
-                    is not affected by the movement of tiles within the list.</p>
+                    added or removed from the list, it must also be added or removed from the hash table.
+                    On the other hand, moving a tile to the front of the list is a metter of changing
+                    link elements, but does not change its memory address. Therefore   moving a tile within
+                    the list does not affect the corresponding reference in the hash table.
+                    change its the hash table.</p>
 
                 <h2>More text to follow</h2>
                 <p>Text to be completed.</p>
