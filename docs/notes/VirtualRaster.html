@@ -37,28 +37,28 @@
                 <p>
                     The Gridfour virtual raster management system provides a way to reduce the memory required for
                     processing large and very large grid-based data sets. To do so, it divides the
-					overall raster into smaller pieces (tiles) that can be swapped between memory and
-					a large-capacity storage device such as a disk drive or Solid State Drive (SSD).
+                    overall raster into smaller pieces (tiles) that can be swapped between memory and
+                    a large-capacity storage device such as a disk drive or Solid State Drive (SSD).
                     When an application requires access to a particular part of the
                     overall grid, that subsection is read into memory for processing, then discarded or written back
                     to the supporting storage system when no longer needed. This approach is similar to the classic
-concept of <a href="https://en.wikipedia.org/wiki/Virtual_memory">virtual memory</a>.
- 					It represents a compromise between performance
-                    and available resources. Memory provides rapid access to data, but may be limited in size 
-					or needed for other uses. File-based storage is slower than memory, but provides
+                    concept of <a href="https://en.wikipedia.org/wiki/Virtual_memory">virtual memory</a>.
+                    It represents a compromise between performance
+                    and available resources. Memory provides rapid access to data, but may be limited in size
+                    or needed for other uses. File-based storage is slower than memory, but provides
                     much more capacity for storing data. The Gridfour virtual raster algorithm attempts
-					to balance these two considerations.</p>
+                    to balance these two considerations.</p>
 
                 <p>Because reading and writing data to a high capacity storage device entails a substantial
-				performance cost, a virtual raster system requires a mechanism for managing the
-				exchange of data efficiently.  The decision of when to load or discard a particular
-				subsection of the grid should be based on the patterns-of-access for the calling
-				application and should attempt to minimize the frequency with which data is
-				transfered between memory and backing storage.</p>
+                    performance cost, a virtual raster system requires a mechanism for managing the
+                    exchange of data efficiently.  The decision of when to load or discard a particular
+                    subsection of the grid should be based on the patterns-of-access for the calling
+                    application and should attempt to minimize the frequency with which data is
+                    transfered between memory and backing storage.</p>
 
-<p>In Gridfour, the exchange of raster subsections (tiles) is managed using a <i>tile-caching</i>
-algorithm. Details of this algorithm are descibed below.</p>				
-	 
+                <p>In Gridfour, the exchange of raster subsections (tiles) is managed using a <i>tile-caching</i>
+                    algorithm. Details of this algorithm are descibed below.</p>
+
 
                 <h1>Concepts</h1>
                 <h2>Raster data</h2>
@@ -68,7 +68,7 @@ algorithm. Details of this algorithm are descibed below.</p>
                     A digital image is essentially a grid of data cells (pixels) each of which is assigned
                     a numerical value, usually light or color intensity codes.
                     But raster products also include mathematical objects such as matrices and geospatial grid products such as elevation data sets.
-					</p>
+                </p>
 
                 <h2>The tiling scheme</h2>
 
@@ -102,11 +102,11 @@ algorithm. Details of this algorithm are descibed below.</p>
                     or not (image data, matrices).
                 </p>
                 <p>Following that assumption, the tile cache is organized as a priority queue orderd by
-		the time of most recent access. The most recently accessed tiles are placed at the head of the queue.
-		The least recently accessed are placed toward its back. The queue is configured to hold an
-		arbitrary maximum number of tiles based on the desired memory use for an application. Figure 1 below shows an example
+                    the time of most recent access. The most recently accessed tiles are placed at the head of the queue.
+                    The least recently accessed are placed toward its back. The queue is configured to hold an
+                    arbitrary maximum number of tiles based on the desired memory use for an application. Figure 1 below shows an example
                     of a virtual raster consisting of a set of 3 rows and 3 columns of tiles. For purposes of
-					illustration, the tile cache is configured to store up to 3 tiles.
+                    illustration, the tile cache is configured to store up to 3 tiles.
                 </p>
                 <figure>
                     <img src="VirtualRaster_files/cache.png">
@@ -122,27 +122,29 @@ algorithm. Details of this algorithm are descibed below.</p>
                     it will already be in memory. To address these goals
                     the tile-cache algorithm applies the following steps:</p>
                 <ol>
-                    <li>Compute the index for the desired tile based on the grid row and column</li>
-                    <li>Search the tile-cache queue to determine whether the target tile is already in the cache</li>
+                    <li>Identify the required tile based on the grid row and column indices to the desired data cell.</li>
+                    <li>Search the tile-cache queue to determine whether the target tile is already in the cache.</li>
                     <li>If the tile is already in the cache:
-                        <ul>
+                        <ol>
                             <li>Move the tile to the first position in the queue.</li>
                             <li>All other tiles are shifted to the right.</li>
-                        </ul>
-                    <li>If the tile is not in the cache:</li>
-                    <ul>
-                        <li>If the cache is full, discard the rightmost tile to make room for the target tile.</li>
-                        <li>Read the target tile from the backing storage device (<i>i.e.</i> a file)
-                            and insert at the head of the queue.</li>
-                        <li>All other tiles are shifted to the right.</li>
-                    </ul>
+                        </ol>
+                    </li>
+                    <li>If the tile is not in the cache:
+                        <ol>
+                            <li>If the cache is full, discard the rightmost tile to make room for the target tile.</li>
+                            <li>Read the target tile from the backing storage device (<i>i.e.</i> a file)
+                                and insert at the head of the queue.</li>
+                            <li>All other tiles are shifted to the right.</li>
+                        </ol>
+                    </li>
                 </ol>
 
                 <p>
-                    The figure below illustrates the state of the tile cache over the course of three 
-					subsequent accesses to tiles A, B, and C.
-					At the end of the sequence, the least-recently accessed tile, tile A, is shifted
-					to the last (rightmost) position in the queue.</p>
+                    The figure below illustrates the state of the tile cache over the course of three
+                    subsequent accesses to tiles A, B, and C.
+                    At the end of the sequence, the least-recently accessed tile, tile A, is shifted
+                    to the last (rightmost) position in the queue.</p>
 
                 <figure>
                     <img src="VirtualRaster_files/cacheA.png">
@@ -151,20 +153,46 @@ algorithm. Details of this algorithm are descibed below.</p>
 
                 <p>If the application were to access tile A again, it would be moved to the head of the queue,
                     and tiles C and B would be shifted to the right. Tile B, being the least-recently accessed tile,
-					would be shifted to the last position in the queue. The figure below illustrates what happens
-					when the application accesses an additional tile, D. Because tile B was the least-recently
-					accessed tile, it would be discarded (or written to the backing store). 
-					The resulting cache would include tiles in the order D, A, and C,
-					as shown in the figure below.</p>
+                    would be shifted to the last position in the queue. The figure below illustrates what happens
+                    when the application accesses an additional tile, D. Because tile B was the least-recently
+                    accessed tile, it would be discarded (or written to the backing store).
+                    The resulting cache would include tiles in the order D, A, and C,
+                    as shown in the figure below.</p>
                 <figure>
                     <img src="VirtualRaster_files/cacheACB.png">
                     <figcaption>Figure 3 &ndash; The cache, after accessing tile A and inserting tile D.</figcaption>
                 </figure>
 
-<h1>Implementation</h1> 
- <p>Text to be completed.</p>
+                <h1>Implementation</h1>
+                <p>The Gridfour Software Project includes implementations of the tile cache in the Java and C programming languages.
+                    Both implementations are similar in their structure and approach. These notes will focus on the C implementation.</p>
+                <h2>The tile index</h2>
+                <p>The Gridfour API assigns integer codes to each tile in row-major order. The first tile in the first
+                    row of tiles is assigned the value zero. The tile to its right is assigned a value of one, and so forth.
+                    The tile index is used as primary key for identifying tiles in all of the data collections
+                    used to support the tile cache.</p>
+                <h2>The tile queue implemented as a linked list</h2>
+                <p>The tile queue is implemented using a doubly linked list. The tile cache maintains pointers
+                    to both the head and tail of the linked list. The doubly linked list structure provides a
+                    convenient way for the cache to move a tile to the head of queue when it is accessed by the application code.
+                    It also allows the API to identify the least-recently used tile and discard it when the application
+                    needs to insert a new tile into the queue.</p>
 
- 
+                <h2>A hash table expedites searching the queue</h2>
+                <p>When the application requires access to a tile, it could perform a sequential search of the
+                    tile queue. However, if the queue is configured to hold a large number of tiles, there could be a substantial
+                    performance cost for the search. To expedite tile searches, the Gridfour API implements a hash table
+                    that maps a tile index to a node within the linked list. The table is implemented using an integer hash key
+                    which is computed directly from the tile index. For the Gridfour C implementation, a simple hash table
+                    is implemented in custom code.</p>
+                <p>Note that operations on the hash table and linked list structures must be coordinated. When a tile is
+                    added or removed from the list, it must also be added or removed from the hash table. However, the hash table
+                    is not affected by the movement of tiles within the list.</p>
+
+                <h2>More text to follow</h2>
+                <p>Text to be completed.</p>
+
+
 
             </div>
         </div>

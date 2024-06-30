@@ -8,3 +8,4 @@ https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_ImageProcessingAndCompress
 https://gwlucastrig.github.io/GridfourDocs/notes/How-to-Extract-Data-from-a-NetCDF-File/index.html
 https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html
 https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html
+https://gwlucastrig.github.io/GridfourDocs/notes/VirtualRaster.html
