@@ -67,7 +67,8 @@
                     many different kinds of raster products. The most common kind of raster is a digital image.
                     A digital image is essentially a grid of data cells (pixels) each of which is assigned
                     a numerical value, usually light or color intensity codes.
-                    But raster products also include mathematical objects such as matrices and geospatial grid products such as elevation data sets.
+                    But raster products also include mathematical objects such as matrices
+                    and geospatial grid products such as elevation data sets.
                 </p>
 
                 <h2>The tiling scheme</h2>
@@ -106,7 +107,7 @@
                     The least recently accessed are placed toward its back. The queue is configured to hold an
                     arbitrary maximum number of tiles based on the desired memory use for an application. Figure 1 below shows an example
                     of a virtual raster consisting of a set of 3 rows and 3 columns of tiles. For purposes of
-                    illustration, the tile cache is configured to store up to 3 tiles.
+                    illustration, the tile cache is configured to store a maximum of 3 tiles.
                 </p>
                 <figure>
                     <img src="VirtualRaster_files/cache.png">
@@ -151,8 +152,8 @@
                     <figcaption>Figure 2&ndash; The cache, after inserting tiles A, B, and C.</figcaption>
                 </figure>
 
-                <p>If the application were to access tile A again, it would be moved to the head of the queue,
-                    and tiles C and B would be shifted to the right. Tile B, being the least-recently accessed tile,
+                <p>If the application were to access tile A again, it would be moved to the head of the queue.
+                    Tiles C and B would be shifted to the right. Tile B, being the least-recently accessed tile,
                     would be shifted to the last position in the queue. The figure below illustrates what happens
                     when the application accesses an additional tile, D. Because tile B was the least-recently
                     accessed tile, it would be discarded (or written to the backing store).
@@ -162,6 +163,30 @@
                     <img src="VirtualRaster_files/cacheACB.png">
                     <figcaption>Figure 3 &ndash; The cache, after accessing tile A and inserting tile D.</figcaption>
                 </figure>
+
+                <h2>Cache size and performance</h2>
+                <p>An optimal selection of cache depends on two factors: the amount of memory that
+                    an application can allocate to the tile cache, and the anticipated pattern of access.
+                    Naturally, the tile cache provides an advantage when an application makes repeated accesses to
+                    tiles that are already loaded the cache.</p>
+                <p>The following use cases indicate different conditions under which the tile cache
+                    size may be configured to support the behavior of an application:</p>
+                <ol>
+                    <li><b>The application accesses the grid in random
+                            or widely scattered positions:</b> Most operations will require reading a new tile from the backing storage device.
+                        In such cases, the tile cache does not improve performance. A smaller cache
+                        size is preferred.</li>
+                    <li><b>The access sequence follows a multi-cell path across the grid:</b> As an example, consider the case where a geospatial data
+                        set such as elevation and bathymetry grid is tied to the path of a vehicle (aircraft, ship, etc.). Access might alternate between
+                        adjacent tiles while gradually transitioning to different tiles as the vehicle moves across the region
+                        supported by the raster product.  A medium size cache would perform well.</li>
+                    <li><b>An application scans the entire grid in row-major order:</b> This use case is common in image processing or data-transcription
+                        operations. Each scan of a grid row will cross an entire row of tiles.  So there is an advantage in making
+                        the tile cache large enough to hold a complete row of tiles.  During processing, the set of tiles in the cache will
+                        be accessed multiple times. But, they will only be read from the backing storage device once. Redundant tile-read operations will be eliminated. Maintaining an entire row of tiles leads
+                        to a larger cache size, but the performance gain is significant.</li>
+                </ol>
+
 
                 <h1>Implementation</h1>
                 <p>The Gridfour Software Project includes implementations of the tile cache in the Java and C programming languages.
@@ -193,10 +218,15 @@
                     the list does not affect the corresponding reference in the hash table.
                     change its the hash table.</p>
 
-                <h2>More text to follow</h2>
-                <p>Text to be completed.</p>
-
-
+                <h1>Conclusion</h1>
+                <p>The tile cache concept plays a key role in both the original
+                    <a href="https://github.com/gwlucastrig/gridfour">Gridfour Java</a> and newer
+                    <a href="https://github.com/gwlucastrig/GridfourC">Gridfour C</a> software libraries.
+                    The source code for these projects provides examples of tile cache implementations.
+                    In both cases, the code includes small enhancements that were not described in this
+                    article because they are specific to the programming language used for the implementation.
+                    Developers wishing to create their own versions of a tile cache may find these elements worth review.
+                </p>
 
             </div>
         </div>
