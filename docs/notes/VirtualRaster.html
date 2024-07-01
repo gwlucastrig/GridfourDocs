@@ -42,7 +42,7 @@
                     When an application requires access to a particular part of the
                     overall grid, that subsection is read into memory for processing, then discarded or written back
                     to the supporting storage system when no longer needed. This approach is similar to the classic
-                    concept of <a href="https://en.wikipedia.org/wiki/Virtual_memory">virtual memory</a>.
+                    <a href="https://en.wikipedia.org/wiki/Virtual_memory">virtual memory technique</a>.
                     It represents a compromise between performance
                     and available resources. Memory provides rapid access to data, but may be limited in size
                     or needed for other uses. File-based storage is slower than memory, but provides
@@ -125,13 +125,13 @@
                     <li>Identify the required tile based on the grid row and column indices to the desired data cell.</li>
                     <li>Search the tile-cache queue to determine whether the target tile is already in the cache.</li>
                     <li>If the tile is already in the cache:
-                        <ol>
+                        <ol style="list-style-type:lower-alpha">
                             <li>Move the tile to the first position in the queue.</li>
                             <li>All other tiles are shifted to the right.</li>
                         </ol>
                     </li>
                     <li>If the tile is not in the cache:
-                        <ol>
+                        <ol style="list-style-type:lower-alpha">
                             <li>If the cache is full, discard the rightmost tile to make room for the target tile.</li>
                             <li>Read the target tile from the backing storage device (<i>i.e.</i> a file)
                                 and insert at the head of the queue.</li>
