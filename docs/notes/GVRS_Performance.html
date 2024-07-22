@@ -452,10 +452,14 @@
                         in cases where the pattern-of-access is arbitrary or unpredictable. When using NetCDF
                         (at least the Java version), it is often helpful if the pattern of data access
                         sticks to the underlying organization of the file. For example, when accessing
-                        the NetCDF file in column-major order, the ETOPO1 read operation took
-                        1184.3 seconds to complete while GVRS took 2.49 seconds.  Of course, we
+                        the NetCDF file in column-major order, the full-grid ETOPO1 read operation took
+                        1184.3 seconds (19 minutes, 44 seconds). The GVRS format took 2.49 seconds.  Of course, we
                         need to be a little candid here.  It is possible to devise access patterns that
-                        defeat both file formts. Had we accessed the GVRS and NetCDF files in a completely random
+                        defeat both file formts. The authors of the ETOPO1 NetCDF file specified
+                        a layout that was optimized for row-major access and poorly suited to the column-major pattern.
+                        Thus, the Java-based NetCDF API had to perform thousands of redundant file-read operations
+                        for the test. Even the GVRS API is not immune to an incompatible access pattern.
+                        Had we accessed the GVRS and NetCDF files in a completely random
                         pattern for a very large number of data points, we could have achieved equally
                         bad performance for both.</p>
 
