@@ -577,7 +577,7 @@
                     The steps are as follows:</p>
                 <ol>
                     <li>The first row and first column are populated using the standard Differencing predictor
-                        (see  <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GVRS-Compression-Algorithms">Lucas, 2019</a>)</li>
+                        (see  <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">Lucas, 2019</a>)</li>
                     <li>The second row and second column are then populated using the simple Triangle predictor.
                         The Triangle predictor itself requires an initialization, which is why the first step
                         in the process depends on the Differencing predictor to populate the first row and column</li>
@@ -673,7 +673,7 @@
 
                 <h3>Configuring a File to use Optimal Predictors</h3>
                 <p>During construction of a GVRS file, the parameters for a file are specified using the GvrsFileSpecification class
-                    (see <a href="https://gwlucastrig.github.io/GridfourDocs/notes/How-to-Package-Data-Using-the-GVRS-Library">How to Package Data Using the GVRS Library</a>.)
+                    (see <a href="https://github.com/gwlucastrig/gridfour/wiki/How-to-Package-Data-Using-the-GVRS-Library">How to Package Data Using the GVRS Library</a>).
                     A Java application can specify the use of the Optimal Predictors compressor, using the approach shown in the
                     following code snippet:</p>
 
