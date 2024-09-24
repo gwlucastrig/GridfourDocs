@@ -164,7 +164,7 @@
                     <figcaption>Figure 3 &ndash; The cache, after accessing tile A and inserting tile D.</figcaption>
                 </figure>
 
-                <h2>Cache size and performance</h2>
+                <h2 id="cache-size-and-performance">Cache size and performance</h2>
                 <p>An optimal selection of cache depends on two factors: the amount of memory that
                     an application can allocate to the tile cache, and the anticipated pattern of access.
                     Naturally, the tile cache provides an advantage when an application makes repeated accesses to
@@ -218,7 +218,120 @@
                     the list's link elements. But the tiles themselves are not modified and their location
                     in memory does not change. Thus the corresponding tile-reference (or pointer) in the hash
                     table does not have to be adjusted.</p>
- 
+
+                <h1>Practical examples</h1>
+                <p>The Gridfour software project includes two implementations of the tile cache: one written in Java,
+                    and another written in C.  The code for these implementations can be found on Github at
+                    <a href="https://github.com/gwlucastrig/gridfour">the Gridfour Java repository</a>
+                    and <a href="https://github.com/gwlucastrig/GridfourC">The Gridfour C repository</a>.</p>
+                <p>To illustrate the role of a tile cache in software implementations, let's consider
+                    the ETOPO1 global elevation and ocean-depth (bathymetry) data set. ETOPO1 is organized in
+                    a grid based on geographic coordinates (latitude and longitude) with a raster cell spacing
+                    of one minute of arc (1/60th of a degree). The original source data was re-packaged in the
+                    GVRS format using a tile-size specification of 120 rows by 180 columns.  This specification
+                    results in tiles that cover an area of 2 degrees of latitude (120 rows, one minute each)
+                    by 3 degrees of longitude (180 rows, one minute each).  The tile size was selected through
+                    trial-and-error to provide a good balance between performance and effective data compression.
+                    The main parameters for ETOPO1 are given below:</p>
+                <pre>
+	Data source:     ETOPO1_v1.0.4.gvrs   (uncompressed)
+	Raster size:     10800 x 21600 for 233280000 grid cells
+	Tile size:       120 x 180 for 10800 tiles
+	Rows of tiles:   90
+	Colums of tiles: 120
+	File size:       455.9 MiB   (compressed  103.8 MiB)
+	Data type:       2 byte integers
+                </pre>
+
+                <p>As described in the paragraph <a href="#cache-size-and-performance">Cache-size and performance</a> above, the Gridfour APIs permit an application to set a tile-cache size
+                    depending on the pattern of access.  The Gridfour C implementation includes a function
+                    that prints a summary of the memory use for the standard tile-cache sizes:</p>
+                <pre>
+	Tile cache size: Large,   4.9 MiB,    bytes per tile: 43200
+	Options for standard cache sizes
+	Size              Max Tiles      Max Memory (MiB)
+	Small                     4                  0.2
+	Medium                    9                  0.4
+	Large                   120                  4.9
+	Extra Large             240                  9.9
+                </pre>
+
+                <p>Both the C and Java source code distributions include example programs that demonstrate
+                    the use of their respective APIs.  The C project includes two examples that illustrate
+                    pattern of access:</p>
+                <ul>
+                    <li><b>ExampleLocation.c</b> performs single-point lookup operations for elevation at
+                        locations through the world.  Since the queries are scattered at different positions
+                        in the grid, and span multiple tiles, there is no advantage (or disadvantage) to
+                        a larger cache size.  The small and medium cache sizes are adequate</li>
+                    <li><b>GvrsReadPerformance.c</b> performs lookup operations for the entire
+                        grid in row-major order.  Because it spans each row of tiles multiple times,
+                        it is advantageous to use the large cache-size that can hold an entire row
+                        of tiles.</li>
+                </ul>
+
+                <h2>Example location queries using a small cache</h2>
+                <p>The text below shows the output from the ExampleLocation program.  Note that
+                    the locations are scattered throughout the raster product so that each accesses a
+                    separate tile.</p>
+                <pre>
+	Name                              Lat         Lon       Elevation (m)
+	Auckland, NZ                    -36.840,    174.740,         15.0
+	Coachella, California, US        33.681,   -116.174,        -22.0
+	Danbury, Connecticut, US         41.386,    -73.482,        154.0
+	Dayton, Ohio, US                 39.784,    -84.110,        238.0
+	Deming, New Mexico, US           32.268,   -107.757,       1324.0
+	Denver, Colorado, US             39.739,   -104.985,       1602.0
+	La Ciudad de México, MX          19.445,    -99.134,       2240.0
+	La Paz, Bolivia                 -16.495,    -68.139,       3749.0
+	Mauna Kea, US                    19.821,   -155.468,       4044.0
+	McMurdo Station, Antarctica     -77.850,    166.692,         31.0
+	Nantes, France                   47.218,     -1.553,         22.0
+	Pontypridd, Wales                51.594,     -3.321,        129.0
+	Québec, QC, Canada               46.812,    -71.205,         28.0
+	Sioux Falls, South Dakota, US    43.568,    -96.725,        428.0
+	Suzhou, CN                       31.335,    120.629,          5.0
+	Zürich, CH                       47.380,      8.543,        435.0
+                </pre>
+
+
+                <h2>Example row-major read performance for different cache sizes</h2>
+                <p>The text below shows examples of the read performance using different
+                    sizes for the tile cache.</p>
+                <pre>
+	Read Performance for file ETOPO1_v1.0.4.gvrs
+
+	Cache-size Large  (120 tiles in cache)
+		Test                     Time (sec)    Operations    Operations/sec
+		Row Major Order            1.900        233280000   122778947.4
+		Column Major Order         1.926        233280000   121121495.3
+
+	Cache-size Medium (9 tiles in cache)
+		Test                     Time (sec)    Operations    Operations/sec
+		Row Major Order           19.437        233280000    12001852.1
+		Column Major Order        25.621        233280000     9105031.0
+                </pre>
+
+                <p>From the descriptive parameters for ETOPO1, we see that there are 120 columns
+                    of tiles in the raster.  So, in a row-major scan of the file, each row of the
+                    scan crosses 120 tiles.  When the cache-size configuration is large, it can
+                    hold the entire row of tiles. For the scan of the first row, the API reads each
+                    tile and stores it in the cache. But every data query in the scan of the second row
+                    can be satisfied using a tile from the cache, and no additional file access is required.
+                    On the other hand, the medium-size cache is not large enough to hold
+                    an entire row of tiles. So most tiles will have dropped out of the cache by the time the
+                    scan of the second row begins. The medium-size configuration requires that tiles
+                    be read redundantly to satify the needs of the application. Thus, the access time
+                    for the medium cache is much larger than for the large cache.</p>
+                <p>The text above also shows access times for reading the file in column-major order.
+                    The results show that the tile-cache can be effective for patterns of access
+                    other than the row-major pattern. In the case of this particular GVRS file,
+                    the column-major access is somewhat slower than row major because the tiles
+                    themselves were collected in row-major order when the file was assembled.
+                    Accessing the tiles in column-major order requires more file-seek operations
+                    than the row-major order did. But this difference is an artifact of the way the
+                    data was collected, and will not be true in all cases.</p>
+
                 <h1>Conclusion</h1>
                 <p>The tile cache concept plays a key role in both the original
                     <a href="https://github.com/gwlucastrig/gridfour">Gridfour Java</a> and newer
