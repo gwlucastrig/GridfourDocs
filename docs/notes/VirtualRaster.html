@@ -57,7 +57,7 @@
                     transferred between memory and backing storage.</p>
 
                 <p>In Gridfour, the exchange of raster subsections (tiles) is managed using a <i>tile-caching</i>
-                    algorithm. Details of this algorithm are descibed below.</p>
+                    algorithm. Details of the Gridfour virtual raster technique are descibed below.</p>
 
 
                 <h1>Concepts</h1>
@@ -218,7 +218,7 @@
                     the list's link elements. But the tiles themselves are not modified and their location
                     in memory does not change. Thus the corresponding tile-reference (or pointer) in the hash
                     table does not have to be adjusted.</p>
-
+ 
                 <h1>Conclusion</h1>
                 <p>The tile cache concept plays a key role in both the original
                     <a href="https://github.com/gwlucastrig/gridfour">Gridfour Java</a> and newer
