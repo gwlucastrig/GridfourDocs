@@ -317,8 +317,9 @@
                     scan crosses 120 tiles.  When the cache-size configuration is large, it can
                     hold the entire row of tiles. For the scan of the first row, the API reads each
                     tile and stores it in the cache. But every data query in the scan of the second row
-                    can be satisfied using a tile from the cache, and no additional file access is required.
-                    On the other hand, the medium-size cache is not large enough to hold
+                    can be satisfied using a tile from the cache. No additional file access is required
+					for the next several rows.</p>
+                <p>On the other hand, the medium-size cache is not large enough to hold
                     an entire row of tiles. So most tiles will have dropped out of the cache by the time the
                     scan of the second row begins. The medium-size configuration requires that tiles
                     be read redundantly to satify the needs of the application. Thus, the access time
