@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>What entropy tells us about data compression</title>
+        <link rel="stylesheet" href="css/text.css" />
+        <link rel="stylesheet" href="css/layout.css" />
+    </head>
+
+
+    <body>
+        <div id="notescontainer">
+            <div id="notesheader">
+                <ul class="link-bar">
+                    <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
+                    <li>|</li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li>|</li>
+                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Application Notes</a></li>
+                    <li>|</li>
+                </ul>
+                <p>&nbsp;</p>
+            </div>
+
+
+            <div id="notescontent">
+                <div class="titleblock">
+                    <p class="blocktitle">
+                        What Entropy Tells us about Data Compression
+                    </p>
+                    <p class="blockauthor">by G.W. Lucas</p>
+                </div>
+                <h1>Introduction</h1>
+                <p>The <a href="https://github.com/gwlucastrig/gridfour">Gridfour software project</a> uses the concept of <i>entropy</i>
+                    as a diagnostic tool to assist in the development of data compression modules. 
+                    This document provides an introduction to the idea of entropy and describes how
+                    it relates to data compression.</p>
+
+                <p>When we implement a data compression technique, one of the
+                    first questions we might ask is “how well does it work?”  Looking at the ratio
+                    of the sizes for input versus output (the <i>compression ratio</i>) gives us a
+                    place to start. But the answer it provides is incomplete. The compression ratio
+                    depends as much on the nature of the input data as it does the effectiveness of
+                    the compression technique.  A very simple input set – one that consists of a
+                    single data value repeated multiple times – will yield a high compression ratio
+                    for virtually any implementation. A complex data set, or one consisting of highly
+                    random values, may resist even the best compression techniques.</p>
+
+                <p>To understand the effectiveness of a compression technique,
+                    we need a way to assess the complexity of an input data set.  One tool for
+                    doing so is provided by the <i>information entropy</i> metric introduced by
+                    Claude Shannon in his ground-breaking paper “A Mathematical Theory of
+                    Communication” (Shannon, 1948).   </p>
+
+
+                <h1>Entropy</h1>
+
+                <p>In the 1940’s, Shannon developed a mathematically rigorous
+                    treatment of the problem of transmitting digital data over a noisy
+                    communications channel (Soni &amp; Goodman, pg. 115).  The resulting 77 page
+                    paper has been called “one of the great analytical achievements of the 20<sup>th</sup>
+                    century” (MIT, 2001). Its primary focus was establishing a mathematics-based
+                    framework for error-free communications. But, in doing so, the paper provided
+                    the theoretical underpinnings modern data compression. Part of that was the
+                    introduction of the concept of entropy. What was the lowest bound to which a
+                    data source could be encoded without a loss of information?  Indeed, how could we
+                    even define the idea of information?</p>
+
+                <p>Shannon realized that the information content of a text
+                    could be quantified based on the idea of predictability.  Consider a text
+                    consisting of a single character repeated many times. Since the value of the
+                    next symbol in the text is always known beforehand, it conveys no new
+                    information. Alternatively, consider a case where a text consists of a
+                    non-trivial symbol set and the selection of the next symbol in a sequence
+                    cannot be predicted with perfect certainty. Shannon demonstrated that each new
+                    symbol would contribute information based on the degree to which it was
+                    unpredictable. Shannon provided a way of quantifying this process using a
+                    metric he named <i>entropy.</i></p>
+
+
+
+                <p>Shannon also demonstrated that, for a broad class of
+                    encoding schemes, the entropy metric represents the lowest bound to which a
+                    text could be compressed without loss of information. This result allows us to
+                    use the entropy calculation as a way of setting a standard for evaluating the
+                    effectiveness of a data compression implementation. </p>
+
+
+
+                <p class="blockquote"><b>Note:</b> For an engaging and entertaining explanation of
+                    the entropy concept, see Josh Starmer’s video <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science)
+                        Clearly Explained!!!</a> on YouTube (Starmer, 2024).</p>
+
+                <h2>The entropy calculation</h2>
+
+                <p>Let’s look at Shannon’s entropy calculation. Consider a
+                    text to be a data set <img alt="data set" src="EntropyMetricForDataCompression_files/image001.png" style="vertical-align:top" />
+                    that consists of a set of unique values
+                    <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" />
+                    each occurring in the body of the text with a distinct probability
+                    <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" />.
+                    These values may be letters of the alphabet, numerical values for a raster data product, or
+                    any information that can be serialized and encoded.  For our purposes, we can
+                    write Shannon’s entropy equation as</p>
+
+                <img class="imageCentered" alt="Shannon's entropy equation" width=195 height=63 src="EntropyMetricForDataCompression_files/image004.png">
+
+
+                <p>Because we are interested in digital applications, we use
+                    the log base 2 to obtain a value in bits. Shannon’s proofs and derivations use the
+                    log base <i>e</i>.  In that form, the computation is unitless. Applying the log
+                    base 2, allows us to describe entropy in terms of a <i>rate</i> given in
+                    “bits-per-symbol”.  Incidentally, the term “bits” was introduced in Shannon’s
+                    original paper. He attributed the term to <a href="https://en.wikipedia.org/wiki/John_Tukey">J.W. Tukey</a> (Shannon, pg. 1).</p>
+
+                <p>The concept of information entropy should not be confused
+                    with the idea from physics, though the equation above resembles Gibbs formula
+                    (Wikipedia, 2024a). Shannon himself claimed that he chose the term <i>entropy</i>
+                    based on the suggestion of <a href="https://en.wikipedia.org/wiki/John_von_Neumann">John von Neumann</a> (Soni &amp; Goodman, pg. 162).</p>
+
+                <h2>Applying entropy</h2>
+
+                <p>To illustrate the entropy concept, let’s consider a couple
+                    of special cases.</p>
+
+                <p><b>Natural language text:</b> The probability for each
+                    symbol in the alphabet is computed based on the number of times it occurs in
+                    the text divided by the total number of symbols in the text. In western
+                    languages the vowel ‘e’ occurs more frequently than the character ‘q’. So the
+                    character ‘e’ has a high probability and the character ‘q’ a low probability.
+                    Using that approach to evaluate a text extract from this document produces an
+                    entropy value of approximately 4.79.</p>
+
+                <p><b>Text consisting of a single value</b>: When the text is
+                    just a single symbol repeated multiple times, the value of each symbol is completely
+                    predictable. The probability of that value is always 1.  So the log of each
+                    probability 1.0 is zero.  Thus the entropy would be zero.  As noted above, a
+                    data set with low entropy compresses readily (or, in this case, trivially). </p>
+
+                <p><b>All symbols have uniform probability</b>: If all symbols
+                    in a text are equiprobable, then they have the probability of
+                    <img width=30 height=25 alt="log(n)" src="EntropyMetricForDataCompression_files/image005.png" style="vertical-align:top" />
+                    where <i>n</i> is the number of unique symbols in the text.  Plugging that probability into
+                    the equation above, we see that the entropy of the data set is simply  <img width=61 height=25
+                                                                                                src="EntropyMetricForDataCompression_files/image006.png" style="vertical-align:top">.  This
+                    situation would occur if:</p>
+                <ul>
+                    <li>All values in a data set are unique</li>
+                    <li>A sufficiently large data set consists of random values.</li>
+                </ul>
+
+                <h2>Higher order models for entropy and conditional probability</h2>
+
+                <p>The entropy specification presented above does not
+                    consider the order of symbols. It treats the probability of any particular
+                    symbol as independent of the symbols that precede it. That formulation is often
+                    referred to as a <i>first-order model.</i> In practice, of course, the
+                    probability of finding a character in natural language text or a value in
+                    numeric sequences is often influenced by its predecessors. For example, in
+                    languages with Latin roots, the letter ‘q’ is generally followed by the letter
+                    ‘u’. So the probability of a particular letter having the value ‘u’ varies
+                    significantly depending on whether the previous letter was a ‘q’ (question,
+                    qu’est-ce que, queso, quindici, quem,…, quod erat demonstrandum).</p>
+
+
+
+                <p>Since Shannon’s original publication, investigators have
+                    established definitions for entropy that treat symbol sequences based on
+                    conditional probability. For example, the second-order model for entropy
+                    couples the probability of a particular symbol to the value of the symbol that
+                    preceded it.</p>
+
+
+
+                <p>Let  <img width=26 height=24 src="EntropyMetricForDataCompression_files/image007.png" style="vertical-align:top">
+                    be the conditional probability that the present symbol is the j-th entry in the symbol
+                    set given that the previous symbol is the i-th symbol. Then the second-order entropy
+                    can be computed as</p>
+
+                <img class="imageCentered" width=268 height=63 src="EntropyMetricForDataCompression_files/image008.png">
+
+
+                <p>The second-order entropy for this document is 3.54.  Higher-order computations follow the pattern shown
+                    in the formula above. We can extend it for third-order entropy where
+                    <img width=38 height=24 src="EntropyMetricForDataCompression_files/image009.png" style="vertical-align:top">
+                    is the conditional probability that the present
+                    symbol is the k-th entry in the symbol set given that the previous two symbols
+                    were the i-th and j-th entries</p>
+
+                <img  class="imageCentered" width=349 height=63 src="EntropyMetricForDataCompression_files/image010.png">
+
+
+                <h2>Entropy, Huffman coding, and effective data compression</h2>
+
+                <p>Huffman coding is a data compression technique that uses
+                    variable-length bit sequences to encode individual entries in a symbol set. 
+                    The encoding for each symbol is based on the frequency of its occurrence within
+                    the text.  The most common symbols are assigned short sequences. Less common
+                    symbols are assigned longer sequences.  Since Huffman coding does not consider
+                    the order of symbols within a text, its structure meets the conditions of the first-order
+                    entropy equation. </p>
+
+                <p>The Huffman coding technique can be conceptualized as a
+                    binary tree. The process for decoding a bit sequence begins with the root node
+                    of the tree and traverses left or right depending on the value of each bit in
+                    the encoded sequence. When the process reaches a terminal node (a “leaf” node),
+                    the symbol associated with the node is added to the decoded text.  </p>
+
+                <p>The figure below shows the Huffman tree constructed for the text
+                    “tree”. The structure of the Huffman tree is determined based on the computed
+                    probabilities for each symbol in the text.  The letter ‘e’ occurs most
+                    frequently, so is assigned a shorter sequence than ‘t’ or ‘r’.  The bit
+                    sequence for the encoded text is 111000.</p>
+
+                <figure>
+                    <img border=0 width=518 height=304 src="EntropyMetricForDataCompression_files/image011.png">
+                    <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>).</figcaption>
+                </figure>
+
+                <p>Huffman did not invent the idea of a coding tree. Earlier
+                    work by Claude Shannon (1948) and Robert Fano (1949) used the concept in two
+                    different but related methods that came to be known as the Shannon-Fano codes. 
+                    Unfortunately, the Shannon-Fano codes were provably sub-optimal. Huffman (1952)
+                    provided an algorithm for constructing a code tree that was optimal (within
+                    certain constraints discussed below).</p>
+
+                <p>One thing to note in the figure is that the probability <i>p</i>
+                    associated with each symbol is related to its bit-length <i>k</i> based on a
+                    power of two with <img width=63 height=26 src="EntropyMetricForDataCompression_files/image012.png" style="vertical-align:top">.  This
+                    relationship is a consequence of the mechanics of the bit-sequence approach
+                    used to encode symbols and also reflects the fact that a Huffman code can be
+                    represented as a binary tree. The probability is also reflected in the depth at
+                    which each symbol node occurs within the tree.  For example, the terminal node
+                    for the letter ‘e’ occurs at level 1, indicating a probability of  <img width=76 height=25
+                                                                                            src="EntropyMetricForDataCompression_files/image013.png" style="vertical-align:top"> . The terminal
+                    nodes r and t occur at level 2 and have a probability of 0.25.</p>
+
+                <h2>Limitations of Huffman revealed by entropy calculation</h2>
+
+                <p>The symbols in the encoded text for “tree” have an average
+                    bit-length of 1.5.  The computed entropy rate for the text is also 1.5.  For
+                    this text, the Huffman code is optimum.  For most texts, Huffman is optimal,
+                    but not truly optimum.  Consider the code tree that results when we prepend the
+                    letter ‘h’ (for “Huffman”) to the text and encode “htree” as shown below.</p>
+
+                <figure>
+                    <img border=0 width=512 height=386 src="EntropyMetricForDataCompression_files/image014.png">
+                    <figcaption>Figure 2 &ndash; Huffman tree for &quot;htree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>).</figcaption>
+                </figure>
+
+
+                <p>The text has an entropy rate of 1.922 bits/symbol, but the
+                    average code length is 2.0 bits/symbol. As noted above, Shannon demonstrated
+                    that entropy represents the lower bound for how compactly a message can be
+                    encoded. In this case, Huffman does not reach that lower bound.  Looking at the
+                    frequency table in the figure, we see that the probabilities for the symbols
+                    are not given by powers of two. The construction of the Huffman code can only
+                    approximate the true probabilities for each symbol. Thus the average code
+                    length exceeds the entropy rate for the text.</p>
+
+                <p>By revealing that the Huffman code does not always reach the
+                    true lower bound for an encoding rate, the entropy measurement suggests that
+                    there might be an opportunity for more efficient encoding algorithms. And,
+                    indeed, more recent data compression techniques such as Arithmetic Coding and Asymmetric
+                    Numeral Systems improve on Huffman by operating over accurate representations
+                    of probability (at the cost of more elaborate processing and software
+                    complexity).</p>
+
+                <h2>Overhead elements for Huffman coding and other techniques</h2>
+
+                <p>To be useful, of course, it is not enough for a
+                    compressor to encode a data set. It also has to provide a means of extraction. 
+                    Each text can, potentially, have a unique code alphabet.  To ensure that a
+                    Huffman coded message can be extracted by a receiving process, the message must
+                    include information about how the text was encoded.  Naturally, this
+                    information adds overhead to the overall size of the encoded message. Naïve
+                    software implementations sometimes include a “frequency table” giving the
+                    counts for each symbol so that the Huffman tree can be reconstructed by the
+                    receiver. Unfortunately, storing a frequency tables may require a large number
+                    of bytes. Better implementations (such as the one found in the Gridfour
+                    software library) may use schemes such as encoding the structure of the Huffman
+                    tree as a preamble to a transmitted text</p>
+
+                <h2>Putting it all together</h2>
+
+                <p>We exported the text for an early version of this document
+                    to an 8-bit text file.   Running the text through a first-order entropy
+                    computation and a Huffman coding implementation yielded the following results:</p>
+
+                <pre>
+	Huffman encoding
+		Huffman tree overhead: 887 bytes, 10.08 bits/unique symbol
+		Encoded size
+			Including overhead: 4.86 bits/symbol
+			Excluding overhead: 4.82 bits/symbol
+		Efficiency
+			Including overhead:  97.6 %
+			Excluding overhead:  99.4 %
+                </pre>
+
+                <p>Excluding the overhead, the efficiency for the
+                    implementation could be computed as a percentage using the following:  </p>
+
+                <img  class="imageCentered" width=351 height=43 src="EntropyMetricForDataCompression_files/image015.png">
+
+
+                <p>Excluding the overhead for the Huffman tree, the implementation
+                    had an efficiency of 99.4 percent.  Including the overhead, the implementation
+                    had an efficiency of 97.6 percent.</p>
+
+
+                <p>For many data compression techniques, the efficiency
+                    calculation is useful as a diagnostic tool.  A poor efficiency rating would
+                    indicate that there might be a problem with an implementation.  Efficiency also
+                    has the advantage of being robust with regard to the entropy in the source
+                    data.  If an implementation is suitable to a data set, even a data set with a high
+                    entropy value might still produce a good efficiency score. </p>
+
+                <h2>Beyond entropy-based compression: the Deflate algorithm</h2>
+
+                <p>Because the Huffman technique does not consider the order
+                    of symbols within the text, it cannot take advantage of sequences of symbols
+                    such as those described in the section on second-order entropy above.  More
+                    recent techniques, such as Lempel-Ziv and Deflate, improve data compression
+                    ratios by looking at repetitive groups of symbols occurring in a text.</p>
+
+
+                <p>The Deflate technique is used in the zip utility, the PNG
+                    image format, and in many other software products.  It usually out-performs
+                    Huffman. In fact, the bits-per-symbol value for a Deflate compressed text is
+                    often lower than either the first or second-order entropy rates. For the sample
+                    text cited above, we have the following results:</p>
+
+                <pre>
+    First-order Entropy: 4.81
+    Second-order Entropy: 3.53
+    Deflate: 3.16
+                </pre>
+
+
+                <p>The entropy definition is not a good match for the
+                    process implemented for the Deflate technique. In fact, the bits-per-symbol averages
+                    obtained from Deflate may be less than the computed entropy rates. So, in the
+                    case of Deflate, the entropy rate does not represent a lower bound for the
+                    compression technique. Even so, there is often a loose coupling between the
+                    entropy for a data source and the relative size of Deflate-compressed product.
+                    The figure below compares bit rates for terrestrial elevation data taken from
+                    the Shuttle Radar Topography Mission (NASA, 2020). The original elevation data
+                    was stored as integer values in raster data files (TIFF format) without data
+                    compression. The Deflate technique was applied directly on the source data. And,
+                    while there is not a perfect relationship between the entropy and Deflate
+                    output, a general trend is clearly visible.</p>
+
+                <figure>
+                    <img border=0 width=496 height=305 src="EntropyMetricForDataCompression_files/image016.png">
+                    <figcaption>Figure 3 &ndash;  First-order entropy versus Deflate bits-per-symbol rates for SRTM data (data source: NASA, 2020)).</figcaption>
+                </figure>
+
+
+                <h1> Conclusion</h1>
+
+                <p>By providing insight into the complexity of a data source,
+                    the entropy metric provides a tool for evaluating the effectiveness of a data
+                    compression technique. Cases where the entropy rate indicates that a data
+                    compressor performs poorly may indicate opportunities for refining an algorithm
+                    or investigating the correctness of a particular implementation. </p>
+
+
+
+                <h1>References</h1>
+                <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, USA: Research Laboratory of Electronics at MIT.</p>
+                <p>Huffman, D. (1952). A method for the construction of minimum-redundancy Codes. <i>Proceedings of the IRE. 40 (9)</i>: 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
+                <p>MIT editors. (2021, July 1). Claude Shannon: reluctant father of the digital age. <i>MIT Technology Review</i>. Accessed from https://www.technologyreview.com/2001/07/01/235669/claude-shannon-reluctant-father-of-the-digital-age/</p>
+                <p>National Aeronautics and Space Administration [NASA]. (2020). Shuttle Radar Topography Mission (SRTM) https://www2.jpl.nasa.gov/srtm/ Data was downloaded from the USGS Earth Explorer web site at https://earthexplorer.usgs.gov/.</p>
+                <p>Shannon, C. (July 1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal. 27 (3)</i>: 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.   Reprint with corrections hosted by the Harvard University Mathematics Department at https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
+                <p>Soni, J., & Goodman, R. (2017). <i>A mind at play: how Claude Shannon invented the information age</i> (First Simon & Schuster hardcover edition.). Simon & Schuster.</p>
+                <p>Starmer, J. [Stat Quest] (2024). <i>Entropy (for Data Science): Clearly Explained!!!</i> [Video]. YouTube. https://www.youtube.com/watch?v=YtebGVx-Fxw</p>
+                <p>Wikipedia contributors. (2024a, October 3). Josiah Willard Gibbs. In <i>Wikipedia, The Free Encyclopedia.</i> Retrieved 17:02, October 15, 2024, from https://en.wikipedia.org/w/index.php?title=Josiah_Willard_Gibbs&oldid=1249234374</p>
+                <p>Wikipedia contributors. (2024b, October 14). Huffman coding. <i>In Wikipedia, The Free Encyclopedia.</i> Retrieved 18:03, October 14, 2024, from https://en.wikipedia.org/w/index.php?title=Huffman_coding&oldid=1245054267</p>
+                <p>Wikipedia contributors. (2024c, May 2). Shannon's source coding theorem. In <i>Wikipedia, The Free Encyclopedia.</i> Retrieved 13:01, October 3, 2024, from https://en.wikipedia.org/w/index.php?title=Shannon%27s_source_coding_theorem&oldid=1221844320 </p>
+
+
+
+
+
+            </div>
+        </div>
+    </body>
+
+</html>
