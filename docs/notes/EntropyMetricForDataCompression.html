@@ -74,11 +74,11 @@
                     metric he named <i>entropy.</i></p>
 
                 <p>Shannon also demonstrated that the entropy metric represents the lowest bound to which
-                a text could be compressed without loss of information. This result is known as the
-                <i>source coding theorem</i> (Wikipedia 2024c). It applies in cases where a variable-length
-                binary code is assigned to each unique symbol in an arbitrary text or sequence of numeric values.
-                In such cases, the theorem allows us to use the entropy calculation as a way of
-                evaluating the effectiveness of a data compression implementation.</p>
+                    a text could be compressed without loss of information. This result is known as the
+                    <i>source coding theorem</i> (Wikipedia 2024c). It applies in cases where a variable-length
+                    binary code is assigned to each unique symbol in an arbitrary text or sequence of numeric values.
+                    In such cases, the theorem allows us to use the entropy calculation as a way of
+                    evaluating the effectiveness of a data compression implementation.</p>
 
                 <p class="blockquote"><b>Note:</b> For an engaging and entertaining explanation of
                     the entropy concept, see Josh Starmer’s video <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science)
@@ -199,8 +199,10 @@
                     the encoded sequence. When the process reaches a terminal node (a “leaf” node),
                     the symbol associated with the node is added to the decoded text.  </p>
 
-                <p>The figure below shows the Huffman tree constructed for the text
-                    “tree”. The structure of the Huffman tree is determined based on the computed
+                <p>Figure 1. below shows the Huffman tree constructed for the text
+                    “tree”. The probabilities for various symbols are shown in the ‘p’ column
+                    in the frequency table (note that they are all negative powers of 2).
+                    The structure of the Huffman tree is determined based on the computed
                     probabilities for each symbol in the text.  The letter ‘e’ occurs most
                     frequently, so is assigned a shorter sequence than ‘t’ or ‘r’.  The bit
                     sequence for the encoded text is 111000.</p>
@@ -210,46 +212,27 @@
                     <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>).</figcaption>
                 </figure>
 
-                <p>Huffman did not invent the idea of a coding tree. Earlier
-                    work by Claude Shannon (1948) and Robert Fano (1949) used the concept in two
-                    different but related methods that came to be known as the Shannon-Fano codes. 
-                    Unfortunately, the Shannon-Fano codes were provably sub-optimal. Huffman (1952)
-                    provided an algorithm for constructing a code tree that was optimal (within
-                    certain constraints discussed below).</p>
-
-                <p>One thing to note in the figure is that the probability <i>p</i>
-                    associated with each symbol is related to its bit-length <i>k</i> based on a
-                    power of two with <img width=63 height=26 src="EntropyMetricForDataCompression_files/image012.png" style="vertical-align:top">.  This
-                    relationship is a consequence of the mechanics of the bit-sequence approach
-                    used to encode symbols and also reflects the fact that a Huffman code can be
-                    represented as a binary tree. The probability is also reflected in the depth at
-                    which each symbol node occurs within the tree.  For example, the terminal node
-                    for the letter ‘e’ occurs at level 1, indicating a probability of  <img width=76 height=25
-                                                                                            src="EntropyMetricForDataCompression_files/image013.png" style="vertical-align:top"> . The terminal
-                    nodes r and t occur at level 2 and have a probability of 0.25.</p>
 
                 <h2>Limitations of Huffman revealed by entropy calculation</h2>
-
-                <p>The symbols in the encoded text for “tree” have an average
-                    bit-length of 1.5.  The computed entropy rate for the text is also 1.5.  For
-                    this text, the Huffman code is optimum.  For most texts, Huffman is optimal,
-                    but not truly optimum.  Consider the code tree that results when we prepend the
-                    letter ‘h’ (for “Huffman”) to the text and encode “htree” as shown below.</p>
+                <p>The encoded text for “tree”, 111000,  is six bits long and has an average of 1.5 bits per symbol.
+                    The computed entropy rate for the text is also 1.5 bits per symbol. For this particular text,
+                    the Huffman code is optimum.  For most texts, Huffman is optimal, but not truly optimum.
+                    Consider the code tree that results when we append the letter ‘s’ to the end of our text to get “trees”.</p>
 
                 <figure>
-                    <img border=0 width=512 height=386 src="EntropyMetricForDataCompression_files/image014.png">
+                    <img border=0 width=503 height=382 src="EntropyMetricForDataCompression_files/TreesEncoding.png">
                     <figcaption>Figure 2 &ndash; Huffman tree for &quot;htree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>).</figcaption>
                 </figure>
 
-
-                <p>The text has an entropy rate of 1.922 bits/symbol, but the
-                    average code length is 2.0 bits/symbol. As noted above, Shannon demonstrated
-                    that entropy represents the lower bound for how compactly a message can be
-                    encoded. In this case, Huffman does not reach that lower bound.  Looking at the
-                    frequency table in the figure, we see that the probabilities for the symbols
-                    are not given by powers of two. The construction of the Huffman code can only
-                    approximate the true probabilities for each symbol. Thus the average code
-                    length exceeds the entropy rate for the text.</p>
+                <p>The encoded text, 1011100110, is now 10 bits long. The text has an entropy rate of 1.922 bits/symbol,
+                    but its average encoding rate is 2.0 bits/symbol. Based on that, we might wonder why the “optimal” Huffman
+                    coding is producing a encoding rate that higher than the lower bound indicated by the entropy rate.
+                    It turns out that the Huffman code is constrained by the mechanics of a encoding
+                    in which each unique symbol is assigned a specific sequence of bits. That constraint
+                    leads to the situation in which the construction of the Huffman tree can only
+                    represent probabilities that are a power of two. Referring to the frequency table in Figure 2 above,
+                    we see that the probabilities in the ‘p’ column are not integer powers of two.
+                    So the Huffman results are only optimal within the constraints of how they are coded.</p>
 
                 <p>By revealing that the Huffman code does not always reach the
                     true lower bound for an encoding rate, the entropy measurement suggests that
