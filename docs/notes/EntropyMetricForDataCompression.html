@@ -73,15 +73,12 @@
                     unpredictable. Shannon provided a way of quantifying this process using a
                     metric he named <i>entropy.</i></p>
 
-
-
-                <p>Shannon also demonstrated that, for a broad class of
-                    encoding schemes, the entropy metric represents the lowest bound to which a
-                    text could be compressed without loss of information. This result allows us to
-                    use the entropy calculation as a way of setting a standard for evaluating the
-                    effectiveness of a data compression implementation. </p>
-
-
+                <p>Shannon also demonstrated that the entropy metric represents the lowest bound to which
+                a text could be compressed without loss of information. This result is known as the
+                <i>source coding theorem</i> (Wikipedia 2024c). It applies in cases where a variable-length
+                binary code is assigned to each unique symbol in an arbitrary text or sequence of numeric values.
+                In such cases, the theorem allows us to use the entropy calculation as a way of
+                evaluating the effectiveness of a data compression implementation.</p>
 
                 <p class="blockquote"><b>Note:</b> For an engaging and entertaining explanation of
                     the entropy concept, see Josh Starmer’s video <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science)
@@ -284,14 +281,14 @@
                     computation and a Huffman coding implementation yielded the following results:</p>
 
                 <pre>
-	Huffman encoding
-		Huffman tree overhead: 887 bytes, 10.08 bits/unique symbol
-		Encoded size
-			Including overhead: 4.86 bits/symbol
-			Excluding overhead: 4.82 bits/symbol
-		Efficiency
-			Including overhead:  97.6 %
-			Excluding overhead:  99.4 %
+    Huffman encoding
+        Huffman tree overhead: 887 bytes, 10.08 bits/unique symbol
+        Encoded size
+            Including overhead: 4.86 bits/symbol
+            Excluding overhead: 4.82 bits/symbol
+        Efficiency
+            Including overhead:  97.6 %
+            Excluding overhead:  99.4 %
                 </pre>
 
                 <p>Excluding the overhead, the efficiency for the
