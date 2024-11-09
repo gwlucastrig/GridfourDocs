@@ -9,3 +9,4 @@ https://gwlucastrig.github.io/GridfourDocs/notes/How-to-Extract-Data-from-a-NetC
 https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html
 https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html
 https://gwlucastrig.github.io/GridfourDocs/notes/VirtualRaster.html
+https://gwlucastrig.github.io/GridfourDocs/notes/EntropyMetricForDataCompression.html
