@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Case studies for entropy and data compression</title>
+        <link rel="stylesheet" href="css/text.css" />
+        <link rel="stylesheet" href="css/layout.css" />
+    </head>
+
+
+    <body>
+        <div id="notescontainer">
+            <div id="notesheader">
+                <ul class="link-bar">
+                    <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
+                    <li>|</li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li>|</li>
+                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Application Notes</a></li>
+                    <li>|</li>
+                    <li><a href="EntropyMetricForDataCompression.html">Part I: Concepts</a></li>
+                    <li>|</li>
+                </ul>
+                <p>&nbsp;</p>
+            </div>
+
+
+            <div id="notescontent">
+                <div class="titleblock">
+                    <p class="blocktitle">
+                        What Entropy tells us about Data Compression<br>
+                        Part II: Case Studies
+                    </p>
+                </div>
+                <h1>Introduction</h1>
+                <p>The previous article in this series, <a href="EntropyMetricForDataCompression.html">What Entropy tells us about Data Compression</a>,
+                    described the use of Shannon entropy as
+                    a tool for evaluating the <i>information content</i> of a data set and
+                    assessing the effectiveness of data compression techniques.
+                    This article will take a look at various data products
+                    and discuss how the entropy of the source data relates to the
+                    data compression statistics for the results. </p>
+
+                <p class="blockquote"><b>Note:</b> This article is under construction.  Additional
+                    information and case studies will be coming soon.</p>
+
+
+                <p>The test subjects used for these case studies are all based on
+                    raster (grid) data products giving geophysical data in a numerical form.
+                    Data of this type is the focus of the <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a>,
+                    an open-source project that provides API's for both the Java and C programming languages.</p>
+
+                <p>At this time, Gridfour uses two classic data compression techniques:
+                    <a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a> and
+                    <a href="https://en.wikipedia.org/wiki/Deflate">Deflate</a>. It also supports the use
+                    of experimental or application-specified data compression techniques, but those are
+                    outside the scope of this article.</p>
+
+                <h2>The entropy calculation</h2>
+                <p>The entropy values reported in the discussion below is based on Claude Shannon's first-order
+                    entropy formula (Shannon, 1948). For more information on the concept of entropy, see the
+                    <a href="EntropyMetricForDataCompression.html">previous article</a> in this series.
+                    Shannon's entropy formula is based on the probabilities of different symbols appearing
+                    within a data set. For natural language text, these symbols might be letters of the alphabet.
+                    For numeric data, they might be the values of bytes appearing in a sequence.  Each such symbol
+                    <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" />
+                    has a corresponding probability <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" />.
+                    For this article, we use a variation of of Shannon's forumulation that gives us entropy <i>H(X)</i> as a <strong><i>rate</i></strong>
+                    expressed in terms of bits/symbol:</p>
+
+                <img class="imageCentered" alt="Shannon's entropy equation" width=195 height=63 src="EntropyMetricForDataCompression_files/image004.png">
+
+                <p>In addition to finding the entropy rate for a data product, we may also be interested in the entropy for the
+                    product as a whole.  We can treat the aggregate entropy in a data set as a simple
+                    multiple of total number of symbols, <i>k</i>, in the data set (the overall length of a text, the total number
+                    of bytes in a numeric product, etc.) times the entropy rate. Typically, the aggregate entropy, <i>H<sub>A</sub>(X)</i>,
+                    is expressed in bytes by including the value 8 in the denominator so that:
+                    <img class="imageCentered" alt="Aggregate entropy" width=195 height=63 src="EntropyMetricForDataCompression_files/image017.png">
+
+
+
+                <h1>Case study 1: ETOPO1</h1>
+                <p>The ETOPO Global Relief Model is a collection of data products that combine elevation and
+                    bathymetry (ocean-depth) data from global and regional data sets into a single raster (grid) for
+                    the entire Earth. ETOPO1 (NOAA, 2009) provides a downsampled version of the model organized in a grid
+                    with 1 minute of arc spacing, or about 1855 meters (1.15 miles) at the Equator.  Major parameters
+                    related to ETOPO1 are shown below.
+
+                <pre>
+    Data source:   ETOPO1_Ice_c_gmt4.grd
+    File format:   NetCDF (internally, HDF5)
+    Data type:     4-byte integers
+    File size:     933,120,000 bytes  (original, uncompressed)
+    Min value:    -10803 meters(Mariana Trench area)
+    Max value:      8333 meters (Mt. Everest area)
+    Range:         19136 meters   [ 8333 - (-10803) ]
+    Raster size:   10800 x 21600 for 233280000 grid cells
+                </pre>
+
+                <h2>Data compression</h2>
+                <p>If we compress the source ETOPO1 data file using standard Deflate data compression
+                    technique, it reduces the size of the file to 288.4 MiB.
+                    Superficially, that appears to be roughly a factor of three
+                    compression ratio. But, looking at the range of values in the descriptive parameters given above, we see that
+                    a lot of the content of the source file could easily be accomodated by two-byte (short) integers rather
+                    than the four-bytes used by the source data. It is unclear why the original authors elected to
+                    store their data as four-byte integers when they could have used two-byte integers.
+                    But we do know a lot of the byte concent of the source data is just filler (either 0x00 if the
+                    elevation value is positive, or 0xff if the elevation is negative).</p>
+
+                <p>The entropy rate computation is driven by unpredictability in a data set.
+                    And, because the filler bytes are highly predictable, they tend to reduce
+                    the overall value of the entropy rate calculation. For example, if we compute the entropy
+                    on a byte-by-byte basis for the source data, we find an entropy rate of 4.822 bits/symbol
+                    (bits per source byte).  However, if we screen out the filler bytes, we obtain
+                    an entropy rate of 7.14 bits/symbol. Removing the filler reduces the size of the
+                    data set by nearly half (not exactly half, because there is some overhead
+                    for file headers in the source data products). Again, eliminating the filler
+                    does not change the actual values of the elevations and ocean depths stored in
+                    the data product.  It just changes the statistical properties of the file (not the data)
+                    and the way it is processed by conventional data compression techniques.
+                    With the adjustment for data type, we see the following results:</p>
+
+                <pre>
+    ETOPO1_Ice_c_gmt4.grd
+        Source format:     4-byte integers
+        Source size:       933,120,000  bytes (file header and overhead removed)
+        Entropy rate:      4.82 bits/symbol
+        Aggregate entropy: 562,314,013 bytes
+        Compressed Size:   396,162,572 bytes
+        Compression ratio: 2.36 to 1
+
+        Source format:     2-byte integers
+        Source size:       466,560,000
+        Entropy rate:      7.14 bits/symbol
+        Aggregate entropy: 416,480,740 bytes
+        Compressed size:   323,323,316 bytes
+        Compression ratio: 1.44 to 1
+                </pre>
+
+                <p>Comparing the two compression ratios in the example above, we see that
+                    the higher entropy for the 2-byte format results in a reduced compression ratio.  On the other
+                    hand, the final compressed size for the 2-byte case has a smaller
+                    aggregate entropy and a smaller final compressed size. This difference highlights
+                    the idea that compression ratio only tells us part of the story when it comes
+                    to evaluating the effectiveness of a technique.
+                    Also, the higher entropy for the 2-byte case gives us an <i>intuition</i> that its
+                    content might be more significant than the content of the 4-byte case.
+                    For the ETOPO1 example, we know that that difference is due to the presence
+                    of unnecessary filler bytes.  For other cases and other data products
+                    that may not necessarily be true. But, in practice, if we encounter anomalous or unexpected
+                    entropy rates, it may indicate that there are factors in the data that require
+                    further investigation.</p>
+
+                <h2>Statistical variation over the domain of a data set</h2>
+                <p>The statistical properties for elevation and bathymetry data exhibit substantial variation
+                    at different locations across the Earth's surface and ocean floor. And, just as we see variations
+                    in features such as slope and surface roughness, we can also find variations in entropy.
+                    Figure 1. below shows a graph of entropy rates across the globe.  Not surprising, the map shows
+                    the highest entropy rates in areas of steepest slope such as mountain ranges, the mid-Atlantic ridge,
+                    Pacific ocean trenches, and the fall off of the Continental Shelf. The ETOPO1 data set does not carry bathymetry
+                    data for <a href="https://en.wikipedia.org/wiki/Lake_Victoria">Lake Victoria</a>, one of the African Great Lakes,
+                    so it is treated as essentially flat and shows up as a black
+                    area on the map. On the other hand, ETOPO1 does include bathymetry for the Great Lakes of North America,
+                    so they do not show up as distinct features.</p>
+
+                <figure>
+                    <img src="EntropyMetricForDataCompression_files/entropyglobal2.png">
+                    <figcaption>Figure 1 &ndash; Entropy rates in bits/elevation across the ETOPO1 data set.</figcaption>
+                </figure>
+
+                <p>Each pixel in
+                    the entropy map image covers a 30-by-30 set of grid cells from the source ETOPO1 data.
+                    Entropy rates were computed for each set of cells and then used to color-code the corresponding pixel
+                    according to their values.  For this analysis, we used a slightly different approach to computing
+                    entropy rates. Rather than looking at the bytes in the data set, the computation
+                    treated the full integer elevation/ocean-depth values as symbols.</p>
+
+                <p>Data compression techniques use the statistical properties of source data (entropy and others)
+                    to develop a compact form for their output. The figure above illustrates the fact that
+                    these statistics are not constant across the entire data product. So a data compression
+                    specification that works well over one part of the Earth will not necessarily be optimal in another.</p>
+                <p>For ETOPO1, the current Gridfour implementation divides the overall grid into smaller subsections called <i>tiles></i>
+                    consisting of 90 rows and 120 columns each (covering 1.5 degrees of latitude and 2 degrees of longitude).
+                    The Gridfour API selects either Deflate data compression or Huffman coding depending on which produces
+                    the smallest output. This approach yields the following:</p>
+
+                <pre>
+     ETOPO1_Ice_c_gmt4.grd
+        Raster size:   10800 x 21600 for 233280000 grid cells
+        Tile size:        90 x 120 (21600 tiles consisting of 10800 grid cells)
+        Compression method usage:
+            Deflate:  64 % of all tiles
+            Huffman:  36 %   ""     ""
+        Average entropy of source data as selected for method:
+            Deflate:   4.89 bits/elevation
+            Huffman:   3.35   ""    ""
+                </pre>
+
+                <p>The fact that Huffman is used so often in compression may seem a bit counterintuitive
+                    because Deflate usually out performs Huffman by a substantial margin.
+                    In this case, it appears that Huffman can out perform Deflate in cases
+                    where the source entropy is low and the tendency of the data to exhibit
+                    repetitive patterns is reduced.</p>
+					
+                <p>For more information on the data compression logic used to produce these results, see
+                  <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">
+                  Compression Algorithms for Raster Data used in the
+                  Gridfour Implementation</a>.</a>
+
+
+
+                <h1>References</h1>
+                <p>Amante, C. and B.W. Eakins, 2009. <i>ETOPO1 1 Arc-Minute Global Relief Model: Procedures, Data Sources and Analysis.
+                        NOAA Technical Memorandum NESDIS NGDC-24.</i> National Geophysical Data Center, NOAA. doi:10.7289/V5C8276M. Accessed 15 November 2024.</p>
+
+                <p>NOAA National Geophysical Data Center. 2009: <i>ETOPO1 1 Arc-Minute Global Relief Model.</i>
+                    NOAA National Centers for Environmental Information. Accessed 15 November 2024.</p>
+
+                <p>Shannon, C. (July 1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal.</i> 27 (3): 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.   Reprint with corrections hosted by the Harvard University Mathematics Department at https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
+
+
+
+            </div>
+        </div>
+    </body>
+
+</html>
