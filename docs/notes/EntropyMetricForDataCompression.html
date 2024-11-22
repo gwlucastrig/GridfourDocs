@@ -82,9 +82,10 @@
                     In such cases, the theorem allows us to use the entropy calculation as a way of
                     evaluating the effectiveness of a data compression implementation.</p>
 
-                <p class="blockquote"><b>Note:</b> For an engaging and entertaining explanation of
-                    the entropy concept, see Josh Starmer’s video <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science)
-                        Clearly Explained!!!</a> on YouTube (Starmer, 2024).</p>
+                <p class="blockquote"><b>Note:</b> For an engaging and accessible explanation of
+                    the entropy concept, see Josh Starmer’s video<br>
+                    <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science) Clearly Explained!!!</a> on YouTube (Starmer, 2024).
+                    I think you will find that the video lives up to its title</p>
 
                 <h2>The entropy calculation</h2>
 
@@ -188,12 +189,12 @@
                 <h2>Entropy, Huffman coding, and effective data compression</h2>
 
                 <p><a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a> (Huffman, 1952) is a data compression technique that uses
-                    variable-length bit sequences to encode individual entries in a symbol set. 
+                    variable-length bit sequences to encode individual entries in a symbol set (alphabet, etc.). 
                     The encoding for each symbol is based on the frequency of its occurrence within
                     the text.  The most common symbols are assigned short sequences. Less common
                     symbols are assigned longer sequences.  Since Huffman coding does not consider
-                    the order of symbols within a text, its structure meets the conditions of the first-order
-                    entropy equation. </p>
+                    the order of symbols within a text, the first-order entropy equation is sufficient
+                    to provide a lower bound for its compressed output.</p>
 
                 <p>The Huffman coding technique can be conceptualized as a
                     binary tree. The process for decoding a bit sequence begins with the root node
@@ -342,6 +343,10 @@
                     compression technique. Cases where the entropy rate indicates that a data
                     compressor performs poorly may indicate opportunities for refining an algorithm
                     or investigating the correctness of a particular implementation.</p>
+                    
+                    <p>Case studies that explore how entropy relates to the compression characteristics
+                    of specific data sets are provided in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II</a>
+                    of this article.</p>
 
                 <h1>References</h1>
                 <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, USA: Research Laboratory of Electronics at MIT.</p>
