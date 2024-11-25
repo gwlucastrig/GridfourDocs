@@ -56,7 +56,8 @@
                     <a href="https://en.wikipedia.org/wiki/Deflate">Deflate</a>. It also supports the use
                     of experimental or application-specified data compression techniques, but those are
                     outside the scope of this article. For more information on Gridfour's data compression
-					implementations, see our article on <a href="GridfourDataCompressionAlgorithms.html">algorithms for raster data compression</a>.</p>
+                    implementations, see our article on
+                    <a href="GridfourDataCompressionAlgorithms.html">algorithms for raster data compression</a>.</p>
 
                 <h2>The entropy calculation</h2>
                 <p>The entropy values reported in the discussion below is based on Claude Shannon's first-order
@@ -70,7 +71,7 @@
                     For this article, we use a variation of of Shannon's forumulation that gives us entropy <i>H(X)</i> as a <strong><i>rate</i></strong>
                     expressed in terms of bits/symbol:</p>
 
-                <img class="imageCentered" alt="Shannon's entropy equation" width=195 height=63 src="EntropyMetricForDataCompression_files/image004.png">
+                <img class="imageCentered" alt="Shannon's entropy formula" width=195 height=63 src="EntropyMetricForDataCompression_files/EntropyFormula.png">
 
                 <p>In addition to finding the entropy rate for a data product, we may also be interested in the entropy for the
                     product as a whole.  We can treat the aggregate entropy in a data set as a simple
@@ -171,17 +172,22 @@
                     <figcaption>Figure 1 &ndash; Entropy rates in bits/elevation across the ETOPO1 data set.</figcaption>
                 </figure>
 
-                <p>Each pixel in
-                    the entropy map image covers a 30-by-30 set of grid cells from the source ETOPO1 data.
+                <p>Each pixel in the entropy map image covers a 30-by-30 set of grid cells from the source ETOPO1 data.
                     Entropy rates were computed for each set of cells and then used to color-code the corresponding pixel
                     according to their values.  For this analysis, we used a slightly different approach to computing
                     entropy rates. Rather than looking at the bytes in the data set, the computation
                     treated the full integer elevation/ocean-depth values as symbols.</p>
+                    
+                    <p>The entropy rates in the figure are based on the local statistics at the area represented by each pixel.
+                    They run from 0 to 9.7 bits/elevation. When we compute entropy for the entire data set,
+                    it combines data from much different areas (flat plains, to high mountain ranges, to deep ocean trenches).
+                    So the overall computed entropy is 12.9 bits/elevation value.</p>
 
                 <p>Data compression techniques use the statistical properties of source data (entropy and others)
                     to develop a compact form for their output. The figure above illustrates the fact that
                     these statistics are not constant across the entire data product. So a data compression
                     specification that works well over one part of the Earth will not necessarily be optimal in another.</p>
+                    
                 <p>For ETOPO1, the current Gridfour implementation divides the overall grid into smaller subsections called <i>tiles></i>
                     consisting of 90 rows and 120 columns each (covering 1.5 degrees of latitude and 2 degrees of longitude).
                     The Gridfour API selects either Deflate data compression or Huffman coding depending on which produces
@@ -199,7 +205,7 @@
             Huffman:   5.83   ""    ""
                 </pre>
 
-                <p>The fact that the Huffman method is selected so often may seem counterintuitive
+                <p>The fact that the Huffman method is selected so often was unexpected
                     because the Deflate technique usually outperforms Huffman by a substantial margin.
                     The reason for this unexpected result is not clear at this time and will
                     be the subject of further investigation.
@@ -211,6 +217,67 @@
                   Compression Algorithms for Raster Data used in the
                   Gridfour Implementation</a>.</a>
 
+<h1>Case study 2: ETOPO 2022, a floating-point raster data set</h1>
+
+<p>Claude Shannon's definition of entropy is broad enough to include a variety of different data types.
+So far, we've considered character sets, bytes, and integers.  Now we'll turn out attention to 32-bit floating-point data.</p>
+The ETOPO 2022 family is a successor to ETOPO1 (NOAA, 2022).  It features raster data products configured to various resolutions,
+including a one minute of arc product with the same dimensions as ETOPO1.</p>
+
+<p>Obtaining the set of probabilities for the entropy calculation for floating-point data is more involved than it
+was for byte and integer based products.  To collect probabilities for a byte based product, we simply created an array
+of 256 counting elements and looped through the source data to tabulate the number of times each unique byte value
+showed up in the product. For two-byte integer values, we needed an array of 65,536 counters, a size which was still managable.
+But tabulating counts for a four-byte floating-point data type would require over 4 billion counters, a size
+that might exceed the memory available for use enven on a large server.</p>
+
+<p>There are numerous technologies available for handing very large data sets, but since this investigation
+was conducted in support of the Gridfour Software Project, we elected to use the Gridfour Virtual Raster Store
+API (see <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_Introduction.html">GVRS: a Fast, File-Backed API for Managing
+Raster Data</a>).  Both the Java and C versions of the Gridfour library include a module named EntropyTabulator that computes
+entropy using the following steps:</p>
+<ol>
+<li>Accept as input a GVRS-packaged version of the source-data product (such as ETOPO1 2022)</li>
+<li>Create a temporary virtual raster file with dimensions 65536-by-65536 (the range of an unsigned two byte integer)</li>
+<li>For each value in the input file
+<ol>
+<li>Extract the bitwise equivalent, <i>K</i>, of the floating point value as a 32-bit integer</li>
+<li>Populate <i>row</i> with the two high bytes of <i>K</i> using  <i>row = (K&gt;&gt;16) &amp; 0xffff</i></li>
+<li>Populate <i>column</i> with the two low bytes of <i>K</i> using <i>column =  K&amp; 0xffff</i></li>
+<li>Read integer count at grid position (row, column), increment it by one, and store new count</li>
+<li>Add one to a running count, <i>n</i>, the total number of data values in the source product</li>
+</ol>
+</li>
+<li>For each cell in the GVRS raster file
+<ol>
+<li>Read the count value, <i>c</i></li>
+<li>For non-zero counts, compute the probability, <i>p = c/n</i>, and use it as a summand term, <i>p&times;log<sub>2</sub>(p)</i>, for the entropy formula</li>
+</ol> 
+</li>
+</ol>
+<p>For the ETOPO 2022 variation with one-minute of arc spacing, the EntropyTabulator application reported the following:</p>
+
+    <pre>
+    Input:
+        File:  ETOPO_2022_v1_60s_N90W180_surface.nc   (NetCDF format)
+        NetCDF source file, compressed size:   478.3 MB, 16.40 bits/elevation
+        GVRS packaged file, compressed size:   418.0 MB, 15.04 bits/sample
+
+    Survey Results:
+        Elevation Samples:     233,280,000
+        Unique Symbols:         30,114,654
+        Repeated Symbols:       24,939,656
+        Total symbols:          55,054,310
+        Max count:                  44,466
+
+        Entropy rate:           21.10 bits/sample
+        Aggregate entropy:      615.4 MB
+</pre>
+<p>The original NetCDF format file from NOAA features a built-in data compression that reduces
+its size from the 32 bits per elevation used by an uncompressed floating-point value to about 16.4
+bits per elevation.  The GVRS compressed size is 15.04. Note that both of these sizes are
+smaller than the tabulated entropy for the file. This result indicates that the
+compression implementations for both data formats are reasonably effective.</p>
 
 
                 <h1>References</h1>
@@ -219,6 +286,9 @@
 
                 <p>NOAA National Geophysical Data Center. 2009: <i>ETOPO1 1 Arc-Minute Global Relief Model.</i>
                     NOAA National Centers for Environmental Information. Accessed 15 November 2024.</p>
+                
+                <p>NOAA National Centers for Environmental Information. 2022: <i>ETOPO 2022 15 Arc-Second Global Relief Model.</i> 
+                NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 15 November 2024.
 
                 <p>Shannon, C. (July 1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal.</i> 27 (3): 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.   Reprint with corrections hosted by the Harvard University Mathematics Department at https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
 
