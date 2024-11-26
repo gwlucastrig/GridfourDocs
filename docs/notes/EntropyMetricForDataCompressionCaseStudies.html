@@ -108,8 +108,8 @@
                     a lot of the content of the source file could easily be accomodated by two-byte (short) integers rather
                     than the four-bytes used by the source data. It is unclear why the original authors elected to
                     store their data as four-byte integers when they could have used two-byte integers.
-                    But we do know a lot of the byte concent of the source data is just filler (either 0x00 if the
-                    elevation value is positive, or 0xff if the elevation is negative).</p>
+                    But we do know that a lot of the byte content of the source data is just filler
+                    (either 0x00 if the elevation value is positive, or 0xff if the elevation is negative).</p>
 
                 <p>The entropy rate computation is driven by unpredictability in a data set.
                     And, because the filler bytes are highly predictable, they tend to reduce
@@ -181,7 +181,7 @@
                     <p>The entropy rates in the figure are based on the local statistics at the area represented by each pixel.
                     They run from 0 to 9.7 bits/elevation. When we compute entropy for the entire data set,
                     it combines data from much different areas (flat plains, to high mountain ranges, to deep ocean trenches).
-                    So the overall computed entropy is 12.9 bits/elevation value.</p>
+                    So the overall computed entropy is 12.89 bits/elevation value.</p>
 
                 <p>Data compression techniques use the statistical properties of source data (entropy and others)
                     to develop a compact form for their output. The figure above illustrates the fact that
