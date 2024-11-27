@@ -188,7 +188,8 @@
                     these statistics are not constant across the entire data product. So a data compression
                     specification that works well over one part of the Earth will not necessarily be optimal in another.</p>
                     
-                <p>For ETOPO1, the current Gridfour implementation divides the overall grid into smaller subsections called <i>tiles></i>
+					<h3 id="method_selection">Localized selection of compression method</h3>
+                <p>For ETOPO1, the current Gridfour implementation divides the overall grid into smaller subsections called <i>tiles</i>
                     consisting of 90 rows and 120 columns each (covering 1.5 degrees of latitude and 2 degrees of longitude).
                     The Gridfour API selects either Deflate data compression or Huffman coding depending on which produces
                     the smallest output. This approach yields the following:</p>
