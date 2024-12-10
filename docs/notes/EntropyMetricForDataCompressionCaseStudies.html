@@ -255,12 +255,19 @@
             Huffman:   5.83   ""    ""
                 </pre>
 
-                <p>The fact that the Huffman method is selected so often was unexpected
+                <p>The fact that the Huffman method was selected so often was unexpected
                     because the Deflate technique usually outperforms Huffman by a substantial margin.
-                    The reason for this unexpected result is not clear at this time and will
-                    be the subject of further investigation.
-                    Since Deflate relies on patterns in the data, it is likely that Huffman is
-                    preferred in tiles where repetitive patterns were absent or difficult to detect.</p>
+                    Seeking a reason for this result, we posted a notice on Stackoverflow asking
+                    <a href="https://stackoverflow.com/questions/79231561/when-would-huffman-coding-outperform-deflate">When would Huffman coding outperform Deflate?</a>.
+                    Mark Adler analyzed our sample data and determined that, while Deflate's
+                    internal Lempel-Ziv (LZ77) string matching	found
+                    a large number of repeated sequences in the sample, most of them were of a very
+                    short length and led to a "negative gain" in compression.  In such cases,
+                    the Deflate library does implement the ability to internally revert to Huffman coding.
+                    But the Java API we used for testing did not automatically support that option.
+                    When we enabled it, Deflate's implementation of the <a href="https://en.wikipedia.org/wiki/Canonical_Huffman_code">Canonical Huffman code</a>
+                    usually outperformed the implementation from the Gridfour software library.</p>
+
 
                 <p>For more information on the data compression logic used to produce these results, see
                     <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">
@@ -316,10 +323,10 @@
 
     Survey Results:
         Elevation Samples:     233,280,000
-        Unique Symbols:         30,114,654
-        Repeated Symbols:       24,939,656
-        Total symbols:          55,054,310
-        Max count:                  44,466
+        Unique symbols:          55,054,310
+          Used once:             30,114,654
+          Used multiple times:   24,939,656
+          Max count:                 44,466
 
         Entropy rate:           21.10 bits/sample
         Aggregate entropy:      615.4 MB
