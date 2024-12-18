@@ -68,7 +68,7 @@
     // inputPath is a Java string giving the path to a file such as
     //    1.   ETOPO1_Ice_c_gmt4.grd
     //    2.   GEBCO_2019.nc
-    NetcdfFile ncfile = NetcdfFile.open(inputPath);
+    NetcdfFile ncfile = NetcdfFiles.open(inputPath);
                 </pre>
 
 
@@ -92,15 +92,17 @@
                     data. When printing to standard output, I have one caveat... The 5.1 version of
                     the NetCDF Java API had a bug in which it would close standard output when processing
                     the GEBCO data (but not the ETOPO1). Therefore I recommend that you use
-                    more recent (or earlier) versions of the library. </p>
+                    more recent versions of the library. </p>
                 <pre>
     PrintStream ps = System.out;
-    NetcdfFile ncfile = NetcdfFile.open(inputPath);
-
-    ps.println("Variables found in file:");
-    List&lt;Variable&gt; variables = ncfile.getVariables();
-    for (Variable v : variables) {
-       ps.println("\n" + v.toString());
+    try(NetcdfFile ncfile = NetcdfFiles.open(inputPath)){
+        ps.println("Variables found in file:");
+        List&lt;Variable&gt; variables = ncfile.getVariables();
+        for (Variable v : variables) {
+           ps.println("\n" + v.toString());
+        }
+    }catch(IOException ioex){
+        //  code as appropriate
     }
                 </pre>
 
@@ -277,10 +279,14 @@
                     a Variable's &quot;read&quot; operation is a NetCDF Array.   The array is a one-dimensional
                     array of readShape[0]*readShape[1] elements, given in row-major order.</p>
                 <pre>
+    // enable cache for Variable "z" to speed up processing
+    // not necessary for ETOPO1 or GEBCO, but often necessary for other NetCDF files
+    z.setCaching(true);
+
     // define two integer arrays
     int[] readOrigin = new int[rank];
     int[] readShape = new int[rank];
-    for (int iRow = 0; iRow < nRows; iRow++) {
+    for (int iRow = 0; iRow &lt; nRows; iRow++) {
        // set up to read the entire row, but just one row.
        readOrigin[0] = iRow;  // rows are numbered from zero
        readOrigin[1] = 0;     // columns are numbered from zero
@@ -288,13 +294,13 @@
        readShape[1]  = nCols; // read the entire set of columns for that row
 
        Array array = z.read(readOrigin, readShape);
-       for (int iCol = 0; iCol < nCols; iCol++) {
+       for (int iCol = 0; iCol &lt; nCols; iCol++) {
           double sample = array.getDouble(iCol);
           // transfer sample to the collection of data for the picture.
        }
     }
 
-    ncfile.close();   // always a good idea.
+    ncfile.close();   // required if you do not use the try-with-resources construct.
                 </pre>
                 <p>The example above omits the logic for transcribing the input data to the
                     image, but you can find it in the source code for
@@ -333,17 +339,46 @@
                     is what will be used. The design for applications that perform intensive access
                     to a NetCDF file should pay attention to the chunk size.  A pattern
                     of access that follows the sequence in which data is laid out within a file
-                    will usually operate more efficiently than one that does not. </p>
+                    will usually operate more efficiently than one that does not.</p>
+
                 <p>Fortunately, the data access in the Java API for NetCDF is quite efficient.
-                    For moderate data access requirements, the order of access doesn't matter.
-                    But for intense operations, it can make a difference.  For example,
-                    running ExtractData on ETOPO1 requires only a few seconds of run time.
-                    However, as an experiment I modified the ExtractData code to read the NetCDF
+                    And, for moderate data access requirements, the order of access doesn't matter.</p>
+
+                <h3>But somtimes you need to use a cache</h3>
+                <p>The chunk size for the NetCDF Variable "elevation" is organized into pieces that
+                    are one row across.  So reading the data in row-major order works well.
+                    When I tested it with the ETOPO1 product, it took about 10 seconds to access
+                    the entire grid (10800 rows by 21600 columns).
+                    However, when I tried to read the product in column-major order, everything fell apart.
+                    As a test, I modified the ExtractData code to read the NetCDF
                     file one column at a time rather than one row at a time. The operation took
                     over 20 minutes. Of course, that pattern of access was pretty much the worst possible
                     way to access the ETOPO1 product and was equivalent to reading through the entire
-                    file several thousand times. So as long as your application pays attention to
-                    the design of the data product, the NetCDF API should provide acceptable performance.</p>
+                    file several thousand times.</p>
+                <p>This performance glitch isn't just a matter of my code torturing the
+                    NetCDF API.  For some data products, it is a significant problem. Some products that don't organize their
+                    chunk sizes on a full-row basis.  And accessing such products in row-major order can lead to slow processing times.</p>
+
+                <p>For example, there is a newer equivalent to ETOPO1 called ETOPO 2022, that organizes its chunks
+                    in a size that only covers 2700 of 21600 columns:</p>
+                <pre>
+    float z(lat=10800, lon=21600)
+    _ChunkSizes = 1350U, 2700U
+                </pre>
+                <p>The chunks are 2700 columns wide.  Since there are 21600 columns in the grid,
+                    each row of the grid covers 8 separate chunks (21600/2700 = 8). If an application
+                    reads the first row in the data set, it has to read 8 chunks.  If the chunks are decarded
+                    after each use, then accessing the next row in the grid requires reading the same
+                    8 chunks over again. Clearly, that is not an efficient way to read a data product. Fortunately, the NetCDF API allows us to avoid
+                    the overhead of many redundant read operations, by activating a "cache" as show below:</p>
+                <pre>
+        z.setCaching(true);
+                </pre>
+
+                <p>The NetCDF-java API is a good implementation.  And, long as your application pays attention to
+                    the design of the data product and activate caches when necessary,
+                    the NetCDF API should provide acceptable performance for most applications.</p>
+
                 <h1 id="an-extra">An Extra: How Much Water is in the World's Oceans?</h1>
                 <p>Given that we have two excellent global bathymetry products at our disposal,
                     I thought it would be interesting to do something with that data.
@@ -414,9 +449,9 @@
                     Accessed December 2019 from <a href="https://www.gebco.net/data_and_products/gridded_bathymetry_data/">https://www.gebco.net/data_and_products/gridded_bathymetry_data/</a></p>
                 <p>National Oceanographic and Atmospheric Administration [NOAA], 2019.
                     <em>ETOPO1 Global Relief Model</em>. Accessed December 2019 from <a href="https://www.ngdc.noaa.gov/mgg/global/">https://www.ngdc.noaa.gov/mgg/global/</a></p>
-                <p>Sonalysts, Inc., 2019. <em>wXstation</em>. Accessed December 2019 from <a href="http://www.sonalysts.com/products/wxstation/">http://www.sonalysts.com/products/wxstation/</a></p>
+                <p>Sonalysts, Inc., 2019. <em>wXstation</em>. Accessed December 2019 from <a href="https://www.sonalysts.com/what-we-do/wxstation/">https://www.sonalysts.com/what-we-do/wxstation/</a></p>
                 <p>University Corporation for Atmospheric Research [UCAR], 2019. <em>NetCDF-Java Library</em>
-                    Accessed December 2019 from <a href="https://www.unidata.ucar.edu/software/netcdf-java/current/">https://www.unidata.ucar.edu/software/netcdf-java/current/</a></p>
+                    Accessed December 2019 from <a href="https://www.unidata.ucar.edu/software/netcdf-java">https://www.unidata.ucar.edu/software/netcdf-java</a></p>
 
 
             </div>
