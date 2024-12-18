@@ -356,8 +356,8 @@
                     way to access the ETOPO1 product and was equivalent to reading through the entire
                     file several thousand times.</p>
                 <p>This performance glitch isn't just a matter of my code torturing the
-                    NetCDF API.  For some data products, it is a significant problem. Some products that don't organize their
-                    chunk sizes on a full-row basis.  And accessing such products in row-major order can lead to slow processing times.</p>
+                    NetCDF API.  For some data products, it is a significant problem. Many products don't organize their
+                    chunk sizes on a full-row basis. And accessing such products in row-major order can lead to slow processing times.</p>
 
                 <p>For example, there is a newer equivalent to ETOPO1 called ETOPO 2022, that organizes its chunks
                     in a size that only covers 2700 of 21600 columns:</p>
@@ -369,7 +369,11 @@
                     each row of the grid covers 8 separate chunks (21600/2700 = 8). If an application
                     reads the first row in the data set, it has to read 8 chunks.  If the chunks are decarded
                     after each use, then accessing the next row in the grid requires reading the same
-                    8 chunks over again. Clearly, that is not an efficient way to read a data product. Fortunately, the NetCDF API allows us to avoid
+                    8 chunks over again. Clearly, that is not an efficient way to read a data product.
+                    In fact, it is essentially the same misguided approach that led my test code to take 20 minutes
+                    when attempting to read to read ETOPO1 in column-major order.</p>
+
+                <p>Fortunately, the NetCDF API allows us to avoid
                     the overhead of many redundant read operations, by activating a "cache" as show below:</p>
                 <pre>
         z.setCaching(true);
@@ -432,7 +436,7 @@
                     <a href="https://www.ngdc.noaa.gov/mgg/global/etopo1_ocean_volumes.html">NOAA's Volumes of the World's Oceans</a>
                     They cite an estimate for the volume of 1,335,000,000 km<sup>3</sup> which is close to the
                     Gridfour result.  They also offer an error estimate of 1% for that figure. That value which provides a useful insight into
-                    how NOAA views the quality of the data. Given the many unknowns in surveying the world's oceans,
+                    how NOAA views the quality of the data. Considering the many unknowns and challenges in surveying the world's oceans,
                     one percent isn't bad...</p>
                 <h1 id="conclusion">Conclusion</h1>
                 <p>While this discussion covered the most important features of the NetCDF API,
