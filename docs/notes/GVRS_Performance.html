@@ -455,7 +455,7 @@
                         the NetCDF file in column-major order, the full-grid ETOPO1 read operation took
                         1184.3 seconds (19 minutes, 44 seconds). The GVRS format took 2.49 seconds.  Of course, we
                         need to be a little candid here.  It is possible to devise access patterns that
-                        defeat both file formts. The authors of the ETOPO1 NetCDF file specified
+                        defeat both file formats. The authors of the ETOPO1 NetCDF file specified
                         a layout that was optimized for row-major access and poorly suited to the column-major pattern.
                         Thus, the Java-based NetCDF API had to perform thousands of redundant file-read operations
                         for the test. Even the GVRS API is not immune to an incompatible access pattern.
