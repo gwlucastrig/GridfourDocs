@@ -104,9 +104,9 @@
 
                 <p>Because we are interested in digital applications, we use
                     the log base 2 to obtain a value in bits. Shannon’s proofs and derivations use the
-                    log base <i>e</i>.  In that form, the computation is unitless. Applying the log
-                    base 2, allows us to describe entropy in terms of a <i>rate</i> given in
-                    “bits-per-symbol”.  Incidentally, the term “bits” was introduced in Shannon’s
+                    log base <i>e</i>.  But, by using the log base 2, we can 
+                    describe entropy in terms of a <i>rate</i> given in
+                    <i>bits-per-symbol</i>.  Incidentally, the term “bits” was introduced in Shannon’s
                     original paper. He attributed the term to <a href="https://en.wikipedia.org/wiki/John_Tukey">J.W. Tukey</a> (Shannon, pg. 1).</p>
 
                 <p>The concept of information entropy should not be confused
@@ -130,7 +130,7 @@
                     Since a byte can take on 256 separate values (typically, 0 to 255), this approach
                     limits the maximum number of unique symbols in a data stream and simplifies
                     the process of counting symbols and computing probabilities. Shannon's
-                    definition of entropy is broad enough to accomodate symbol sets consisting of alternate
+                    definition of entropy is broad enough to accommodate symbol sets consisting of alternate
                     data types, such as integers or even floating-point values. Examples of this approach
                     are given in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II of this article</a>.</p>
 
@@ -217,7 +217,7 @@
                     include some method to encode the structure of the Huffman tree. This requirement adds overhead to a compressed
                     product. Even discounting the overhead, the Huffman code often does not reach the lower-bound
                     established by the first-order entropy computation. This shortfall occurs because the Huffman coding can
-                    only represent probabilities as integral powers of two and must approximate the probabilties for many symbol sets.
+                    only represent probabilities as integral powers of two and must approximate the probabilities for many symbol sets.
                     Even so, it usually produces good results.</p>
 
                 <p> In practice, we accept a Huffman implementation
@@ -266,7 +266,7 @@
 
 
                 <p>The Deflate technique is used in the zip utility, the PNG
-                    image format, and in many other software products.  It usually out-performs
+                    image format, and in many other software products.  It usually outperforms
                     Huffman. In fact, the bits-per-symbol value for a Deflate compressed text is
                     often lower than either the first or second-order entropy rates. For the sample
                     text cited above, we have the following results:</p>
