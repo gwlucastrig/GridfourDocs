@@ -44,7 +44,7 @@
                     results from an implementation created for the Gridfour software project.
                     Although the focus of this article is on the technique itself, the Gridfour module
                     serves as an example of how to address some of the practical considerations
-                    involved in its implementation. By including a working demonstrating of Optimal Predictors
+                    involved in its implementation. By including a working demonstration of Optimal Predictors
                     as part of its software library, the Gridfour project hopes to direct some overdue attention
                     to this under appreciated technique.</p>
 
@@ -70,7 +70,7 @@
                     Part 3 of the article concludes with a brief note on ideas for future work.</p>
 
                 <p>For brevity, this article will sometimes refer to the Optimal Predictor technique
-                    and its Gridfour implementation using the acronymn LSOP for "Lewis-Smith Optimal Predictors".</p>
+                    and its Gridfour implementation using the acronym LSOP for "Lewis-Smith Optimal Predictors".</p>
 
                 <p>If you prefer, you can jump to the sections of interest using the following links.</p>
                 <ul>
@@ -123,7 +123,7 @@
                 <h2 id="performance">Performance</h2>
                 <p>There are two factors to consider when assessing the performance of a data compression technique:
                     compression ratios and access speed. Since the motivation for implementing Optimal Predictors
-                    was to improve the data compression ratios for the Gridfour library, we will being with that.</p>
+                    was to improve the data compression ratios for the Gridfour library, we will begin with that.</p>
 
                 <p>To assess the data-compression performance of the Optimal Predictors implementation, I tested three
                     Digital Elevation Models (DEMs). The first two, ETOPO1 and GEBCO 2020 give global-scale elevation data with a grid spacing
@@ -139,9 +139,8 @@
                     The SRTM file gives elevation data over a one-degree square area that includes the city
                     of Paducah, Kentucky (KY) USA. That particular sample was selected because its local terrain
                     was sufficiently varied to fully exercise the Optimal Predictor algorithm, but not so radical as to
-                    produce atypical results. The Paducah sample was
-                    was also featured in Kidner &#38; Smith's 2003 overview paper. The earlier work
-                    provided a useful basis of comparison for evaluating the Gridfour results
+                    produce atypical results. The Paducah sample was also featured in Kidner &#38; Smith's 2003 overview paper.
+                    The earlier work provided a useful basis of comparison for evaluating the Gridfour results
                     during our investigation</p>
 
                 <table>
@@ -190,7 +189,7 @@
                     given above, the partitioning scheme was specified to use tiles 120 rows high and 240 columns wide.
                     Each tile is compressed independently. When a tile is compressed, the Gridfour library uses a <i>brute force</i>
                     method for compressing the data: it reduces the tile using each of the three legacy predictors
-                    (Differencing, Linear, and Triangle) and the new Optimal Predictors method. Then, it choses the one
+                    (Differencing, Linear, and Triangle) and the new Optimal Predictors method. Then, it chooses the one
                     that produces the best results. As part of this process, the prediction residuals are compressed using either
                     Huffman coding or the Deflate algorithm. The compressed
                     sizes are compared and the combination that produces the best results is used to store data to
@@ -260,7 +259,7 @@
 
                 <p>Part of the compressibility of data also depends on the presence of features and artifacts that
                     are small relative to the sample spacing and which exhibit unpredictable behavior... In other words,
-                    the presense of noise components that reduce predictability lead to less effective data compression.
+                    the presence of noise components that reduce predictability lead to less effective data compression.
                     Often, the software systems that create Digital Elevation Model products remove noise and small features
                     as part of their data quality assurance and filtering processes. So the features that do remain
                     are generally significant and should not be neglected by a data compression implementation.</p>
@@ -269,7 +268,7 @@
 
                 <p>I will conclude the discussion of the Optimal Predictor's performance with a little more
                     detail about the SRTM data set. In 2000, NASA's Shuttle Radar Topography Mission (SRTM)
-                    collected elevation data for much of the world using a sophisticated synthetic aperature radar apparatus.
+                    collected elevation data for much of the world using a sophisticated synthetic aperture radar apparatus.
                     NASA and the U.S. government have generously provided the results of this survey for international public use
                     (<a href="https://lpdaac.usgs.gov/products/astgtmv003">NASA, 2020</a>). The SRTM data
                     is available in various forms. The results in the table below are based on the analysis of data

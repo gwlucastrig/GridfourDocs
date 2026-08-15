@@ -67,30 +67,30 @@
                     <a href="https://gwlucastrig.github.io/gridfour/">Gridfour open-source software project</a>.
                 </p>
 
-				<p>This articles covers a lot of material, including a discussion of the USGS products,
-				some background on the GeoTIFF standard, and an introduction to the algorithms for
-				shaded-relief rendering. If you want, you can jump to the sections of interest
-				using the following links.<p>
-				<ul>
-				<li><a class="box-link" href="#san-jacinto">The San Jacinto data sample</a> provides an overview of the
-				data sample used for the discussion that follows.</li>
-				
-				<li><a class="box-link" href="#tiff-file-format">The GeoTIFF format</a> gives an introduction
-				to the GeoTIFF file format, the way it organizes imagery and metadata, and the
-				way the U.S. Geological Society uses it to distribute their data.</li>
-				
-				<li><a class="box-link" href="#shaded-relief-algorithm">The Shaded-relief algorithm</a> describes
-				the surface illumination models used to create shading and lighting effects
-				from elevation data.</li>
-				
-				<li><a class="box-link" href="#additional-resources">Additional resources</a> Provides links
-				to additional information on shaded-relief techniques and locations
-				where you can obtain the USGS Cloud Optimized GeoTIFF data.</li>
-				
-				</ul>
-				
-				
-				<h2 id="san-jacinto">The San Jacinto data sample</h2>
+                <p>This article covers a lot of material, including a discussion of the USGS products,
+                some background on the GeoTIFF standard, and an introduction to the algorithms for
+                shaded-relief rendering. If you want, you can jump to the sections of interest
+                using the following links.</p>
+                <ul>
+                <li><a class="box-link" href="#san-jacinto">The San Jacinto data sample</a> provides an overview of the
+                data sample used for the discussion that follows.</li>
+                
+                <li><a class="box-link" href="#tiff-file-format">The GeoTIFF format</a> gives an introduction
+                to the GeoTIFF file format, the way it organizes imagery and metadata, and the
+                way the U.S. Geological Society uses it to distribute their data.</li>
+                
+                <li><a class="box-link" href="#shaded-relief-algorithm">The Shaded-relief algorithm</a> describes
+                the surface illumination models used to create shading and lighting effects
+                from elevation data.</li>
+                
+                <li><a class="box-link" href="#additional-resources">Additional resources</a> Provides links
+                to additional information on shaded-relief techniques and locations
+                where you can obtain the USGS Cloud Optimized GeoTIFF data.</li>
+                
+                </ul>
+                
+                
+                <h2 id="san-jacinto">The San Jacinto data sample</h2>
                 <p>Let’s take a look at what the USGS products have to offer. 
                     The picture below is a shaded-relief rendering of elevation data for part of
                     Riverside County in Southern California. It includes the
@@ -101,7 +101,7 @@
 
 
                 <figure>
-                    <img width=780 height=1006   src="ElevationGeoTiff1_files/image001.jpg">
+                    <img width=780 height=1006   src="ElevationGeoTiff1_files/image001.jpg" alt="Monochrome shaded-relief rendering of San Jacinto Mountains">
                     <figcaption>Figure 1 &ndash; Monochrome shaded-relief rendering derived from Cloud Optimized GeoTIFF (data source: USGS_13_n34w117.tif).</figcaption>
                 </figure>
 
@@ -110,11 +110,11 @@
                     striking when you consider that it is only a reduced-scale version of the
                     original. In order to fit in on this page, we needed to shrink it down by a
                     factor of 12. To give a better sense of the quality of the source data, the figure below shows
-					a close-up view of the image rendered at its full resolution. The figure shows a small section
-					of the overall data set taken from the lower-right corner of the image.
-					The lake and river features are derived from a surface-water Shapefile. But the road features
-					and building footprints that are visible in the image are derived purely from the elevation data.
-					Their presence gives some idea of the true resolution of the USGS data set.
+                    a close-up view of the image rendered at its full resolution. The figure shows a small section
+                    of the overall data set taken from the lower-right corner of the image.
+                    The lake and river features are derived from a surface-water Shapefile. But the road features
+                    and building footprints that are visible in the image are derived purely from the elevation data.
+                    Their presence gives some idea of the true resolution of the USGS data set.
                 </p>
 
                 <figure id="COG_Full_Resolution">
@@ -125,28 +125,28 @@
 
                 <p>Both images shown above were rendered using a technique called <i>shaded-relief</i>.
                     The algorithm used to produce the effect is described
-					<a href="#shaded-relief-algorithm">below</a>. The color techniques used for the second image are discussed in 
-					<a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html">Part 2 of this series of articles.</a>.
+                    <a href="#shaded-relief-algorithm">below</a>. The color techniques used for the second image are discussed in 
+                    <a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html">Part 2 of this series of articles.</a>.
                 </p>
-	
-					<h3>The San Jacinto data at-a-glance</h3>
-					<ul>
-					<li>Covers an area located in Riverside County in Southern California.</li>
-					<li>Includes the towns of Beaumont, Banning, Palm Springs, and the Coachella Valley.</li>
-					<li>Organized by geographic coordinates (latitude, longitude)</li>
-					<li>Covers a one-degree square area from 33N/117W to 34N/118W.</li>
-					<li>Grid spacing is one-third second of arc (about 10.3 meters between rows, 8.5 meters between columns)</li>
-					<li>Grid dimensions are 10812 rows by 10812 columns, or about 117 million raster cells.</li>
-					<li>Elevations range from 70.3 meters (230 ft) below mean sea level to 3291.5 meters (10799 ft) above</li> 
-					<li>Average elevation is 763 meters (2503 ft) MSL</li>
-					</ul>
-					
-					<p>With a raster spacing of one-third second of arc, we would expect a one-degree square grid
-					to have 10800-by-10800 cells.  The Cloud Optimized GeoTIFF products include 12 extra rows
-					and columns of grid cells.  These extra cells overlap adjacent data areas. So the true upper-left corner of the
-					San Jacinto sample is not 34N/117W, but is actually a small distance to its northwest.
-					This overlap is intended to ensure continuity when performing surface analysis and rendering.
-					More detail on this design choice is provided below (see <a href="#optimized_how">What makes it an optimized GeoTIFF?</a>).</p> 
+    
+                    <h3>The San Jacinto data at-a-glance</h3>
+                    <ul>
+                    <li>Covers an area located in Riverside County in Southern California.</li>
+                    <li>Includes the towns of Beaumont, Banning, Palm Springs, and the Coachella Valley.</li>
+                    <li>Organized by geographic coordinates (latitude, longitude)</li>
+                    <li>Covers a one-degree square area from 33N/117W to 34N/118W.</li>
+                    <li>Grid spacing is one-third second of arc (about 10.3 meters between rows, 8.5 meters between columns)</li>
+                    <li>Grid dimensions are 10812 rows by 10812 columns, or about 117 million raster cells.</li>
+                    <li>Elevations range from 70.3 meters (230 ft) below mean sea level to 3291.5 meters (10799 ft) above</li> 
+                    <li>Average elevation is 763 meters (2503 ft) MSL</li>
+                    </ul>
+                    
+                    <p>With a raster spacing of one-third second of arc, we would expect a one-degree square grid
+                    to have 10800-by-10800 cells.  The Cloud Optimized GeoTIFF products include 12 extra rows
+                    and columns of grid cells.  These extra cells overlap adjacent data areas. So the true upper-left corner of the
+                    San Jacinto sample is not 34N/117W, but is actually a small distance to its northwest.
+                    This overlap is intended to ensure continuity when performing surface analysis and rendering.
+                    More detail on this design choice is provided below (see <a href="#optimized_how">What makes it an optimized GeoTIFF?</a>).</p> 
 
 
                 <h2 id="tiff-file-format">The GeoTIFF format</h2>
@@ -235,14 +235,14 @@
                     GeoTIFF products</p>
 
                 <table>
-				<thead>
+                <thead>
                     <tr>
-                        <td >Tag</td>
-                        <td >Type</td>
-                        <td >Description</td>
+                        <th>Tag</th>
+                        <th>Type</th>
+                        <th>Description</th>
                     </tr>
-					</thead>
-					<tbody>
+                    </thead>
+                    <tbody>
                     <tr>
                         <td>GeoKeyDirectoryTag (34735)</td>
                         <td>Short Integer [4xN]</td>
@@ -251,7 +251,7 @@
                                 tags for non-integral specifications. </td>
                     </tr>
                     <tr>
-					<td>GeoDoubleParamsTag (34736)</td>
+                    <td>GeoDoubleParamsTag (34736)</td>
                         <td>Double [N]</td>
                         <td >N parameters given as double-precision floating-point values,
                                 including Earth radius, flattening, etc. </td>
@@ -275,7 +275,7 @@
                         <td>Double [3]</td>
                         <td>3 elements (x, y, z) given equivalent distance between pixels (x, y, z).</td>
                     </tr>
-					</tbody>
+                    </tbody>
                 </table>
 
                 <p>The key specification in a GeoTIFF is the GeoKeyDirectoryTag.
@@ -298,7 +298,7 @@
     2049   34737       6       0    GeogCitationKey -- Authorship notes
     2054       0       1    9102    GeogAngularUnitsGeoKey -- Angular degrees
     2057   34736       1       1    GeogSemiMajorAxisKey –- Equatorial radius of Earth
-    2059   34736       1       0    GeogInvFlatteningGeoKey –- Flattening of spherioid
+    2059   34736       1       0    GeogInvFlatteningGeoKey –- Flattening of spheroid
     2062   34736       3       2    TOWGS84GeoKey  -- “To WGS84” transformation data
                 </pre>
 
@@ -376,13 +376,13 @@ ModelPixelScaleTag
                 <p>Where</p>
 
                 <p class="mathtext"> <img class="mathimage" width=150 height=25 src="ElevationGeoTiff1_files/image003.png">
-				are the tiepoint specifications from the source file</p>
+                are the tiepoint specifications from the source file</p>
 
                 <p class="mathtext"><img class="mathimage" width=103 height=25  src="ElevationGeoTiff1_files/image004.png">
-						   are the coordinates for an arbitrary point of interest in the raster</p>
+                           are the coordinates for an arbitrary point of interest in the raster</p>
 
                 <p class="mathtext"><img class="mathimage" width=44 height=25 src="ElevationGeoTiff1_files/image005.png">
-				are the scaling factors from  the ModelPixelScaleTag</p>
+                are the scaling factors from  the ModelPixelScaleTag</p>
 
                 <p>Then</p>
 
@@ -397,7 +397,7 @@ ModelPixelScaleTag
                 <p>These relationships can be written in matrix form as</p>
 
                 <p class="mathtext"><img  width=283 height=63 src="ElevationGeoTiff1_files/image010.png"></p>
-				
+                
                 <p class="mathtext"><img width=330 height=90 src="ElevationGeoTiff1_files/image011.png"></p>
 
 
@@ -473,7 +473,7 @@ ModelPixelScaleTag
 
                 <h3>Coding the lighting model</h3>
 
-                <p>Coding a diffuse lightning model is easy provided that we
+                <p>Coding a diffuse lighting model is easy provided that we
                     have a way of computing the surface normal at each pixel position. The DemoCOG
                     application uses a B-Spline interpolation class that is included in the
                     Gridfour software distribution. For our purposes, the interpolator does double
@@ -492,8 +492,8 @@ ModelPixelScaleTag
                     interpolation point.</p>
 
                 <p>Let <img class="mathimage" width=25 height=25 src="ElevationGeoTiff1_files/image013.png">
-				 and <img class="mathimage" width=25 height=25 src="ElevationGeoTiff1_files/image014.png">
-				    be the slopes of the
+                 and <img class="mathimage" width=25 height=25 src="ElevationGeoTiff1_files/image014.png">
+                    be the slopes of the
                     elevation surface in the directions of the x and y axes. If we wish we may
                     apply an arbitrary exaggeration factor to these values as described above (in
                     which case the values for the slopes would be adjusted, but the algebra below
@@ -509,7 +509,7 @@ ModelPixelScaleTag
 
                 <p>The unit normal vector to the surface is computed from the
                     cross product of the tangent vectors:</p>
-					<p class="mathtext"><img width=4 height=25 src="ElevationGeoTiff1_files/image017.png"></p>
+                    <p class="mathtext"><img width=4 height=25 src="ElevationGeoTiff1_files/image017.png"></p>
 
                 <p class="mathtext"><img width=289 height=56 src="ElevationGeoTiff1_files/image018.png"></p>
 
@@ -519,8 +519,8 @@ ModelPixelScaleTag
                     the images shown above, we placed the light source in the northwest direction
                     with an elevation of 60 degrees above the horizon. We used that information to
                     construct a unit vector 
-					<img class="mathimage" width=9 height=25  src="ElevationGeoTiff1_files/image019.png">
-					pointing toward the
+                    <img class="mathimage" width=9 height=25  src="ElevationGeoTiff1_files/image019.png">
+                    pointing toward the
                     illumination source. So the cosine of the angle between the surface normal and
                     the illumination vector is just the dot product:</p>
 
@@ -579,7 +579,7 @@ ModelPixelScaleTag
 
                 <p>So far, most of our pictures have been in black-and-white. You
                     may be wondering about ways to add color to elevation-derived imagery. In
-					<a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html">Part 2 of this series</a>,
+                    <a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff2.html">Part 2 of this series</a>,
                     we will show how an application can use color to contribute information about
                     land-cover and environment to shaded-relief renderings. To do so, we use a kind
                     of GeoTIFF that is much different than the elevation GeoTIFFs we’ve discussed
@@ -607,7 +607,7 @@ ModelPixelScaleTag
                     See also PDF document accessed May 2020 from <a
                         href="https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf">https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf</a></p>
 
-				<p>Patterson, Tom. (2019). Shaded Relief. Website accessed December 2020 from <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a>.
+                <p>Patterson, Tom. (2019). Shaded Relief. Website accessed December 2020 from <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a>.
 
                 <p>U.S. Census Bureau. (2019). Tiger/Line® Shapefiles: Roads.
                     Website accessed May 2020 from <a
@@ -629,8 +629,8 @@ ModelPixelScaleTag
                     shaded-relief rendering as well as a collection of truly beautiful images at Tom
                     Patterson’s <i>Shaded Relief</i> website at <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></li>
                     <li>The <i>Relief Shading</i> website provides additional examples of cartographic techniques at
-					<a href="http://www.reliefshading.com/">http://www.reliefshading.com/</a>. The website also
-					provides a large number of references to other on-line articles describing algorithms for shaded relief rendering.</li>
+                    <a href="http://www.reliefshading.com/">http://www.reliefshading.com/</a>. The website also
+                    provides a large number of references to other on-line articles describing algorithms for shaded relief rendering.</li>
                 </ul>
 
                 <h2>Data sources</h2>
