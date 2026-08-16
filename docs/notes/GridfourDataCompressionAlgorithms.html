@@ -69,7 +69,7 @@
                     can discard some of the precision of the input float values (depending on
                     the scaling factor and the precision of the input data).  So it is, in
                     effect, a lossy representation. But, because the integer-coded float approach
-                    is used for a number of publically available geophysical data sets, the GVRS API
+                    is used for a number of publicly available geophysical data sets, the GVRS API
                     implements logic to support it directly.</p>
                 <p>The GVRS API implements lossless (non-lossy) data compression algorithms for both
                     integer and floating-point data.  The implementations for the two are much different.
@@ -105,7 +105,7 @@
                     scheme. In a tiling scheme, the grid is divided into a series of regularly sized
                     subgrids as illustrated in the figure below.</p>
                 <p><img src="images/General/TilingScheme.png" alt="Tiling Scheme"> </p>
-                <p>From the perspective of data compression, the tiling scheme presents two influencial features.
+                <p>From the perspective of data compression, the tiling scheme presents two influential features.
                     First, because tiles must be accessed independently, they are compressed individually rather
                     than as a set. In GVRS, tiles are compressed on a case-by-case basis. This is significant because
                     in many data sets, the statistical properties of the data tends to vary across the
@@ -114,12 +114,12 @@
                     within the data. In the ETOPO1 elevation/bathymetry example, we would expect to see very
                     different terrain (and very different data compression characteristics) over the Nullarbor Plain
                     in Australia versus the steep drop offs along the Continental Shelf. By partitioning
-                    a data set into separate tiles, we reduce the tendenacy for regions of data to be compressed
+                    a data set into separate tiles, we reduce the tendency for regions of data to be compressed
                     to include a large number of dissimilar features.</p>
                 <p>On the other hand, partitioning the data into smaller subgrids can have a disadvantage because
-                    it reduces the overall size of a block of data to be compressed. Most practical compression
-                    implementations include a certain amount of overhead beyond the storage required for the
-                    actual data itself. This overhead tends to be of a more-or-less fixed size. For a small
+                    it reduces the overall size of a block of data to be compressed. Most practical compression implementations
+                    include overhead beyond the storage required for the actual data.
+                    This overhead tends to be of a more-or-less fixed size. For a small
                     data set, that overhead may comprise a significant amount of the overall storage required for
                     the data. But as the size of the data set increases, the relative contribution of the
                     overhead is reduced.</p>
@@ -167,8 +167,8 @@
                     it is possible to use the values of one or more grid points to predict
                     the value of a neighbor. This assumption is generally true in real-world examples
                     such as elevation data.  We expect that two points a few hundred meters
-                    apart have a higher probably of being similar than two points placed
-                    far apart in much different kinds of terrain.  This idea is sometimes referred
+                    apart are more likely to be similar than two points placed
+                    far apart.  This idea is sometimes referred
                     to as &quot;spatial autocorrelation&quot; and has been extensively studied in
                     Geographic Information Analysis and other fields.</p>
                 <p>Again let&#39;s consider the example of a set of elevation grid points specified on a
@@ -274,12 +274,12 @@
                     the high-order bit used to indicate if additional bytes follow.
                     The length of the sequence depends on the magnitude of the residual
                     to be coded. In the worst case, 6 bytes are required to encode
-                    large magnitude residual (1 byte for the introducer, 5 bytes for the content).</p>
+                    a large magnitude residual (1 byte for the introducer, 5 bytes for the content).</p>
                 <p>The M32 coding scheme is effective in the case where the computed residuals
                     tend to be small because it preserves the one-byte-per-value relationship.
                     Again, in the case of larger residuals, the M32 code can actually be longer
                     than the 4 bytes needed for a simple integer. Fortunately, a good predictor
-                    will produce small residuals. In fact, in the elevation data sets used when developing
+                    will produce small residuals. In fact, for the elevation data sets used when developing
                     GVRS, the average length of the M32 code sequences is
                     about 1.013 bytes per grid value.</p>
                 <h1 id="compressors">Compressors</h1>
@@ -300,7 +300,7 @@
                     to compress data using both codecs and all three predictive-residual transformations.
                     It then selects the serialized form that produces the smallest output size.
                     In testing with ETOPO1, the Deflate algorithm was selected in
-                    about 65 percent of the tiles with Huffman being selected for the remaining 35.</p>
+                    about 65 percent of the tiles with Huffman being selected for the remaining 35 percent.</p>
                 <h2 id="huffman-coding">Huffman Coding</h2>
                 <p>Huffman coding was originally developed for the compression of text-based data
                     and the terminology associated with it reflects that origin. For these notes,
@@ -354,22 +354,25 @@
                     the classic algorithm. Once established, the tree is stored according
                     to the following recursive algorithm which starts from the
                     root node of the tree.</p>
-                <pre><code><span class="hljs-number">1.</span> Introduce <span class="hljs-keyword">with</span> sequence <span class="hljs-keyword">with</span> <span class="hljs-keyword">an</span> unsigned <span class="hljs-keyword">byte</span> indicating <span class="hljs-keyword">the</span> <span class="hljs-built_in">number</span>
-   <span class="hljs-keyword">of</span> unique symbols, N, <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> tree. Since there will never be <span class="hljs-literal">zero</span> symbols
-   <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> tree, GVRS stores <span class="hljs-keyword">the</span> <span class="hljs-built_in">value</span> N<span class="hljs-number">-1</span> <span class="hljs-keyword">in</span> this <span class="hljs-keyword">byte</span>. Thus <span class="hljs-literal">one</span> <span class="hljs-keyword">byte</span> is sufficient
-   <span class="hljs-built_in">to</span> represent all possible symbol counts <span class="hljs-keyword">for</span> <span class="hljs-keyword">a</span> M32 representation.
-<span class="hljs-number">2.</span> Traverse <span class="hljs-keyword">the</span> Huffman tree starting <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> root node <span class="hljs-keyword">using</span> RecusiveStore(rootNode)
-<span class="hljs-number">3.</span> RecursiveStore(node)
-    <span class="hljs-keyword">a</span>. If <span class="hljs-keyword">the</span> node is <span class="hljs-keyword">a</span> branch
-        i. Output <span class="hljs-keyword">a</span> bit <span class="hljs-keyword">with</span> <span class="hljs-built_in">value</span> <span class="hljs-number">0.</span>
-        ii. Call RecursiveStore <span class="hljs-keyword">on</span> <span class="hljs-title">the</span> <span class="hljs-title">left</span> <span class="hljs-title">child</span> <span class="hljs-title">node</span>.
-        iii. Call RecursiveStore <span class="hljs-keyword">on</span> <span class="hljs-title">the</span> <span class="hljs-title">right</span> <span class="hljs-title">child</span> <span class="hljs-title">node</span>.
+                <pre><code>
+1. Introduce with sequence with an unsigned byte indicating the number
+   of unique symbols, N, in the tree. Since there will never be zero symbols
+   in the tree, GVRS stores the value N-1 in this byte. Thus one byte is sufficient
+   to represent all possible symbol counts for a M32 representation.
+2. Traverse the Huffman tree starting from the root node using RecusiveStore(rootNode)
+3. RecursiveStore(node)
+    a. If the node is a branch
+        i. Output a bit with value 0.
+        ii. Call RecursiveStore on the left child node.
+        iii. Call RecursiveStore on the right child node.
         iv. Return.
-    b. If <span class="hljs-keyword">the</span> node is <span class="hljs-keyword">a</span> leaf (<span class="hljs-keyword">a</span> terminal)
-        i. Output <span class="hljs-keyword">a</span> bit <span class="hljs-keyword">with</span> <span class="hljs-keyword">a</span> <span class="hljs-built_in">value</span> <span class="hljs-number">1.</span>
-        ii. Output <span class="hljs-keyword">the</span> symbol.
+    b. If the node is a leaf (a terminal)
+        i. Output a bit with a value 1.
+        ii. Output the symbol.
         iii. Return.
-</code></pre><p>In testing with the ETOPO1 data set, there were typically about 100 unique
+</code></pre>
+
+                <p>In testing with the ETOPO1 data set, there were typically about 100 unique
                     symbols in a M32-serialized tile. Storing the Huffman tree algorithm averaged
                     about 782 bits per tile.</p>
                 <p>For simplicity, the tree-encoding algorithm was described above using a
@@ -441,18 +444,32 @@
                     of luck and hope that insights from GVRS can help you on your way. And, as always,
                     we welcome your ideas and suggestions.</p>
                 <h1 id="references">References</h1>
-                <p>Adobe Systems, Inc. (1992). <em>TIFF Revision 6.0 Final – June 3, 1992</em>. Retrieved January 2020 from <a href="https://www.adobe.io/open/standards/TIFF.html">https://www.adobe.io/open/standards/TIFF.html</a></p>
-                <p>Cutler, C. Chapin. (1950). U.S. Patent No. 2605361, &quot;Differential Quantization of Communication Signals&quot;. Filed June 29, 1950, issued July 29, 1952</p>
-                <p>Deutsch, L. Peter  (1996). &quot;DEFLATE Compressed Data Format Specification version 1.3&quot;. IETF. p. 1. sec. Abstract. doi:10.17487/RFC1951. RFC 1951.</p>
-                <p>Huffman, D. (1952). &quot;A Method for the Construction of Minimum-Redundancy Codes&quot; (PDF). Proceedings of the IRE. 40 (9): 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
-                <p>Kidner, D.B. and Smith, D.H. (1992). &quot;Compression of digital elevation models by Huffman coding&quot;. Computers and Geosciences, 18(8), 1013-1034.</p>
-                <p>Kidner, David B. &amp; Smith, Derek, H. (2003). &quot;Advances in data compression of digital elevation models&quot;. Computers &amp; Geosciences 29 (8), 985-1002.</p>
-                <p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005. &quot;NCEP WMO GRIB2 Documentation&quot;. Accessed January 2020 from <a href="https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/">https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/</a></p>
-                <p>Nayuki (2020). &quot;Reference Arithmetic Coding&quot;. Retrieved January 2020 from <a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
+                <p>Adobe Systems, Inc. (1992). <em>TIFF Revision 6.0 Final – June 3, 1992</em>.
+				Retrieved January 2020 from <a href="https://www.adobe.io/open/standards/TIFF.html">
+				https://www.adobe.io/open/standards/TIFF.html</a></p>
+                <p>Cutler, C. Chapin. (1950). U.S. Patent No. 2605361, &quot;Differential Quantization of Communication Signals&quot;.
+				Filed June 29, 1950, issued July 29, 1952</p>
+                <p>Deutsch, L. Peter  (1996). &quot;DEFLATE Compressed Data Format Specification version 1.3&quot;.
+				IETF. p. 1. sec. Abstract. doi:10.17487/RFC1951. RFC 1951.</p>
+                <p>Huffman, D. (1952). &quot;A Method for the Construction of Minimum-Redundancy Codes&quot; (PDF).
+				Proceedings of the IRE. 40 (9): 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
+                <p>Kidner, D.B. and Smith, D.H. (1992). &quot;Compression of digital elevation models by Huffman coding&quot;.
+				Computers and Geosciences, 18(8), 1013-1034.</p>
+                <p>Kidner, David B. &amp; Smith, Derek, H. (2003). &quot;Advances in data compression of digital elevation models&quot;.
+				Computers &amp; Geosciences 29 (8), 985-1002.</p>
+                <p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005.
+				&quot;NCEP WMO GRIB2 Documentation&quot;. Accessed January 2020 from
+				<a href="https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/">
+				https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/</a></p>
+                <p>Nayuki (2020). &quot;Reference Arithmetic Coding&quot;. Retrieved January 2020 from
+				<a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
                 <p>Nelson, M. (1991). <em>The Data Compression Book</em>. M&amp;T Publishing Company, Redwood City, CA.</p>
-                <p>SQLite4 (2019). &quot;Variable-Length Integers&quot;. Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">https://sqlite.org/src4/doc/trunk/www/varint.wiki</a>.</p>
-                <p>Wikipedia (2020). &quot;Differential pulse-code modulation&quot;. Retrieved January 2020 from <a href="https://en.wikipedia.org/wiki/Differential_pulse-code_modulation">https://en.wikipedia.org/wiki/Differential_pulse-code_modulation</a></p>
-
+                <p>SQLite4 (2019). &quot;Variable-Length Integers&quot;.
+				Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">
+				https://sqlite.org/src4/doc/trunk/www/varint.wiki</a>.</p>
+                <p>Wikipedia (2020). &quot;Differential pulse-code modulation&quot;.
+				Retrieved January 2020 from <a href="https://en.wikipedia.org/wiki/Differential_pulse-code_modulation">
+				https://en.wikipedia.org/wiki/Differential_pulse-code_modulation</a></p>
             </div>
         </div>
     </body>
