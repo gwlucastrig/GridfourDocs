@@ -53,7 +53,7 @@
                     these techniques one step at a time. The text that follows includes the following sections:</p>
 					<ul>
 					<li><a class="box-link" href="#assigning-color-by-elevation">Assigning color by elevation</a> examines
-					the pro's and con's of assigning color to an image strictly on the basis of elevation.</li>
+					the pros and cons of assigning color to an image strictly on the basis of elevation.</li>
 					
 					<li><a class="box-link" href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a> shows
 					how using an external land-cover product can improve the appearance of a shaded-relief image.</li>
@@ -109,7 +109,7 @@
                     to add color to a shaded-relief image strictly on the basis of elevation. To do
                     so, we specify a palette tied to elevation intervals and apply it to the image
                     processing.  In the pictures below, I used a palette that was developed by the
-                    National Oceanographic and Atmospheric and Administration (NOAA) for its global-scale
+                    National Oceanic and Atmospheric and Administration (NOAA) for its global-scale
                     ETOPO1 elevation and bathymetry data set (NOAA, 2020).  In the ETOPO1 palette,
                     elevations at or below sea level are shown in shades of blue. Lower elevations
                     are shown in green. And higher elevations are shown in tan or white.</p>
@@ -203,7 +203,7 @@
     1024       0       1       1   GtModelTypeGeoKey -- 1 means projected
     1025       0       1       1   GtRasterTypeGeoKey --  PixelIsArea
     1026   34737      21       0   GtCitationGeoKey – descriptive text
-    2049   34737      12      21   GeodeticCitatonGeoKey – descriptive text
+    2049   34737      12      21   GeodeticCitationGeoKey – descriptive text
     2054       0       1    9102   GeogAngularUnitsGeoKey -- 9102 means degrees
     2062   34736       3       0   TOWGS84GeoKey  -- “To WGS84” transformation data
     3072       0       1    5070   ProjectedCRSGeoKey – refers to EPSG 5070
@@ -211,14 +211,14 @@
                 </pre>
 
 
-                <p>In this data set, key 1024 (GtModelTypeKey) has the value 1,
+                <p>In this data set, key 1024 (GtModelTypeGeoKey) has the value 1,
                     indicating that the GeoTIFF uses a projected coordinate system. Key 3072 (projected
                     coordinate reference system geo key) refers to the European Petroleum Survey
                     Group (EPSG) map projection database specification number 5070 (EPSG, 2020). 
                     Although this particular GeoTIFF does not give a full set of parameters for the
                     map projection it uses, we can look it up the necessary elements from external
-                    sources. The ESPG system is well known and its specifications are readily
-                    available on the Internet. ESPG map projection 5070 is an Albers Equal Area
+                    sources. The EPSG system is well known and its specifications are readily
+                    available on the Internet. EPSG map projection 5070 is an Albers Equal Area
                     Conic map projection optimized for depicting features in the Contiguous United
                     States (CONUS).</p>
 
@@ -476,7 +476,7 @@
 
                 <h2>Data sources</h2>
 
-                <p>The USGS Cloud Optimized GeoTIFF elevation data sources are located at the following sites:
+                <p>The USGS Cloud Optimized GeoTIFF elevation data sources are located at the following sites:</p>
                 <ul>
                     <li>Via FTP: <a href="ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/Elevation/13/TIFF/">
                             ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/Elevation/13/TIFF/</a></li>
