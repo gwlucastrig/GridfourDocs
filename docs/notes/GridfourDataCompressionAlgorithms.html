@@ -39,7 +39,7 @@
                     data-compression techniques for grid-based data. To that end, the Gridfour API
                     includes an implementation of a file format named GVRS which provides a file-based
                     system for storing gridded data. Gridfour supports compression through the use of
-                    custom <em>codec</em> (coder-decoder) classes that are included in its software
+                    custom <em>codec</em> (coder&ndash;decoder) classes that are included in its software
                     distribution. These codecs may be used through the GVRS file API or in stand-alone mode
                     depending on the requirements of the applications that use them.  Developers may
                     also leverage the Gridfour API to write their own custom codecs.
@@ -291,7 +291,7 @@
                     redundancy than the original. And as the redundancy is increased,
                     the data becomes more suitable for processing by conventional data compression techniques.</p>
                 <p>As noted above, the two codecs currently implemented in GVRS are based
-                    on the Huffman coding and Deflate algorithms. API’s that support
+                    on the Huffman coding and Deflate algorithms. APIs that support
                     Deflate are available in most popular software environments and
                     programming languages. GVRS uses the Deflate class provided by
                     the standard Java API.  For the simpler Huffman coding,
@@ -343,7 +343,7 @@
                     the memory use by the application.  So finding an optimal tile-size
                     choice may require some experimentation. In working with elevation data sets,
                     we have found that a tile size in the range of 10 to 40 thousand grid
-                    cells tends is usually a good place to start.</p>
+                    cells is usually a good place to start.</p>
                 <h3 id="how-gvrs-stores-the-huffman-tree">How GVRS Stores the Huffman Tree</h3>
                 <p>In the classic Huffman algorithm, the symbol-frequency table is used to create
                     a tree structure that serves as a mechanism for encoding or decoding
@@ -403,7 +403,7 @@
                         <tr>
                             <th>Method</th>
                             <th>Bits/Symbol</th>
-                            <th>Time to Read Tiles</th>
+                            <th>Time to Read Tiles (seconds)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -432,7 +432,7 @@
                     we think that claim is valid.</p>
                 <p>There are many, many promising avenues to explore for better solutions
                     to the raster data compression problem. Kidner and Smith (2003) used a more
-                    powerful predictor based on Legrange multipliers and arithmetic coding.
+                    powerful predictor based on Lagrange multipliers and arithmetic coding.
                     Some commercial solutions (and the JPEG 2000 standard) have explored
                     the use of wavelet functions. Data compression continues to be an area
                     of active interest in the software community, and we fully expect that

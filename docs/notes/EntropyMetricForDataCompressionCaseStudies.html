@@ -49,7 +49,7 @@
                 <p>The test subjects used for these case studies are all based on
                     raster (grid) data products giving geophysical data in a numerical form.
                     Data of this type is the focus of the <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a>,
-                    an open-source project that provides API's for both the Java and C programming languages.</p>
+                    an open-source project that provides APIs for both the Java and C programming languages.</p>
 
                 <p>At this time, Gridfour uses two classic data compression techniques:
                     <a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a> and
@@ -60,7 +60,7 @@
                     <a href="GridfourDataCompressionAlgorithms.html">algorithms for raster data compression</a>.</p>
 
                 <h2>The entropy calculation</h2>
-                <p>The entropy values reported in the discussion below is based on Claude Shannon's first-order
+                <p>The entropy values reported in the discussion below are based on Claude Shannon's first-order
                     entropy formula (Shannon, 1948). For more information on the concept of entropy, see the
                     <a href="EntropyMetricForDataCompression.html">previous article</a> in this series.
                     Shannon's entropy formula is based on the probabilities of different symbols appearing
@@ -68,7 +68,7 @@
                     For numeric data, they might be the values of bytes appearing in a sequence.  Each such symbol
                     <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" />
                     has a corresponding probability <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" />.
-                    For this article, we use a variation of of Shannon's forumulation that gives us entropy <i>H(X)</i> as a <strong><i>rate</i></strong>
+                    For this article, we use a variation of Shannon's formulation that gives us entropy <i>H(X)</i> as a <strong><i>rate</i></strong>
                     expressed in terms of bits/symbol:</p>
 
                 <img class="imageCentered" alt="Shannon's entropy formula" width=195 height=63 src="EntropyMetricForDataCompression_files/EntropyFormula.png">
@@ -105,9 +105,9 @@
                     technique, it reduces the size of the file to 288.4 MiB.
                     Superficially, that appears to be roughly a factor of three
                     compression ratio. But, looking at the range of values in the descriptive parameters given above, we see that
-                    a lot of the content of the source file could easily be accomodated by two-byte (short) integers rather
-                    than the four-bytes used by the source data. It is unclear why the original authors elected to
-                    store their data as four-byte integers when they could have used two-byte integers.
+                    a lot of the content of the source file could easily be accommodated by 2-byte (short) integers rather
+                    than the four-byte format used by the source data. It is unclear why the original authors elected to
+                    store their data as 4-byte integers when they could have used 2-byte integers.
                     But we do know that a lot of the byte content of the source data is just filler
                     (either 0x00 if the elevation value is positive, or 0xff if the elevation is negative).</p>
 
@@ -272,24 +272,24 @@
                 <p>For more information on the data compression logic used to produce these results, see
                     <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">
                         Compression Algorithms for Raster Data used in the
-                        Gridfour Implementation</a>.</a>
+                        Gridfour Implementation</a>.</p>
 
                 <h1>Case study 2: ETOPO 2022, a floating-point raster data set</h1>
 
                 <p>Claude Shannon's definition of entropy is broad enough to include a variety of different data types.
-                    So far, we've considered character sets, bytes, and integers.  Now we'll turn out attention to 32-bit floating-point data.</p>
-                The ETOPO 2022 family is a successor to ETOPO1 (NOAA, 2022).  It features raster data products configured to various resolutions,
+                    So far, we've considered character sets, bytes, and integers.  Now we'll turn our attention to 32-bit floating-point data.</p>
+                <p>The ETOPO 2022 family is a successor to ETOPO1 (NOAA, 2022).  It features raster data products configured to various resolutions,
                 including a one minute of arc product with the same dimensions as ETOPO1. In addition to updating the overall
                 data collection from ETOPO1, ETOPO 2022 introduces the use of non-integral floating-point data for elevations.</p>
 
                 <p>Obtaining the set of probabilities for the entropy calculation for floating-point data is more involved than it
                     was for byte and integer based products.  To collect probabilities for a byte based product, we simply created an array
                     of 256 counting elements and looped through the source data to tabulate the number of times each unique byte value
-                    showed up in the product. For two-byte integer values, we needed an array of 65,536 counters, a size which was still managable.
+                    showed up in the product. For 2-byte integer values, we needed an array of 65,536 counters, a size which was still manageable.
                     But tabulating counts for a four-byte floating-point data type would require over 4 billion counters, a size
                     that might even exceed the memory available for use on a large server.</p>
 
-                <p>There are numerous technologies available for handing very large data sets, but since this investigation
+                <p>There are numerous technologies available for handling very large data sets, but since this investigation
                     was conducted in support of the Gridfour Software Project, we elected to use the Gridfour Virtual Raster Store
                     API (see <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GVRS_Introduction.html">GVRS: a Fast, File-Backed API for Managing
                         Raster Data</a>).  Both the Java and C versions of the Gridfour library include a module named EntropyTabulator that computes
