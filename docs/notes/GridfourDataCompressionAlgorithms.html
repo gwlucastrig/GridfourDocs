@@ -15,7 +15,9 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Gridfour-Java API</a></li>
+                    <li>|</li>
+					<li><a href="https://github.com/gwlucastrig/GridfourC">Gridfour-C API</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Application Notes</a></li>
                     <li>|</li>
@@ -27,14 +29,13 @@
 
 
                 <p class="title">
-                    Compression Algorithms for Raster Data used in the Gridfour Implementation
+                    Data Compression for Numerical Raster Data
                 </p>
 
-
-
                 <h1 id="introduction">Introduction</h1>
-                <p>This document provides details on the design, methods, and algorithms used
-                    by the Gridfour raster (grid) data compression implementation.</p>
+                <p>This document provides details for the design, methods, and algorithms used
+                    by the Gridfour raster data compression implementation.</p>
+					
                 <p>One of the goals for the Gridfour software is to provide a testbed for developers who are investigating
                     data-compression techniques for grid-based data. To that end, the Gridfour API
                     includes an implementation of a file format named GVRS which provides a file-based
@@ -45,6 +46,7 @@
                     also leverage the Gridfour API to write their own custom codecs.
                     To illustrate how a compression codec could be implemented, Gridfour provides codecs based on the well-known
                     Huffman coding (Huffman, 1952) and Deflate algorithms (Deutsch, 1996).  </p>
+					
                 <p>The Gridfour implementations provide moderate data compression with good
                     access speed, but there is certainly room for improvement.
                     The algorithms used in the current GVRS file management software are based on work that
