@@ -78,7 +78,7 @@
 		    (i.e. the <i>residual</i>) should be small. Even better, the information content (the <i>entropy</i>)
 		    of the resuduals is often much smaller than that of the source data.</p>
 
-		<p>The venerable TIFF image format implemented a <i>Differencing Predictor</i>. The predictor
+		<p>The venerable TIFF image format implemented a <i>differencing predictor</i>. The differencing predictor
 		    exploits the fact that "many continuous-tone images rarely vary much in pixel value from
 		    one pixel to the next" (Adobe 1992, p. 64). It predicts that the value for each pixel will remain
 		    the same as its predecessor. The residuals are collected and passed to a conventional data compressor
@@ -123,60 +123,25 @@
 		    Digital Elevation Models (DEMs). The choice of ETOPO1 was a matter of convenience
 		    as much as anything else.</p>
 			
-		<h2 id="tiling-schemes-and-data-compression">Tiling Schemes and Data Compression</h2>
-		<p>The grid specification for many raster data files is large enough that it is often
-		    impractical to store the entire content in memory. Even with a relatively compact
-		    representation using short integers, the ETOPO1 data set would require close to
-		    500 megabytes of memory. So the GVRS File format partitions large rasters using a tiling
-		    scheme. In a tiling scheme, the grid is divided into a series of regularly sized
-		    subgrids as illustrated in the figure below.</p>
-			
-		<p><img src="images/General/TilingScheme.png" alt="Tiling Scheme"> </p>
-		<p>From the perspective of data compression, the tiling scheme presents two influential features.
-		    First, because tiles must be accessed independently, they are compressed individually rather
-		    than as a set. In GVRS, tiles are compressed on a case-by-case basis. This is significant because
-		    in many data sets, the statistical properties of the data tends to vary across the
-		    domain of the data. Data compression techniques thrive on redundancy and self-similarity
-		    in the source data. But raster data sets with larger grids allow more room for variation
-		    within the data. In the ETOPO1 elevation/bathymetry example, we would expect to see very
-		    different terrain (and very different data compression characteristics) over the Nullarbor Plain
-		    in Australia versus the steep drop offs along the Continental Shelf. By partitioning
-		    a data set into separate tiles, we reduce the tendency for regions of data to be compressed
-		    to include a large number of dissimilar features.</p>
-			
-		<p>On the other hand, partitioning the data into smaller subgrids can have a disadvantage because
-		    it reduces the overall size of a block of data to be compressed. Most practical compression implementations
-		    include overhead beyond the storage required for the actual data.
-		    This overhead tends to be of a more-or-less fixed size. For a small
-		    data set, that overhead may comprise a significant amount of the overall storage required for
-		    the data. But as the size of the data set increases, the relative contribution of the
-		    overhead is reduced.</p>
-			
-		<h1 id="predictive-techniques-for-raster-data-compression">Predictive Techniques for Raster Data Compression</h1>
-		<p>Data compression techniques that work well for text are often ineffective for raster data sets.
-		    Virtually all data compression algorithms operate by identifying redundant elements in a data set and
-		    replacing them with a more compact representation. Unfortunately, many raster data sets,
-		    particularly those containing geophysical information, tend to not present
-		    redundancy in a form that conventional data compression tools can exploit.  Turning to the
-		    elevation example cited above, it is easy to imagine a set of sample points collected
-		    along a constant slope. Each elevation value in the set would be unique. So a superficial inspection
-		    of the numeric values in the set would not reveal redundant elements.  But every sample would
-		    reflect the same rate of increase from point to point. And the underlying structure of the data
-		    would, in fact, carry a high degree of redundancy. The key to compressing such data
-		    is to transform it into a state in which the redundant elements become visible to conventional
-		    data compression techniques.  </p>
-			
-		<p>Many raster compression techniques address the problem of non-compliant raster
-		    data by using so called <em>predictive</em> techniques. These techniques implement
-		    models that predict the value at each grid point in the raster. The residuals
-		    from these predictions (actual value minus predicted value), tend to be small
-		    in magnitude and more readily compressed than the source data.  Thus, in its
-		    compressed form, the data is represented using the prediction parameters
-		    and the compressed residuals. During decompression, these residuals are
-		    used as correction factors that adjust the predicted values to match the original inputs.</p>
+		<h1 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to ETOPO1</h1>
+		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
+		First, most compression schemes carry some degree of overhead based on the number if unique 
+		symbols that occur in the data set. The values in ETOPO1 cover a range of 19136 meters given
+		as integers. While not all possible values in that range actually appear in the raster product, 
+		17036 of them do. Compressors such as Huffman coding depend on a subset of the symbols having 
+		a much higher frequency of occurrence than others. And while values near zero do dominate the graph,
+		there is still a substantial presence of other values, such as those in the ocean 
+		abyssal plain (4000 meters depth) and those near a land of elevation of 300 meters.  
+		Finally, the ETOPO1 data features a relatively high Shannon entropy rate of
+		approximately 12.9 bits per value.</p>
+		
+		 <figure>
+		 <img src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
+		 <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
+		 </figure>
 			
 		<h2 id="the-simplest-predictive-technique">The Simplest Predictive Technique</h2>
-		<p>The original 1993 implementation used a simple predictor which assumed that the
+		<p>The simple predictor which assumed that the
 		    value of the raster data remained constant from grid point to grid point.
 		    For that predictor, the residual was just the value of the current grid
 		    point minus that of its predecessor.  The compressed form of the raster
