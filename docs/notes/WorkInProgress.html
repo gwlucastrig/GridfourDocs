@@ -51,6 +51,52 @@
 		    Developers can extend the capabilities of Gridfour by writing custom codec (coder-decoder)
 		    classes that are registered with the Gridfour API at runtime. This approach lets investigators
 		    take advantage of Gridfour’s data management capabilities and focus on their core algorithm development.</p>
+			
+			
+			
+		<h2 id="the-etopo1-example-data-set">An example raster data source: ETOPO1</h2>
+
+		<p>In the discussion that follows, we will use a data set called ETOPO1 to illustrate
+		    key points related to raster data compression. The ETOPO series(for Earth topography) 
+			is a family of global-scale elevation and ocean depth
+		    (bathymetry) data set developed by the U.S. National Oceanic and Atmospheric Administration (NOAA, 2026).
+			ETOPO1 is a numeric raster that gives elevations in integer meters referenced to mean sea level,
+			with negative values indicating depth. The raster has a spatial basis. Its
+			grid is defined by latitude and longitude coordinates (Amante, 2009) with grid cells
+			referenced to specific locations on the Earth. Figure 1 below shows a shaded-relief image 
+			that was created data taken from ETOPO1.</p>
+
+		<figure>
+		    <img src="images/General/ShadedReliefGlobalElevation.png" alt="ETOPO1 Shaded Relief">
+		    <figcaption>Figure 1 &ndash; Shaded relief derived from ETOPO1 (data source: NOAA, image: Gridfour)</figcaption>
+		</figure>
+
+		<p>The following table summarizes the general properties for ETOPO1.</p> 
+			<table class="tight-table">
+			<tbody>
+			<tr><td>Rows in raster</td>           <td class="tdright">10800</td></tr>
+			<tr><td>Columns in raster</td>        <td class="tdright">21600</td></tr>
+			<tr><td>Cells in raster</td>          <td class="tdright">233 million</td/</tr>
+			<tr><td>Cell spacing</td>             <td class="tdright">1/60<sup>th</sup> degree</td></tr>
+			<tr><td>Cell size (at Equator)</td>   <td class="tdright">1.855 km (1.15 mi)</td></tr>
+			<tr><td>Min value (depth)</td>        <td class="tdright">-10803 m</td></tr>
+			<tr><td>Max value (elevation)</td>    <td class="tdright">8333 m</td></tr>
+			<tr><td>Range of values</td>          <td class="tdright">19136 m</td></tr>
+			<tr><td>Storage format</td>           <td class="tdright">two-byte integer</td></tr>
+			<tr><td>Size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
+			<tr><td>Size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
+			<tr><td>Size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
+			<tr><td>Entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
+			</tbody>
+			</table>
+
+		<p>ETOPO1 was selected as an example for a number of reasons. First, it contains
+		    a substantial number of sample points and requires enough storage space to be
+		    interesting to compress. Second, the surface it describes is highly variable
+		    and provides a broad spectrum of test cases ranging from flat plains,
+		    to mountainous regions, to sheer drop offs along the Continental Shelf.
+		    And, finally, terrain data is something that is familiar to our readers
+		    and easily visualized.</p>
 
 		<h2 id="why-custom_compression">Why do we need custom compression for raster data?</h2>
 
@@ -76,7 +122,7 @@
 		    the value of a one grid cell based on those of its neighbors. A predicted value may not be always be
 		    a perfect match for the source data, but in general the difference between the true value and the prediction
 		    (i.e. the <i>residual</i>) should be small. Even better, the information content (the <i>entropy</i>)
-		    of the resuduals is often much smaller than that of the source data.</p>
+		    of the residuals is often much smaller than that of the source data.</p>
 
 		<p>The venerable TIFF image format implemented a <i>differencing predictor</i>. The differencing predictor
 		    exploits the fact that "many continuous-tone images rarely vary much in pixel value from
@@ -90,38 +136,7 @@
 		    It also includes a more advanced algorithm based on Lagrange Multipliers that was proposed by
 			Smith and Lewis in 1994.
 
-		<h2 id="the-etopo1-example-data-set">An example raster data source: ETOPO1</h2>
-		<p>In the discussion that follows, we will use a data set called ETOPO1 to illustrate
-		    key points related to raster data compression. As mentioned above, ETOPO1 is a global-scale elevation and ocean depth
-		    (bathymetry) data set provided on a grid defined by latitude and longitude coordinates (Amante, 2009).
-		    Figure 1 below shows a shaded-relief image that was created data taken from ETOPO1.</p>
-
-		<figure>
-		    <img src="images/General/ShadedReliefGlobalElevation.png" alt="ETOPO1 Shaded Relief">
-		    <figcaption>Figure 1 &ndash; Shaded relief derived from ETOPO1 (data source: NOAA, image: Gridfour)</figcaption>
-		</figure>
-
-		<p>ETOPO1 is organized into a grid consisting of cells with a uniform angular (geographic) spacing
-		    of one minute of arc (1/60<sup>th</sup> degree). This spacing corresponds to an Earth-surface
-		    distance of approximately 1.855 kilometers (1.15 miles) near the equator.  While that value
-		    might seem like a rather coarse sample interval, it still leads to a substantially large raster.
-		    The ETOPO1 grid consists of 10800 rows and 21600 columns, representing a total of over 233 million data points.
-		    Elevations are given in meters above mean sea level. They range from -10803 meters (depth) near the Mariana Trench
-		    to 8333 meters near Mount Everest.</p>
-
-		<p>ETOPO1 was selected as an example for a number of reasons. First, it contains
-		    a substantial number of sample points and requires enough storage space to be
-		    interesting to compress. Second, the surface it describes is highly variable
-		    and provides a broad spectrum of test cases ranging from flat plains,
-		    to mountainous regions, to sheer drop offs along the Continental Shelf.
-		    And, finally, terrain data is something that is familiar to our readers
-		    and easily visualized.</p>
-			
-		<p>It should, however, be noted that GVRS is intended to be a general-purpose utility
-		    for processing many different kinds of grid-based data sets. It is not limited
-		    to geospatial or geophysical information, and it is certainly not limited to
-		    Digital Elevation Models (DEMs). The choice of ETOPO1 was a matter of convenience
-		    as much as anything else.</p>
+		
 			
 		<h1 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to ETOPO1</h1>
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
@@ -220,7 +235,7 @@
 		<p>To see how this relationship is derived, start by taking each sample and the predicted
 		    point as vectors:</p>
 		<p><img src="images/GVRS_Compression/TriangleAlgebra1.png" alt="Variables for triangle predictor"> </p>
-		<p>From linear algebra, we can compute the normal to a plane and locate a point on that plane
+		<p>From linear algebra, we can compute the normal to a plane and locate a point <i>P</i> on that plane
 		    using the following:</p>
 		<p><img src="images/GVRS_Compression/TriangleAlgebra2.png" alt="Variables for triangle predictor"> </p>
 		<p>When we solve for Z<sub>P</sub>, the <em>x</em>, <em>y</em>, <em>s</em>, and <em>t</em> variables cancel out and we find
@@ -464,6 +479,10 @@ iii. Return.
 
 		<p>Kidner, David B. &amp; Smith, Derek, H. (2003). &quot;Advances in data compression of digital elevation models&quot;.
 		    Computers &amp; Geosciences 29 (8), 985-1002.</p>
+
+		<p>National Oceanic and Atmospheric Administration [NOAA], 2026. ETOPO Global Relief Model.
+		National Centers for Environmental Information website accessed September 2026 from 
+		<a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model">https://www.ncei.noaa.gov/products/etopo-global-relief-model</a></p>
 
 		<p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005.
 		    &quot;NCEP WMO GRIB2 Documentation&quot;. Accessed January 2020 from
