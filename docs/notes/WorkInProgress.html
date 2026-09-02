@@ -67,11 +67,17 @@
 			that was created using data taken from ETOPO1.</p>
 
 		<figure>
-		    <img src="images/General/ShadedReliefGlobalElevation.png" alt="ETOPO1 Shaded Relief">
+		    <img class="imageCentered" src="images/General/ShadedReliefGlobalElevation.png" alt="ETOPO1 Shaded Relief">
 		    <figcaption>Figure 1 &ndash; Shaded relief derived from ETOPO1 (data source: NOAA, image: Gridfour)</figcaption>
 		</figure>
 
+	<p>We selected ETOPO1 as an example for a number of reasons. First, at 445 megabytes in size, 
+	it is large enough to be worth compressing. Also, the data is complex enough to be interesting.
+	And, finally,terrain data is something that is familiar that we should all have a good intuition
+	for the way it behaves.</p>
+	
 		<p>The following table summarizes the general properties for ETOPO1.</p> 
+		<br>
 			<table class="tight-table">
 			<tbody>
 			<tr><td>Rows in raster</td>           <td class="tdright">10800</td></tr>
@@ -83,20 +89,31 @@
 			<tr><td>Max value (elevation)</td>    <td class="tdright">8333 m</td></tr>
 			<tr><td>Range of values</td>          <td class="tdright">19136 m</td></tr>
 			<tr><td>Storage format</td>           <td class="tdright">two-byte integer</td></tr>
-			<tr><td>Size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
-			<tr><td>Size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
-			<tr><td>Size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
+			<tr><td>Storage size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
+			<tr><td>Storage size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
+			<tr><td>Storage size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
 			<tr><td>Entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
 			</tbody>
 			</table>
+ 
+		<h3 id="entropy">Entropy in ETOPO1</h2>
+		<p>The last entry in the ETOPO1 properties table gives a value for the Shannon entropy
+		of the data source.  For our purposes, we can use a loose definition of the the term 
+		<i>entropy</i> to refer to the complexity of a data source. One of the ideas of the
+		custom compression technques we use in Gridfour is that we can apply transformations
+		to reduce the complexity of our data sources. So the entropy calculation gives us a way
+		of measuring how well those transformations work.</p>
 
-		<p>ETOPO1 was selected as an example for a number of reasons. First, it contains
-		    a substantial number of sample points and requires enough storage space to be
-		    interesting to compress. Second, the surface it describes is highly variable
-		    and provides a broad spectrum of test cases ranging from flat plains,
-		    to mountainous regions, to sheer drop offs along the Continental Shelf.
-		    And, finally, terrain data is something that is familiar to our readers
-		    and easily visualized.</p>
+		<p>Entropy gives us insight into
+		the minimum size that a data compression scheme can attain. But there are a number
+		of qualifying factors when applying that insight. For example, ETOPO1 features an
+		entropy of 12.9 bits per value, but both the zip and custom compression achieve values lower
+		than that (7.23 for zip, 3.60 for the custom compression).</p>
+
+		<p>See <a href="EntropyMetricForDataCompression.html">What Entropy tells us about data compression</a>
+		for more details on this topic.</p>
+		
+		
 
 		<h2 id="why-custom_compression">Why do we need custom compression for raster data?</h2>
 
@@ -105,12 +122,12 @@
 		    raster formats. But, as Kidner and Smith pointed out, "most data and image compression algorithms fail
 		    to capitalize fully on the inherent redundancy in spatial data" (2003).</p>
 
-		<p>For example, consider the case of the ETOPO1 Global Relief Model.
-		    ETOPO1 combines land elevation and ocean bathymetry data for the entire Earth.
-		    Uncompressed, the data set requires about 445 megabytes of storage.
-		    The standard ZIP utility compresses that down to 246 megabytes.
-		    While that result represents a respectable reduction, it is still not as good as the compression ratios
-		    we expect when using ZIP to processing ordinary text.</p>
+		<p>Data compression techniques thrive on the redundancy.  If a particular value shows up
+		with a high frequency in a raster product, a data compression scheme such as Huffman coding can reduce storage size
+		by encoding it with a minimal representation. If a set of values frequently show up in sequence,
+		compressors such as Deflate can save even more storage by encoding the whole group rather than just an single value.</p>
+		
+ 
 
 		<p>By focusing on the unique characteristics of spatial data, implementations such as NetCDF, TIFF,
 		    and Gridfour can achieve better compression ratios for numerical rasters. In the case of ETOPO1, the
@@ -151,7 +168,7 @@
 		approximately 12.9 bits per value.</p>
 		
 		 <figure>
-		 <img src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
+		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
 		 <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
 		 </figure>
 			

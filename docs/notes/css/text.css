@@ -268,6 +268,14 @@ tr:hover {
 	background-color: #f5f5f5;}
 }
 
+figure   {
+  display: flex;
+  justify-content: center;
+}
+
+figcaption {
+	text-align: center;
+}
 
 
 .flow-r {
