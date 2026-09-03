@@ -87,24 +87,28 @@
 			<tr><td>Cell size (at Equator)</td>   <td class="tdright">1.855 km (1.15 mi)</td></tr>
 			<tr><td>Min value (depth)</td>        <td class="tdright">-10803 m</td></tr>
 			<tr><td>Max value (elevation)</td>    <td class="tdright">8333 m</td></tr>
+			<tr><td>Average value</td>            <td class="tdright">-1818 m</td></tr>
 			<tr><td>Range of values</td>          <td class="tdright">19136 m</td></tr>
+			<tr><td>Unique values recorded</td>   <td class="tdright">17036</td></tr>
 			<tr><td>Storage format</td>           <td class="tdright">two-byte integer</td></tr>
 			<tr><td>Storage size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
 			<tr><td>Storage size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
 			<tr><td>Storage size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
-			<tr><td>Entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
+			<tr><td>Shannon entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
 			</tbody>
 			</table>
  
 		<h3 id="entropy">Entropy in ETOPO1</h2>
-		<p>The last entry in the ETOPO1 properties table gives a value for the Shannon entropy
-		of the data source.  For our purposes, we can use a loose definition of the the term 
+		<p>The last entry in the ETOPO1 properties table gives a value for the entropy
+		of the data source. Entropy, one of the fundamental ideas of information theory,
+		was introduced by Claude Shannon (1948).		
+		For our purposes, we can use a loose definition of the the term 
 		<i>entropy</i> to refer to the complexity of a data source. One of the ideas of the
 		custom compression technques we use in Gridfour is that we can apply transformations
 		to reduce the complexity of our data sources. So the entropy calculation gives us a way
-		of measuring how well those transformations work.</p>
+		of estimating how well those transformations work.</p>
 
-		<p>Entropy gives us insight into
+		<p>Entropy also gives us insight into
 		the minimum size that a data compression scheme can attain. But there are a number
 		of qualifying factors when applying that insight. For example, ETOPO1 features an
 		entropy of 12.9 bits per value, but both the zip and custom compression achieve values lower
@@ -113,7 +117,32 @@
 		<p>See <a href="EntropyMetricForDataCompression.html">What Entropy tells us about data compression</a>
 		for more details on this topic.</p>
 		
+		<h2>Standard data compression techniques</h2>
+		<p>Data compression is a mature and extensively researched field of study. While there are a substantial
+		number of different data compression algorithms, two main techniques are widely used:</p>
+		<ul>
+		<li>Huffman coding</li>
+		<li>Lempel-Ziv techniques (Zip applications, the Deflate API, etc.)</li>
+		</ul>
+		<h3>Huffman coding</h3>
+		<p>Huffman coding is a provably optimal data compression technique (Huffman, 1952). It assigns
+		variable-length bit codes to each unique symbol in a text. Symbols that occur most frequently
+		are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
+		Even though Huffman coding has been superceded by more recent techniques, it is still
+		used as a core component of several compression formats including the JPEG image specification and
+		the Deflate API.</p>
+		<p>Huffman coding is effective when a text contains a small set of unique symbols that occur
+		with a much higher frequency than all other symbols <i>combined</i>.</p>
 		
+		
+		<h3>Lempel-Ziv techniques (Deflate API)</h3>
+		<p>While the Huffman code operates on individual symbols, Lempel-Ziv techniques are based on 
+		identifying sequences of symbols. Essentially, Lempel-Ziv techniques construct a dynamic dictionary
+        of sequences from an arbitrary text and record bit sequences referring to entries from that dictionary.
+		The Deflate API is based on a combination of the Lempel-Ziv 1977 variation and Huffman coding.</p>
+
+        <p>Lempel-Ziv techniques, and the Deflate API, are most effective when a text contains several
+			sequences of symbols that occur multiple times.</p>
 
 		<h2 id="why-custom_compression">Why do we need custom compression for raster data?</h2>
 
@@ -121,19 +150,20 @@
 		    So, at first glance, it may not be apparent why we would be interested in custom solutions for numerical
 		    raster formats. But, as Kidner and Smith pointed out, "most data and image compression algorithms fail
 		    to capitalize fully on the inherent redundancy in spatial data" (2003).</p>
+			
+			<p>The limitations of conventional techniques when applied to spatial-based raster data are apparent
+			in the compression results for ETOPO1. The Windows Zip utility reduces it from 445 megabytes down to 246, or 
+			55 percent of its original size.  But the same program reduces this HTML document to 31 percent of its size.
+			Clearly, mainstream techniques work better on plain text than they do on numerical rasters.
+			Conventional techniques are limited in that they do not account for the numerical relationships between
+			adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
+			showed, we can take advantage of these relationships to transform the data into a form that
+            is more tractable to data compression. For example, the Gridfour implementation reduces the size
+of ETOPO1 to 22 percent of its original size while losslessly preservice the its content. </p>
+			
+	
 
-		<p>Data compression techniques thrive on the redundancy.  If a particular value shows up
-		with a high frequency in a raster product, a data compression scheme such as Huffman coding can reduce storage size
-		by encoding it with a minimal representation. If a set of values frequently show up in sequence,
-		compressors such as Deflate can save even more storage by encoding the whole group rather than just an single value.</p>
-		
- 
-
-		<p>By focusing on the unique characteristics of spatial data, implementations such as NetCDF, TIFF,
-		    and Gridfour can achieve better compression ratios for numerical rasters. In the case of ETOPO1, the
-		    Gridfour process losslessly reduces the 455 megabyte source down to just over 100 megabytes.</p>
-
-		<h2>How can spatially-aware compression reduce raster data size?</h2>
+		<h2>How does spatially-aware compression reduce raster data size?</h2>
 		<p>One of the seminal ideas of raster data compression is that there is often only a small variation
 		    in value from grid cell to grid cell. In many cases, it is possible for an algorithm to predict
 		    the value of a one grid cell based on those of its neighbors. A predicted value may not be always be
@@ -161,16 +191,29 @@
 		symbols that occur in the data set. The values in ETOPO1 cover a range of 19136 meters given
 		as integers. While not all possible values in that range actually appear in the raster product, 
 		17036 of them do. Compressors such as Huffman coding depend on a subset of the symbols having 
-		a much higher frequency of occurrence than others. And while values near zero do dominate the graph,
-		there is still a substantial presence of other values, such as those in the ocean 
-		abyssal plain (4000 meters depth) and those near a land of elevation of 300 meters.  
-		Finally, the ETOPO1 data features a relatively high Shannon entropy rate of
+		a much higher frequency of occurrence than others. And while elevations near zero do dominate the graph,
+		their contribution to the overall raster is actually smaller than the combined counts of other values. 
+		For instance, note the contributions in the
+		abyssal plain regions (4000 meters depth) and those near a land of elevation of 300 meters.</p>
+		
+		<p>Also, recall the ETOPO1 data features a relatively high Shannon entropy rate of
 		approximately 12.9 bits per value.</p>
 		
 		 <figure>
 		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
 		 <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
 		 </figure>
+		 
+		 <p>Figure 3 shows what happens when we apply predictive techniques to ETOPO1.</p>
+		 
+		 	 <figure>
+		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationPredictionResiduals.png"
+		 alt="Counts for residuals from predicted values for ETOPO1">
+		 <figcaption>Figure 3 &ndash; Counts for residuals from predicted values for ETOPO1..</figcaption>
+		 </figure>
+		 
+		 
+		 
 			
 		<h2 id="the-simplest-predictive-technique">The Simplest Predictive Technique</h2>
 		<p>The simple predictor which assumed that the
@@ -179,7 +222,7 @@
 		    point minus that of its predecessor.  The compressed form of the raster
 		    data consisted of an initial <em>seed</em> value followed by a sequence of delta
 		    values that could be used to recover the original representation.
-		    In GVRS, this technique is referred to as a Differencing Predictor Model.
+		    In Gridfour's implementation, this technique is referred to as a Differencing Predictor Model.
 		    Other data compression implementations sometimes refer to it as a <em>differencing technique</em>.
 		    In the original Gem93 project, the Differencing Predictor approach was inspired by
 		    a description of audio delta pulse code modulation in
@@ -215,12 +258,12 @@
 		    from the end of one row to the beginning of the next. If taken in sequence,
 		    these two sample points will not be spatially correlated. </p>
 		<p>In practice, this requirement for special handling is easily met. In the uncompressed form,
-		    GVRS stores grid points in row-major order (one row at a time). So in most cases,
+		    Gridfour stores grid points in row-major order (one row at a time). So in most cases,
 		    the predecessor of a grid point is just the sample that preceded it in the row.
 		    There is, however, one edge case that requires special handling. In row-major order,
 		    the grid point that follows the last point in a row is the first point in the next row.
 		    So, a predictor-residual based on the Differencing Model needs to implement
-		    special handling for that transition. In GVRS, the following rules are applied:</p>
+		    special handling for that transition. In Gridfour, the following rules are applied:</p>
 		<ol>
 		    <li>The first grid point in the first row of a tile is treated as a &quot;seed&quot; value.</li>
 		    <li>The difference value for each point in a row, except the first, is computed using the grid point that preceded it.</li>
@@ -235,7 +278,7 @@
 		    (NCEP 2005, table 5.6) and the TIFF image format
 		    (Adobe, 1992, p. 64, &quot;Section 14: Differencing Predictor&quot;).</p>
 		<h2 id="other-predictor-models">Other Predictor Models</h2>
-		<p>The current version of GVRS implements two additional predictor models:
+		<p>The current version of Gridfour implements two additional predictor models:
 		    the Linear Predictor and the Triangle Predictor.</p>
 		<p>The Linear Predictor model predicts that the data varies as a linear function. The value
 		    for the next sample in a sequence is predicted using a straight-line computed from the two
@@ -259,7 +302,7 @@
 		    the simple computation used by the Triangle Predictor model.</p>
 		<p>Both the Linear and the Triangle Predictor require special handling to initialize
 		    the grid before applying the prediction computations. In the case of the Linear
-		    Predictor, GVRS uses the seed value and the pattern established for the Differencing
+		    Predictor, Gridfour uses the seed value and the pattern established for the Differencing
 		    Predictor to pre-populate the first two columns of the grid. In the case of the
 		    Triangle Predictor, the first row and first column are populated using same approach.
 		    Once the grid is initialized, the specific predictors
@@ -268,7 +311,7 @@
 		<p>Once the residuals are computed using a predictor-residual model,
 		    they are passed to compression processes based on conventional data
 		    compression algorithms such as the Huffman and Deflate techniques
-		    described above.  Both the custom Huffman implementation included with the GVRS code base
+		    described above.  Both the custom Huffman implementation included with the Gridfour code base
 		    and the Deflate API provided as part of the standard Java library
 		    are designed to process bytes. But the predictive-residual models produce output
 		    in the form of integers. So in order to use them to process
@@ -282,7 +325,7 @@
 		    of the residuals are quite small (using the Triangle Predictor, 87.9 percent
 		    of the residuals computed for ETOPO1 have an absolute value less than 15).
 		    So using 4 bytes to store these small values would be wasteful.</p>
-		<p>To serialize the residuals, GVRS uses a scheme that it calls the M32 code.
+		<p>To serialize the residuals, Gridfour uses a scheme that it calls the M32 code.
 		    M32 is an integer-to-byte coding scheme that adjusts the number of bytes
 		    in the output to reflect the magnitude of each term in the input.
 		    In that regard, it uses an approach similar to that used for the widely used UTF-8 character encoding.
@@ -308,23 +351,23 @@
 		    Again, in the case of larger residuals, the M32 code can actually be longer
 		    than the 4 bytes needed for a simple integer. Fortunately, a good predictor
 		    will produce small residuals. In fact, for the elevation data sets used when developing
-		    GVRS, the average length of the M32 code sequences is
+		    Gridfour, the average length of the M32 code sequences is
 		    about 1.013 bytes per grid value.</p>
 		<h1 id="compressors">Compressors</h1>
 		<p>By applying the predictive-residual transformations and M32 serialization,
-		    the GVRS codecs transform the data to a state where it can be processed by
+		    the Gridfour codecs transform the data to a state where it can be processed by
 		    conventional compressor methods. While the transformation-serialization process generally
 		    reduces the size of the data (as it did for the ETOPO1 example),
 		    its main benefit is that it results in a form with more
 		    redundancy than the original. And as the redundancy is increased,
 		    the data becomes more suitable for processing by conventional data compression techniques.</p>
-		<p>As noted above, the two codecs currently implemented in GVRS are based
+		<p>As noted above, the two codecs currently implemented in Gridfour are based
 		    on the Huffman coding and Deflate algorithms. APIs that support
 		    Deflate are available in most popular software environments and
-		    programming languages. GVRS uses the Deflate class provided by
+		    programming languages. Gridfour uses the Deflate class provided by
 		    the standard Java API.  For the simpler Huffman coding,
-		    GVRS uses a custom implementation.</p>
-		<p>During the compression phase, the current implementation of GVRS attempts
+		    Gridfour uses a custom implementation.</p>
+		<p>During the compression phase, the current implementation of Gridfour attempts
 		    to compress data using both codecs and all three predictive-residual transformations.
 		    It then selects the serialized form that produces the smallest output size.
 		    In testing with ETOPO1, the Deflate algorithm was selected in
@@ -363,7 +406,7 @@
 		    this tendency of the statistical properties of data to change across
 		    a data set is referred to as <em>non-stationarity</em>.</p>
 		<p>These two considerations have a direct bearing on the size of the tiles specified
-		    when creation a GVRS file to cover a raster product with non-uniform behavior.
+		    when creation a Gridfour file to cover a raster product with non-uniform behavior.
 		    A larger tile size reduces the amount of symbol-table overhead compared
 		    to the length of the encoded data. But a larger tile also allows
 		    for more non-stationarity and thus dilutes the effectiveness of
@@ -372,11 +415,11 @@
 		    choice may require some experimentation. In working with elevation data sets,
 		    we have found that a tile size in the range of 10 to 40 thousand grid
 		    cells is usually a good place to start.</p>
-		<h3 id="how-gvrs-stores-the-huffman-tree">How GVRS Stores the Huffman Tree</h3>
+		<h3 id="how-Gridfour-stores-the-huffman-tree">How Gridfour Stores the Huffman Tree</h3>
 		<p>In the classic Huffman algorithm, the symbol-frequency table is used to create
 		    a tree structure that serves as a mechanism for encoding or decoding
 		    the compressed data. Although many implementations store the frequency data directly,
-		    the GVRS implementation gains efficiency by storing the structure of the tree itself
+		    the Gridfour implementation gains efficiency by storing the structure of the tree itself
 		    rather than retaining the actual frequency data.</p>
 		<p>In the storage phase of processing, the Huffman tree is created using
 		    the classic algorithm. Once established, the tree is stored according
@@ -385,7 +428,7 @@
 		<pre><code>
 1. Introduce with sequence with an unsigned byte indicating the number
 of unique symbols, N, in the tree. Since there will never be zero symbols
-in the tree, GVRS stores the value N-1 in this byte. Thus one byte is sufficient
+in the tree, Gridfour stores the value N-1 in this byte. Thus one byte is sufficient
 to represent all possible symbol counts for a M32 representation.
 2. Traverse the Huffman tree starting from the root node using RecusiveStore(rootNode)
 3. RecursiveStore(node)
@@ -451,9 +494,9 @@ iii. Return.
 		    of implementation and clarity of code, so lacks some optimizations that
 		    would tend to complicate or obscure the logic. So, there may be opportunities
 		    for reducing the processing time. Arithmetic coding may be the subject
-		    of future investigation for the GVRS project.  </p>
+		    of future investigation for the Gridfour project.  </p>
 		<h1 id="future-work">Future Work</h1>
-		<p>The introduction to this article made the claim that the GVRS package is intended
+		<p>The introduction to this article made the claim that the Gridfour package is intended
 		    to serve as a testbed for investigators and software developers who wish to
 		    experiment with their own solutions for raster data compression. We hope that by
 		    describing the current implementations, we demonstrated some of the reasons that
@@ -465,11 +508,11 @@ iii. Return.
 		    the use of wavelet functions. Data compression continues to be an area
 		    of active interest in the software community, and we fully expect that
 		    new techniques are waiting to be discovered.</p>
-		<p>The GVRS project is especially interested in lossless, or nearly lossless, techniques
-		    for compressing real-valued data.  The current GVRS implementation implements compression
+		<p>The Gridfour project is especially interested in lossless, or nearly lossless, techniques
+		    for compressing real-valued data.  The current Gridfour implementation implements compression
 		    for floating point data, but the results are not as successful as they are for integers.</p>
 		<p>If you are investigating raster-based data compression, we wish you the best
-		    of luck and hope that insights from GVRS can help you on your way. And, as always,
+		    of luck and hope that insights from Gridfour can help you on your way. And, as always,
 		    we welcome your ideas and suggestions.</p>
 		<h1 id="references">References</h1>
 		<p>Adobe Systems, Inc. (1992). <em>TIFF Revision 6.0 Final – June 3, 1992</em>.
@@ -509,10 +552,19 @@ iii. Return.
 		<p>Nayuki (2020). &quot;Reference Arithmetic Coding&quot;. Retrieved January 2020 from
 		    <a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
 		<p>Nelson, M. (1991). <em>The Data Compression Book</em>. M&amp;T Publishing Company, Redwood City, CA.</p>
+		
+		<p>Paeth, Alan W. (1991). Arvo, James (ed.). "Image File Compression Made Easy". 
+		<i>Graphics Gems 2</i>. Academic Press, San Diego: 93–100. 
+		doi:10.1016/B978-0-08-050754-5.50029-3. ISBN 0-12-064480-0.</p>
+
+        <p>Shannon, C. (1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal. 27 (3)</i>: 
+                   379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
+                   Reprint with corrections hosted by the Harvard University Mathematics Department at
+                   <a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">
+                   https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf</a> (accessed November 2024).</p>
 
         <p>Smith, Derek H., & Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.
            Computers & Geosciences, Volume 20, Issues 7-8, August-October 1994, 1137-1141</p>
-
 
 		<p>SQLite4 (2019). &quot;Variable-Length Integers&quot;.
 		    Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">
