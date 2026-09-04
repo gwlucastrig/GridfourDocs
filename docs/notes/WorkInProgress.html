@@ -89,7 +89,6 @@
 			<tr><td>Max value (elevation)</td>    <td class="tdright">8333 m</td></tr>
 			<tr><td>Average value</td>            <td class="tdright">-1818 m</td></tr>
 			<tr><td>Range of values</td>          <td class="tdright">19136 m</td></tr>
-			<tr><td>Unique values recorded</td>   <td class="tdright">17036</td></tr>
 			<tr><td>Storage format</td>           <td class="tdright">two-byte integer</td></tr>
 			<tr><td>Storage size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
 			<tr><td>Storage size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
@@ -126,11 +125,14 @@
 		</ul>
 		<h3>Huffman coding</h3>
 		<p>Huffman coding is a provably optimal data compression technique (Huffman, 1952). It assigns
-		variable-length bit codes to each unique symbol in a text. Symbols that occur most frequently
+		variable-length bit codes to each unique symbol in a text. The lengths of these bit codes are
+        determined based on a <i>frequency table</i> that relates each symbol to the number of times it occurs in the text.
+		Symbols that occur most frequently
 		are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
 		Even though Huffman coding has been superceded by more recent techniques, it is still
 		used as a core component of several compression formats including the JPEG image specification and
 		the Deflate API.</p>
+		
 		<p>Huffman coding is effective when a text contains a small set of unique symbols that occur
 		with a much higher frequency than all other symbols <i>combined</i>.</p>
 		
@@ -159,7 +161,7 @@
 			adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
 			showed, we can take advantage of these relationships to transform the data into a form that
             is more tractable to data compression. For example, the Gridfour implementation reduces the size
-of ETOPO1 to 22 percent of its original size while losslessly preservice the its content. </p>
+            of ETOPO1 to 22 percent of its original size while losslessly preserving the its content. </p>
 			
 	
 
@@ -181,30 +183,38 @@ of ETOPO1 to 22 percent of its original size while losslessly preservice the its
 
 		<p>The Gridfour API implements both the differencing and triangle predictors. Details are given below.
 		    It also includes a more advanced algorithm based on Lagrange Multipliers that was proposed by
-			Smith and Lewis in 1994.
+			Smith and Lewis in 1994.</p>
 
 		
 			
-		<h1 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to ETOPO1</h1>
+		<h1 id="ETOPO1-resists-compression">How ETOPO1 resists conventional data compression</h1>
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
-		First, most compression schemes carry some degree of overhead based on the number if unique 
-		symbols that occur in the data set. The values in ETOPO1 cover a range of 19136 meters given
-		as integers. While not all possible values in that range actually appear in the raster product, 
-		17036 of them do. Compressors such as Huffman coding depend on a subset of the symbols having 
-		a much higher frequency of occurrence than others. And while elevations near zero do dominate the graph,
-		their contribution to the overall raster is actually smaller than the combined counts of other values. 
-		For instance, note the contributions in the
-		abyssal plain regions (4000 meters depth) and those near a land of elevation of 300 meters.</p>
-		
-		<p>Also, recall the ETOPO1 data features a relatively high Shannon entropy rate of
-		approximately 12.9 bits per value.</p>
+		At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
+		for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
+		symbols in a text, an configuration which would be expected to reduce the compessed size of a data set.
+		But even though the near-zero occur more often than other values across the range,
+		they do not dominate the frequency table for encoded symbols. In fact, they represent less than
+		five percent of the total number of grid cells in the raster. The cost of encoding all data values in the
+		raster outweighs any saving that we might see for any particular subset of the whole.</p>
+		<p>This situation reflects a trend that we often see in data sets such as ETOPO1. Raster products
+		commonly have a broad set of unique values with similar frequencies of occurance. This characteristic
+		drives up the Shannon entropy for the data set and leads toward less successful data compression.
+		Additionally, most compression implementations carry a non-trivial overhead based on the
+		number of unique symbols that occur in the source data. So the large range-of-values we see in
+		many raster data products can have an even greater impact on the final size of a compressed data set.<p> 
 		
 		 <figure>
 		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
 		 <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
 		 </figure>
 		 
-		 <p>Figure 3 shows what happens when we apply predictive techniques to ETOPO1.</p>
+		 <p>Figure 3 below shows what happens when we apply Kidner and Smith's triangle predictor techniques to ETOPO1.
+		 We obtain a set of residuals that are much more amenable to data compression than the original
+		 values from the raster product. In this case, the spike of near-zero residuals actualy does
+		 dominate the frequency table for encoded symbols. Furthermore, the range of unique residual values
+		 reduces to a smaller interval (-2970 to +1953). Finally, the overall entropy for the data set is
+		 reduced from 12.9 for the raw samples to 4.99 for the residuals. Later in these notes, we will consider
+		 ways of reducting that value even further.</p>
 		 
 		 	 <figure>
 		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationPredictionResiduals.png"
@@ -213,10 +223,27 @@ of ETOPO1 to 22 percent of its original size while losslessly preservice the its
 		 </figure>
 		 
 		 
-		 
+		 <h1 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to raster data</h1>
+		 <p>Predictive techniques make a critical assumption about the nature of numerical raster data 
+		 products with a spatial basis. They assume that
+		    the characteristics of two points closely located in space will tend to be similar.
+		    In other words, it assumes that the <em>values</em> of elements that are closely located
+		    spatially (i.e. in terms of grid coordinates) will also be close together numerically.
+		    And, thanks to this similarity (e.g. this tendency for neighboring samples to correlate),
+		    it is possible to use the values of one or more grid points to predict
+		    the value of a neighbor. This assumption is generally true in real-world examples
+		    such as elevation data.  We expect that two points a few hundred meters
+		    apart are more likely to be similar than two points placed
+		    far apart.  This idea is sometimes referred
+		    to as &quot;spatial autocorrelation&quot; and has been extensively studied in
+		    Geographic Information Analysis and other fields.</p>
 			
 		<h2 id="the-simplest-predictive-technique">The Simplest Predictive Technique</h2>
-		<p>The simple predictor which assumed that the
+		<p>The simplest predictor technique we apply to raster data is the differencing predictor
+		    which was introduced above. The differencing approach takes grid points in some serial order
+			and assumes that each value in the grid will be a close match for the one that preceded it.
+			
+		    which assumed that the
 		    value of the raster data remained constant from grid point to grid point.
 		    For that predictor, the residual was just the value of the current grid
 		    point minus that of its predecessor.  The compressed form of the raster
@@ -230,18 +257,7 @@ of ETOPO1 to 22 percent of its original size while losslessly preservice the its
 		    technique that was used in the audio industry as early as the 1950’s (Chaplin, 1952).
 		    While the Differencing Model predictor is not especially powerful,
 		    it is easy to implement and offers excellent run-time performance.</p>
-		<p>The Differencing Model predictor makes a critical assumption about the data. It assumes that
-		    the values of two points closely located in space will tend to be similar.
-		    In other words, it assumes that the <em>values</em> of elements that are closely located
-		    spatially (i.e. in terms of grid coordinates) will also be close together numerically.
-		    And, thanks to this similarity (e.g. this tendency for neighboring samples to correlate),
-		    it is possible to use the values of one or more grid points to predict
-		    the value of a neighbor. This assumption is generally true in real-world examples
-		    such as elevation data.  We expect that two points a few hundred meters
-		    apart are more likely to be similar than two points placed
-		    far apart.  This idea is sometimes referred
-		    to as &quot;spatial autocorrelation&quot; and has been extensively studied in
-		    Geographic Information Analysis and other fields.</p>
+
 		<p>Again let&#39;s consider the example of a set of elevation grid points specified on a
 		    region with a constant slope. Because the sample points are collected at positions
 		    with a uniform spacing, the difference in elevation from point-to-point is
