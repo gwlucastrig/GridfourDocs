@@ -281,7 +281,7 @@
 			 <figure>
 		<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternDifferencing.png"
 		alt="Pattern for Differencing-Model Predictive Resolution Transform"></p>
-		<figcaption>Figure 4. Traversal pattern for Gridfour differencing predictor</figcaption>
+		<figcaption>Figure 4. &ndash; Traversal pattern for Gridfour differencing predictor</figcaption>
 		</figure>
 		
 		<p>It is worth repeating that the use of the Differencing Model for raster data is not unique to the Gridfour project.
@@ -293,14 +293,14 @@
 			adjacency issues at the transition from row to row (World Wide Web Consortium, 2003, section 9 "Filtering").
 			</p>
 		<h2 id="other-predictor-models">Other Predictor Models</h2>
-		<p>The current version of Gridfour implements two additional predictor models:
+		<p>The standard version of Gridfour implements two additional predictor models:
 		    the Linear Predictor and the Triangle Predictor.</p>
 		<p>The Linear Predictor model predicts that the data varies as a linear function. The value
 		    for the next sample in a sequence is predicted using a straight-line computed from the two
 		    that preceded it.  The predictor is applied on a row-by-row basis. The vertical coordinate
 		    of the points that precede the target point are assigned the values Z<sub>A</sub>, Z<sub>B</sub> respectively.
 		    If we assume that the grid points are spaced at equal intervals,
-		    then the predicted value, Z<sub>P</sub>, is given by Z<sub>P</sub> = 2&#10005;Z<sub>B</sub>&thinsp;-&thinsp;Z<sub>A</sub>.</p>
+		    then the predicted value, Z<sub>P</sub>, is given by Z<sub>P</sub>&thinsp;=&thinsp;2&thinsp;&#10005;&thinsp;Z<sub>B</sub>&thinsp;-&thinsp;Z<sub>A</sub>.</p>
 		<p>The Triangle Predictor was described by Kidner &amp; Smith (1992).  It uses three neighboring
 		    points A, B, and C, to predict the value of a target sample as shown in the figure below.
 		    The vertical coordinate of the points are assigned the values Z<sub>A</sub>, Z<sub>B</sub>, and Z<sub>C</sub> respectively.
@@ -325,22 +325,23 @@
 		<h2 id="serializing-the-residuals">Serializing the Residuals</h2>
 		<p>Once the residuals are computed using a predictor-residual model,
 		    they are passed to compression processes based on conventional data
-		    compression algorithms such as the Huffman and Deflate techniques
-		    described above.  Both the custom Huffman implementation included with the Gridfour code base
-		    and the Deflate API provided as part of the standard Java library
-		    are designed to process bytes. But the predictive-residual models produce output
-		    in the form of integers. So in order to use them to process
-		    and store the outputs from the models, the residuals must somehow be serialized
-		    into a byte form. Most of the residuals tend to be close to zero, so the serialization
-		    for them is trivial. In some cases, however, the residuals will be in
-		    excess of the value that can be stored in a single byte.</p>
+		    compression algorithms such as the Huffman and Deflate APIs
+		    described above. One further challenge remains.  Recall that when we processed ETOPO1
+			using the triangle predictor, it yielded residuals in the range -2970 to 1953.
+			For other input data sets, the potential range of residuals can be much larger,
+			up to and including the full range of signed integer types. While the Gridfour
+			implementation of canonical Huffman coding can accept integers as input,
+			the Deflate API is designed to accept bytes. So in order to process residuals
+			using Deflate, we need to marshal the residual values into the form of bytes.</p>
+		 
 		<p>While it would be feasible to simply split out the integer residual
 		    values into the component bytes, doing so would tend to dilute the
 		    redundancy in the output data. Furthermore, a significant number
 		    of the residuals are quite small (using the Triangle Predictor, 87.9 percent
 		    of the residuals computed for ETOPO1 have an absolute value less than 15).
-		    So using 4 bytes to store these small values would be wasteful.</p>
-		<p>To serialize the residuals, Gridfour uses a scheme that it calls the M32 code.
+			So marshaling residuals to a 4-byte form would tend to fill the input
+			into Deflate with a large number of superfluous zero-valued bytes.</p>
+		<p>To serialize the residuals for processing by Delfate, Gridfour uses a scheme that it calls the M32 code.
 		    M32 is an integer-to-byte coding scheme that adjusts the number of bytes
 		    in the output to reflect the magnitude of each term in the input.
 		    In that regard, it uses an approach similar to that used for the widely used UTF-8 character encoding.
@@ -365,110 +366,49 @@
 		    tend to be small because it preserves the one-byte-per-value relationship.
 		    Again, in the case of larger residuals, the M32 code can actually be longer
 		    than the 4 bytes needed for a simple integer. Fortunately, a good predictor
-		    will produce small residuals. In fact, for the elevation data sets used when developing
+		    will usually produce small residuals. In fact, for the elevation data sets used when developing
 		    Gridfour, the average length of the M32 code sequences is
 		    about 1.013 bytes per grid value.</p>
-		<h1 id="compressors">Compressors</h1>
-		<p>By applying the predictive-residual transformations and M32 serialization,
-		    the Gridfour codecs transform the data to a state where it can be processed by
-		    conventional compressor methods. While the transformation-serialization process generally
-		    reduces the size of the data (as it did for the ETOPO1 example),
-		    its main benefit is that it results in a form with more
-		    redundancy than the original. And as the redundancy is increased,
-		    the data becomes more suitable for processing by conventional data compression techniques.</p>
-		<p>As noted above, the two codecs currently implemented in Gridfour are based
-		    on the Huffman coding and Deflate algorithms. APIs that support
-		    Deflate are available in most popular software environments and
-		    programming languages. Gridfour uses the Deflate class provided by
-		    the standard Java API.  For the simpler Huffman coding,
-		    Gridfour uses a custom implementation.</p>
-		<p>During the compression phase, the current implementation of Gridfour attempts
-		    to compress data using both codecs and all three predictive-residual transformations.
-		    It then selects the serialized form that produces the smallest output size.
-		    In testing with ETOPO1, the Deflate algorithm was selected in
-		    about 65 percent of the tiles with Huffman being selected for the remaining 35 percent.</p>
-		<h2 id="huffman-coding">Huffman Coding</h2>
-		<p>Huffman coding was originally developed for the compression of text-based data
-		    and the terminology associated with it reflects that origin. For these notes,
-		    we will stick to the usual conventions and refer to the sequence of data values
-		    to be compressed (the M32 serialized bytes) as the &quot;text&quot;. Individual elements
-		    with the sequence (each M32-serialized byte) will be described as the <em>symbols</em>.</p>
-		<p>Huffman coding is based on an analysis of the frequency with which certain
-		    data values (symbols) appear within the data sequence (text) to be compressed.
-		    It provides an efficient way of assigning a unique sequence of bits
-		    to each symbol such that the more common symbols have shorter encoding
-		    sequences and the less common symbols have longer sequences.
-		    Since common symbols can be encoded using short sequences,
-		    the overall length of the encoded text is reduced.</p>
-		<p>One consequence of this approach is that the encoded message must somehow
-		    carry information about the <em>frequency table</em> for the symbols it encodes.
-		    Traditional Huffman implementations provide this information directly
-		    by including a symbol-frequency table at the start of the compressed
-		    data sequence. Adaptive Huffman methods embed the information
-		    in the compressed sequence itself. In either case, the frequency
-		    information adds overhead to the encoded data.</p>
-		<p>In many cases, the overhead for the frequency information has a fixed size regardless
-		    of the length of the encoded text. Thus, as the length of the
-		    original text increases, the proportion of the output due to
-		    overhead elements decreases. So, under the Huffman encoding,
-		    longer text tends to compress more efficiently than shorter text.</p>
-		<p>On the other hand, in some data sets, the distribution of the symbol frequencies
-		    can change over the course of the text. For example, in the ETOPO1
-		    elevation data, the symbol table for a mountainous region behaves differently
-		    than that collected over the plains. So if a set of elevation data set
-		    contained data for both regions, a single frequency table would not provide
-		    an efficient description the two separate regions. In spatial analysis,
+			
+			   <h2 id="tiling-schemes-and-data-compression">Tiling Schemes and Data Compression</h2>
+                <p>Many raster products are large enough that it is not feasible to process the
+				entire data set all at once.  Gridfour manages large rasters by subdividing the grid
+				into a number of smaller, uniformly sized subgrids called <i>tiles</i> as shown in
+				Figure 5 below.
+ 
+				<figure>
+                <<img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme"> 
+				<figcaption>Figure 5 &ndash; An example tiling scheme</figcaption>
+				</figure>
+                <p>The Gridfour API implements logic that allows tiles to be compressed and decompressed
+				independently. This approach is significant in terms of data compression because,  
+                    in many data sets, the statistical properties of the data often varies across the
+                    domain of the data. For example, in the ETOPO1 elevation/bathymetry example, we would expect to see very
+                    different terrain (and very different data compression characteristics) over the Nullarbor Plain
+                    in Australia versus the steep drop offs along the Continental Shelf. Processing the raster
+					as a single entity would combine data distributed across heterogenous areas. And, because
+					compresion depends on redundancy and uniformity, the extra complexity inherent in mixing
+					together statistically different regions would lead to less successful results.</p>
+					
+					<p> In spatial analysis,
 		    this tendency of the statistical properties of data to change across
 		    a data set is referred to as <em>non-stationarity</em>.</p>
-		<p>These two considerations have a direct bearing on the size of the tiles specified
-		    when creation a Gridfour file to cover a raster product with non-uniform behavior.
-		    A larger tile size reduces the amount of symbol-table overhead compared
-		    to the length of the encoded data. But a larger tile also allows
-		    for more non-stationarity and thus dilutes the effectiveness of
-		    the symbol table.  Of course, a larger tile size also increases
-		    the memory use by the application.  So finding an optimal tile-size
-		    choice may require some experimentation. In working with elevation data sets,
-		    we have found that a tile size in the range of 10 to 40 thousand grid
-		    cells is usually a good place to start.</p>
-		<h3 id="how-Gridfour-stores-the-huffman-tree">How Gridfour Stores the Huffman Tree</h3>
-		<p>In the classic Huffman algorithm, the symbol-frequency table is used to create
-		    a tree structure that serves as a mechanism for encoding or decoding
-		    the compressed data. Although many implementations store the frequency data directly,
-		    the Gridfour implementation gains efficiency by storing the structure of the tree itself
-		    rather than retaining the actual frequency data.</p>
-		<p>In the storage phase of processing, the Huffman tree is created using
-		    the classic algorithm. Once established, the tree is stored according
-		    to the following recursive algorithm which starts from the
-		    root node of the tree.</p>
-		<pre><code>
-1. Introduce with sequence with an unsigned byte indicating the number
-of unique symbols, N, in the tree. Since there will never be zero symbols
-in the tree, Gridfour stores the value N-1 in this byte. Thus one byte is sufficient
-to represent all possible symbol counts for a M32 representation.
-2. Traverse the Huffman tree starting from the root node using RecusiveStore(rootNode)
-3. RecursiveStore(node)
-a. If the node is a branch
-i. Output a bit with value 0.
-ii. Call RecursiveStore on the left child node.
-iii. Call RecursiveStore on the right child node.
-iv. Return.
-b. If the node is a leaf (a terminal)
-i. Output a bit with a value 1.
-ii. Output the symbol.
-iii. Return.
-</code></pre>
-
-		<p>In testing with the ETOPO1 data set, there were typically about 100 unique
-		    symbols in a M32-serialized tile. Storing the Huffman tree algorithm averaged
-		    about 782 bits per tile.</p>
-		<p>For simplicity, the tree-encoding algorithm was described above using a
-		    recursive approach. In the actual code, it is implemented using a stack.
-		    Although the stack-based approach leads to more complicated code,
-		    it is necessary because of the potential depth of recursion that
-		    might be encountered when storing the tree structure. In rare cases,
-		    the depth of the Huffman tree (and thus the depth of recursive calls)
-		    could reach 256, which would be too deep for some Java JVM’s.
-		    Thus a safe implementation required the use of a stack.</p>
+					
+					<p>Dividing the data into subgrids allows the API to apply different predictors and different
+					compression techniques depending on the local behavior of the data in each tile.
+					Thus, the specification of tiles becomes an important consideration in applying data
+					compression to  a large raster. On the other hand, partitioning the data into
+					smaller subgrids can have a disadvantage because
+                    it reduces the overall size of a block of data to be compressed. Most practical compression implementations
+                    include overhead beyond the storage required for the actual data.
+                    This overhead tends to be of a more-or-less fixed size. For a small
+                    data set, that overhead may comprise a significant amount of the overall storage required for
+                    the data. But as the size of the data set increases, the relative contribution of the
+                    overhead is reduced.</p>
+			 
+		 
+		 
+		 
 		<h2 id="arithmetic-coding">Arithmetic Coding</h2>
 		<p>Kidner and Smith (2003) demonstrated improvement in compression ratios by using
 		    arithmetic coding rather than Huffman codes. Because arithmetic coding reflects
