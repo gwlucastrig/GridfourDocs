@@ -36,7 +36,7 @@
 		<p>This document provides details for the design, methods, and algorithms used
 		    by the Gridfour raster data compression implementation.</p>
 
-		<p>One of the goals of the Gridfour software project is to explore data compression
+		<p>The Gridfour software project explores data compression
 		    techniques for numerical, grid-based data products. We are particularly interested
 		    in <i>lossless</i> compression for data sets that have an underlying spatial basis.
 		    There are many such data products that benefit from custom data compression. These include
@@ -44,8 +44,7 @@
 		    meteorological analysis, laboratory observations, and other grid-based representations of natural phenomena.</p>
 
 		<p>The Gridfour API implements lossless data compression
-		    for both integer and floating-point raster data formats. The API allows software applications to
-		    access the data in part or as a whole on an as-needed basis by performing decompression on-the-fly
+		    for both integer and floating-point raster data formats and supports on-the-fly decompression
 		    at runtime. The mechanisms that support authoring and reading raster data products can also
 		    serve as a convenient testbed for software developers who are investigating their own data-compression techniques.
 		    Developers can extend the capabilities of Gridfour by writing custom codec (coder-decoder)
@@ -79,10 +78,11 @@
 		<p>The following table summarizes the general properties for ETOPO1.</p> 
 		<br>
 			<table class="tight-table">
+			<caption>ETOPO1 properties at a glance</caption>
 			<tbody>
 			<tr><td>Rows in raster</td>           <td class="tdright">10800</td></tr>
 			<tr><td>Columns in raster</td>        <td class="tdright">21600</td></tr>
-			<tr><td>Cells in raster</td>          <td class="tdright">233 million</td/</tr>
+			<tr><td>Cells in raster</td>          <td class="tdright">233 million</td></tr>
 			<tr><td>Cell spacing</td>             <td class="tdright">1/60<sup>th</sup> degree</td></tr>
 			<tr><td>Cell size (at Equator)</td>   <td class="tdright">1.855 km (1.15 mi)</td></tr>
 			<tr><td>Min value (depth)</td>        <td class="tdright">-10803 m</td></tr>
@@ -90,20 +90,20 @@
 			<tr><td>Average value</td>            <td class="tdright">-1818 m</td></tr>
 			<tr><td>Range of values</td>          <td class="tdright">19136 m</td></tr>
 			<tr><td>Storage format</td>           <td class="tdright">two-byte integer</td></tr>
-			<tr><td>Storage size uncompressed</td>        <td class="tdright">445 megabytes</td><tr>
+			<tr><td>Storage size uncompressed</td>        <td class="tdright">445 megabytes</td></tr>
 			<tr><td>Storage size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
 			<tr><td>Storage size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
 			<tr><td>Shannon entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
 			</tbody>
 			</table>
  
-		<h3 id="entropy">Entropy in ETOPO1</h2>
+		<h3 id="entropy">Entropy in ETOPO1</h3>
 		<p>The last entry in the ETOPO1 properties table gives a value for the entropy
 		of the data source. Entropy, one of the fundamental ideas of information theory,
 		was introduced by Claude Shannon (1948).		
-		For our purposes, we can use a loose definition of the the term 
+		For our purposes, we can use a loose definition of the term 
 		<i>entropy</i> to refer to the complexity of a data source. One of the ideas of the
-		custom compression technques we use in Gridfour is that we can apply transformations
+		custom compression techniques we use in Gridfour is that we can apply transformations
 		to reduce the complexity of our data sources. So the entropy calculation gives us a way
 		of estimating how well those transformations work.</p>
 
@@ -129,7 +129,7 @@
         determined based on a <i>frequency table</i> that relates each symbol to the number of times it occurs in the text.
 		Symbols that occur most frequently
 		are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
-		Even though Huffman coding has been superceded by more recent techniques, it is still
+		Even though Huffman coding has been superseded by more recent techniques, it is still
 		used as a core component of several compression formats including the JPEG image specification and
 		the Deflate API.</p>
 		
@@ -156,8 +156,9 @@
 			<p>The limitations of conventional techniques when applied to spatial-based raster data are apparent
 			in the compression results for ETOPO1. The Windows Zip utility reduces it from 445 megabytes down to 246, or 
 			55 percent of its original size.  But the same program reduces this HTML document to 31 percent of its size.
-			Clearly, mainstream techniques work better on plain text than they do on numerical rasters.
-			Conventional techniques are limited in that they do not account for the numerical relationships between
+			Clearly, mainstream techniques work better on plain text than they do on numerical rasters.</p>
+			
+			<p>Conventional techniques are limited in that they do not account for the numerical relationships between
 			adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
 			showed, we can take advantage of these relationships to transform the data into a form that
             is more tractable to data compression. For example, the Gridfour implementation reduces the size
@@ -191,7 +192,7 @@
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
 		At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
 		for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
-		symbols in a text, an configuration which would be expected to reduce the compessed size of a data set.
+		symbols in a text, an configuration which would be expected to reduce the compressed size of a data set.
 		But even though the near-zero occur more often than other values across the range,
 		they do not dominate the frequency table for encoded symbols. In fact, they represent less than
 		five percent of the total number of grid cells in the raster. The cost of encoding all data values in the
@@ -210,11 +211,11 @@
 		 
 		 <p>Figure 3 below shows what happens when we apply Kidner and Smith's triangle predictor techniques to ETOPO1.
 		 We obtain a set of residuals that are much more amenable to data compression than the original
-		 values from the raster product. In this case, the spike of near-zero residuals actualy does
+		 values from the raster product. In this case, the spike of near-zero residuals actually does
 		 dominate the frequency table for encoded symbols. Furthermore, the range of unique residual values
 		 reduces to a smaller interval (-2970 to +1953). Finally, the overall entropy for the data set is
 		 reduced from 12.9 for the raw samples to 4.99 for the residuals. Later in these notes, we will consider
-		 ways of reducting that value even further.</p>
+		 ways of reducing that value even further.</p>
 		 
 		 	 <figure>
 		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationPredictionResiduals.png"
@@ -249,7 +250,7 @@
 			<li>For all other cells, predict that the value for the cell will be the same as its predecessor</li>
 			<li>The difference of the actual value and the prediction is the residual. Record the residuals for all cells</li>
 			<li>Pass the collection of residuals to a conventional data compression routine.</li>
-			<li>The result will often be much smaller than a direct compression of the orginal values.</li>
+			<li>The result will often be much smaller than a direct compression of the original values.</li>
 			</ul>
 			
 			<p>In Gridfour, the seed value is not included as part of the compression, but is treated
@@ -262,7 +263,7 @@
 			close. So it is important that the traversal sequence preserves adjacency. Now consider the case
 			in which an implementation traverses a grid in row-major order as it does in the TIFF standard.
             The process	accesses grid cells one at a time
-            across a row. Adjency is preserved. But, at the end of a row, it jumps back to the first cell in the
+            across a row. Adjacency is preserved. But, at the end of a row, it jumps back to the first cell in the
             next row. For a large raster, that cell may be far removed from its predecessor.<p>
 
 			<p>There are patterns for traversing a raster that do preserve adjacency. The GRIB2 format
@@ -278,7 +279,7 @@
 			
 			<p>Figure 4 shows the pattern used in Gridfour's differencing predictor. The difference is
 			always computed using an adjacent cell. But, at the transition from row to row, the
-			computation uses the verically adjacent cell rather than the horizontal.</p>
+			computation uses the vertically adjacent cell rather than the horizontal.</p>
 			
 			 <figure>
 		<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternDifferencing.png"
@@ -389,7 +390,7 @@
                     different terrain (and very different data compression characteristics) over the Nullarbor Plain
                     in Australia versus the steep drop offs along the Continental Shelf. Processing the raster
 					as a single entity would combine data distributed across heterogenous areas. And, because
-					compresion depends on redundancy and uniformity, the extra complexity inherent in mixing
+					compression depends on redundancy and uniformity, the extra complexity inherent in mixing
 					together statistically different regions would lead to less successful results.</p>
 					
 					<p> In spatial analysis,
