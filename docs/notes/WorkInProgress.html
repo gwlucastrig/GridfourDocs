@@ -305,11 +305,11 @@
 		    If we assume that the grid points are spaced at equal intervals,
 		    then the predicted value, Z<sub>P</sub>, is given by Z<sub>P</sub>&thinsp;=&thinsp;2&thinsp;&#10005;&thinsp;Z<sub>B</sub>&thinsp;-&thinsp;Z<sub>A</sub>.</p>
 		<p>The Triangle Predictor was described by Kidner &amp; Smith (1992).  It uses three neighboring
-		    points A, B, and C, to predict the value of a target sample as shown in the figure below.
+		    points A, B, and C, to predict the value of a target sample as shown in the image below.
 		    The vertical coordinate of the points are assigned the values Z<sub>A</sub>, Z<sub>B</sub>, and Z<sub>C</sub> respectively.
 		    By treating the grid as having a fixed spacing between columns, <em>s</em>, and a fixed spacing between rows, <em>t</em>,
 		    the prediction computation is simplified to Z<sub>P</sub> = Z<sub>B</sub>+Z<sub>C</sub>-Z<sub>A</sub>.</p>
-		<p><img src="images/GVRS_Compression/CompressionPatternTriangle.png" alt="Pattern for Triangle-Model Predictive-Residual Transform"></p>
+		<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternTriangle.png" alt="Pattern for Triangle-Model Predictive-Residual Transform"></p>
 		<p>To see how this relationship is derived, start by taking each sample and the predicted
 		    point as vectors:</p>
 		<p><img src="images/GVRS_Compression/TriangleAlgebra1.png" alt="Variables for triangle predictor"> </p>
@@ -374,6 +374,10 @@
 		    about 1.013 bytes per grid value.</p>
 			
 			   <h2 id="tiling-schemes-and-data-compression">Tiling Schemes and Data Compression</h2>
+			   <p>Although it may not seem an obvious part of a data compression scheme, there
+			   is one other consideration that can have a substantial influence on compression results:
+			   the way we choose to subdivide large rasters into smaller grids.</p>
+			   
                 <p>Many raster products are large enough that it is not feasible to process the
 				entire data set all at once.  Gridfour manages large rasters by subdividing the grid
 				into a number of smaller, uniformly sized subgrids called <i>tiles</i> as shown in
@@ -409,6 +413,8 @@
                     data set, that overhead may comprise a significant amount of the overall storage required for
                     the data. But as the size of the data set increases, the relative contribution of the
                     overhead is reduced.</p>
+	 
+	 
 	 
 		<h1 id="future-work">Future Work</h1>
 		<p>The introduction to this article made the claim that the Gridfour package is intended
