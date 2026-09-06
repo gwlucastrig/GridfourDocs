@@ -256,10 +256,12 @@
 			as an overhead element.</p>
 
 			<p>For the most part, implementing a differencing predictor is straightforward. The one area of significant variation
-			lies in how we define the traversal sequence for the grid cells in the raster. The key assumption
+			lies in how we define the traversal sequence for the grid cells in the raster. The selection
+			of an ordering scheme affects the compression ratio for the output. The key assumption
 			for the differencing technique is that the numerical values for adjacent cells are relatively
-			closes. So it is important that the traversal sequence preserves adjacency. Now consider the case
-			in which an implementation traverses a grid in row-major order. It accesses grid cells one at a time
+			close. So it is important that the traversal sequence preserves adjacency. Now consider the case
+			in which an implementation traverses a grid in row-major order as it does in the TIFF standard.
+            The process	accesses grid cells one at a time
             across a row. Adjency is preserved. But, at the end of a row, it jumps back to the first cell in the
             next row. For a large raster, that cell may be far removed from its predecessor.<p>
 
@@ -374,10 +376,10 @@
                 <p>Many raster products are large enough that it is not feasible to process the
 				entire data set all at once.  Gridfour manages large rasters by subdividing the grid
 				into a number of smaller, uniformly sized subgrids called <i>tiles</i> as shown in
-				Figure 5 below.
+				Figure 5 below.</p>
  
 				<figure>
-                <<img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme"> 
+                <img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme"> 
 				<figcaption>Figure 5 &ndash; An example tiling scheme</figcaption>
 				</figure>
                 <p>The Gridfour API implements logic that allows tiles to be compressed and decompressed
@@ -392,12 +394,13 @@
 					
 					<p> In spatial analysis,
 		    this tendency of the statistical properties of data to change across
-		    a data set is referred to as <em>non-stationarity</em>.</p>
-					
-					<p>Dividing the data into subgrids allows the API to apply different predictors and different
+		    a data set is referred to as <em>non-stationarity</em>. A well-chosen tiling scheme allows an
+			API to separate data into subsets that feature a self-consistent set of statistics.
+			Dividing the data into subgrids also allows the API to apply different predictors and different
 					compression techniques depending on the local behavior of the data in each tile.
 					Thus, the specification of tiles becomes an important consideration in applying data
-					compression to  a large raster. On the other hand, partitioning the data into
+					compression to a large raster.</p>
+					<p>On the other hand, partitioning the data into
 					smaller subgrids can have a disadvantage because
                     it reduces the overall size of a block of data to be compressed. Most practical compression implementations
                     include overhead beyond the storage required for the actual data.
@@ -405,51 +408,7 @@
                     data set, that overhead may comprise a significant amount of the overall storage required for
                     the data. But as the size of the data set increases, the relative contribution of the
                     overhead is reduced.</p>
-			 
-		 
-		 
-		 
-		<h2 id="arithmetic-coding">Arithmetic Coding</h2>
-		<p>Kidner and Smith (2003) demonstrated improvement in compression ratios by using
-		    arithmetic coding rather than Huffman codes. Because arithmetic coding reflects
-		    the frequency distribution of symbols in the compressed data more accurately than
-		    Huffman, it can achieve better compression ratios than Huffman.
-		    Unfortunately, implementing arithmetic coding is more complicated than
-		    implementing Huffman coding.  Arithmetic encoders also tend to require
-		    more processing time than Huffman.</p>
-		<p>As an experiment, we implemented a compression codes using the Reference Implementation
-		    of an adaptive arithmetic encoder (Nayuki, 2020). During the test, we
-		    replaced the Huffman codec with the arithmetic codec, but retained the Deflate codec.
-		    The relative number of tiles for which arithmetic coding was selected remained roughly
-		    the same as for the Huffman case described above. But the arithmetic encoder
-		    reduced the size of the compressed data by about 2 percent. On the other hand,
-		    arithmetic coding required more processing time than Huffman.</p>
-		<table>
-		    <thead>
-			<tr>
-			    <th>Method</th>
-			    <th>Bits/Symbol</th>
-			    <th>Time to Read Tiles (seconds)</th>
-			</tr>
-		    </thead>
-		    <tbody>
-			<tr>
-			    <td>Huffman &amp; Deflate</td>
-			    <td>4.6</td>
-			    <td>1.9</td>
-			</tr>
-			<tr>
-			    <td>Arithmetic &amp; Deflate</td>
-			    <td>4.5</td>
-			    <td>7.2</td>
-			</tr>
-		    </tbody>
-		</table>
-		<p>It is worth noting that the Reference Implementation focuses on correctness
-		    of implementation and clarity of code, so lacks some optimizations that
-		    would tend to complicate or obscure the logic. So, there may be opportunities
-		    for reducing the processing time. Arithmetic coding may be the subject
-		    of future investigation for the Gridfour project.  </p>
+	 
 		<h1 id="future-work">Future Work</h1>
 		<p>The introduction to this article made the claim that the Gridfour package is intended
 		    to serve as a testbed for investigators and software developers who wish to
@@ -459,8 +418,10 @@
 		<p>There are many, many promising avenues to explore for better solutions
 		    to the raster data compression problem. Kidner and Smith (2003) used a more
 		    powerful predictor based on Lagrange multipliers and arithmetic coding.
-		    Some commercial solutions (and the JPEG 2000 standard) have explored
-		    the use of wavelet functions. Data compression continues to be an area
+			The Gridfour implementation of this feature is covered in our project notes
+			<a href="CompressionUsingOptimalPredictors.html">Lossless compression for raster data using optimal predictors</a>.
+		    Some commercial and public solutions, including the JPEG 2000 standard, 
+		    use wavelet functions. Data compression continues to be an area
 		    of active interest in the software community, and we fully expect that
 		    new techniques are waiting to be discovered.</p>
 		<p>The Gridfour project is especially interested in lossless, or nearly lossless, techniques
