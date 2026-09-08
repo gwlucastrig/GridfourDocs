@@ -439,6 +439,7 @@
 		But when the source tile has low entropy, the predictors tend to be of approximately equal effectiveness.
 		For low entropy cases, the less powerful predictors may be selected because they feature slightly
 		less overhead than the triangle predictor.
+
 		<pre>
 GVRS Canonical Huffman                        Compressed Output    |     Predictor Residuals
   Predictor                Times Used       bits/sym    bits/tile  |  esc-bits    avg-unique  entropy | code table
@@ -468,7 +469,7 @@ Details for the Gridfour implementation are provided in a separate article at
 <a href="CompressionUsingOptimalPredictors.html">Lossless compression for raster data using optimal predictors</a>.</p>
 
 <p>The optimal predictor achieves the best compression ratios of any solution currently implemented by
-Gridfour. But that performance comes at the cost of extra predictor extra processing time for both compression and decompression. 
+Gridfour. But that performance comes at the cost of extra processing time for both compression and decompression. 
 So it is treated as an optional selection in the Gridfour API. Table 2 below gives compression and decompression
 statistics for different codec and predictor configurations when processing the ETOPO1 data set. Tests were performed
 using the Gridfour Java API running on a medium-scale laptop computer running Windows.</p>
@@ -527,7 +528,7 @@ as separate data sets and passing them to conventional compressors.</p>
 The Gridfour project is interested in investigating alternative (potentially better) techniques.</p>
 
 
-<h3 id="ETOPO-2022">The ETOPO 2022 floating-point raster data set</h3>
+<h3 id="ETOPO-2022">The ETOPO-2022 floating-point raster data set</h3>
 <p>In 2022, NOAA released an updated version of their ETOPO data products that used floating point values
 rather than integers. The data set includes products at different resolutions, including one with the same
 1 minute of arc resolution as ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value. 
@@ -536,7 +537,7 @@ While this is an slight improvement over the source NetCDF format (456 megabytes
 The text below shows summary information from the compression results.  The high-order 7 bits
 of the mantissa (the row labeled Mantissa-1) have a lower entropy than the middle and lower bytes (Mantissa-2 and Mantissa-3).
 The <i>Input</i> column indicates the number of bytes before compression, the <i>Compressed</i>
-column indicates the resulting compression.</p>
+column indicates the resulting compression:</p>
 
 <pre>
 Gridfour_Float
