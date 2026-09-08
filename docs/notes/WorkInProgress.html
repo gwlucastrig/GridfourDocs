@@ -28,9 +28,15 @@
 	    <div id="notescontent">
 
 
-		<p class="title">
-		    Data Compression for Numerical Raster Data
-		</p>
+                <div class="titleblock">
+                    <p class="blocktitle">
+                        Data compression for numerical raster data
+                    </p>
+                    <p class="blockauthor">by G.W. Lucas</p>
+					<p class="blockauthor">March 2020, updated August 2026</p>
+                </div>
+
+ 
 
 		<h1 id="introduction">Introduction</h1>
 		<p>This document provides details for the design, methods, and algorithms used
@@ -141,7 +147,7 @@
 		<p>While the Huffman code operates on individual symbols, Lempel-Ziv techniques are based on 
 		identifying sequences of symbols. Essentially, Lempel-Ziv techniques construct a dynamic dictionary
         of sequences from an arbitrary text and record bit sequences referring to entries from that dictionary.
-		The Deflate API is based on a combination of the Lempel-Ziv 1977 variation and Huffman coding.</p>
+		The Deflate API is based on a combination of the Lempel-Ziv 1977 variation and Huffman coding (Deutsch, 1996).</p>
 
         <p>Lempel-Ziv techniques, and the Deflate API, are most effective when a text contains several
 			sequences of symbols that occur multiple times.</p>
@@ -188,7 +194,7 @@
 
 		
 			
-		<h1 id="ETOPO1-resists-compression">How ETOPO1 resists conventional data compression</h1>
+		<h1 id="ETOPO1-resists-compression">Why ETOPO1 resists conventional data compression</h1>
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
 		At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
 		for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
@@ -202,7 +208,7 @@
 		drives up the Shannon entropy for the data set and leads toward less successful data compression.
 		Additionally, most compression implementations carry a non-trivial overhead based on the
 		number of unique symbols that occur in the source data. So the large range-of-values we see in
-		many raster data products can have an even greater impact on the final size of a compressed data set.<p> 
+		many raster data products can have an even greater impact on the final size of a compressed data set.</p> 
 		
 		 <figure>
 		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
@@ -287,7 +293,7 @@
 		<figcaption>Figure 4. &ndash; Traversal pattern for Gridfour differencing predictor</figcaption>
 		</figure>
 		
-		<p>It is worth repeating that the use of the Differencing Model for raster data is not unique to the Gridfour project.
+		<p>It is worth repeating that the use of the differencing predictor for raster data is not unique to the Gridfour project.
 		    It is used in a number of specifications including the GRIB2 raster data format
 		    (NCEP 2005, table 5.6) and the TIFF image format
 		    (Adobe, 1992, p. 64, &quot;Section 14: Differencing Predictor&quot;).
@@ -325,6 +331,7 @@
 		    Triangle Predictor, the first row and first column are populated using same approach.
 		    Once the grid is initialized, the specific predictors
 		    can be used for the remaining grid cells.</p>
+			
 		<h2 id="serializing-the-residuals">Serializing the Residuals</h2>
 		<p>Once the residuals are computed using a predictor-residual model,
 		    they are passed to compression processes based on conventional data
@@ -332,19 +339,22 @@
 		    described above. One further challenge remains.  Recall that when we processed ETOPO1
 			using the triangle predictor, it yielded residuals in the range -2970 to 1953.
 			For other input data sets, the potential range of residuals can be much larger,
-			up to and including the full range of signed integer types. While the Gridfour
+			up to and including the full range of signed integer types.</p>
+			
+			<p>While the Gridfour
 			implementation of canonical Huffman coding can accept integers as input,
 			the Deflate API is designed to accept bytes. So in order to process residuals
 			using Deflate, we need to marshal the residual values into the form of bytes.</p>
 		 
-		<p>While it would be feasible to simply split out the integer residual
-		    values into the component bytes, doing so would tend to dilute the
+		<p>It is feasible to simply split out the integer residual
+		    values into the component bytes, but doing so would tend to dilute the
 		    redundancy in the output data. Furthermore, a significant number
 		    of the residuals are quite small (using the Triangle Predictor, 87.9 percent
 		    of the residuals computed for ETOPO1 have an absolute value less than 15).
 			So marshaling residuals to a 4-byte form would tend to fill the input
 			into Deflate with a large number of superfluous zero-valued bytes.</p>
-		<p>To serialize the residuals for processing by Delfate, Gridfour uses a scheme that it calls the M32 code.
+			
+		<p>To serialize the residuals for processing by Deflate, Gridfour uses a scheme that it calls the M32 code.
 		    M32 is an integer-to-byte coding scheme that adjusts the number of bytes
 		    in the output to reflect the magnitude of each term in the input.
 		    In that regard, it uses an approach similar to that used for the widely used UTF-8 character encoding.
@@ -356,9 +366,9 @@
 		    in the output is essentially a hybrid value. For small-magnitude values (
 		    in the range -126 to +126), it is just a signed-byte representation
 		    of the input value. The values -127 and +127 are used to introduce
-		    multibyte sequences. And the value -128 is used to indicate the
+		    multi-byte sequences. And the value -128 is used to indicate the
 		    minimum 32-bit integer value, -2147483648, which Gridfour often
-		    uses as a null-data code. In the multibyte sequences, the bytes that
+		    uses as a null-data code. In the multi-byte sequences, the bytes that
 		    follow the introducer give bits for the numerical value in
 		    big-endian order. Each byte carries 7 bits of information with
 		    the high-order bit used to indicate if additional bytes follow.
@@ -387,6 +397,7 @@
                 <img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme"> 
 				<figcaption>Figure 5 &ndash; An example tiling scheme</figcaption>
 				</figure>
+				
                 <p>The Gridfour API implements logic that allows tiles to be compressed and decompressed
 				independently. This approach is significant in terms of data compression because,  
                     in many data sets, the statistical properties of the data often varies across the
@@ -407,6 +418,7 @@
 			and different compression techniques depending on the local behavior of the data in each tile.
 			Thus, the specification of tiles becomes an important consideration in applying data
 			compression to a large raster.</p>
+			
 			<p>On the other hand, partitioning the data into
 			smaller subgrids can have a disadvantage because
 			it reduces the overall size of a block of data to be compressed. Most practical compression implementations
@@ -457,20 +469,20 @@ Details for the Gridfour implementation are provided in a separate article at
 
 <p>The optimal predictor achieves the best compression ratios of any solution currently implemented by
 Gridfour. But that performance comes at the cost of extra predictor extra processing time for both compression and decompression. 
-So it is treated as an optional selection in the Girdfour API. Table 2 below gives compression and decompression
+So it is treated as an optional selection in the Gridfour API. Table 2 below gives compression and decompression
 statistics for different codec and predictor configurations when processing the ETOPO1 data set. Tests were performed
 using the Gridfour Java API running on a medium-scale laptop computer running Windows.</p>
-
-<br>
+ 
 <table class="tight-table">
 	<caption>Table 2 &ndash; Performance </caption>
 	<thead>
 		<tr>
-			<th>Codec/Predictor</th>
-			<th>Storage size</th>
-			<th>Compress<br>(seconds)</th>
-			<th>Decompress<br>(seconds)</th>
+			<th scope="col">Codec/Predictor</th>
+			<th scope="col">Storage size</th>
+			<th scope="col">Compress<br>(seconds)</th>
+			<th scope="col">Decompress<br>(seconds)</th>
 		</tr>
+	</thead>
 	<tbody>
 		<tr>
 			<td>Huffman</td> 
@@ -522,12 +534,13 @@ through conventional compressors.</p>
 		    new techniques are waiting to be discovered.</p>
 		<p>The Gridfour project is especially interested in lossless, or nearly lossless, techniques
 		    for compressing real-valued data.  The current Gridfour implementation implements compression
-		    for floating point data, but the results are not as successful as they are for integers.</p>
+		    for floating point data, but the results are not as successful as they are for integers.
+			We would like to investigate further solutions for floating-point formats.</p>
 		<p>If you are investigating raster-based data compression, we wish you the best
 		    of luck and hope that insights from Gridfour can help you on your way. And, as always,
 		    we welcome your ideas and suggestions.</p>
 		<h1 id="references">References</h1>
-		<p>Adobe Systems, Inc. (1992). <em>TIFF Revision 6.0 Final – June 3, 1992</em>.
+		<p>Adobe Systems, Inc. (1992). <i>TIFF Revision 6.0 Final – June 3, 1992</i>.
 		    Retrieved from <a href="https://download.osgeo.org/libtiff/doc/TIFF6.pdf">
 			https://download.osgeo.org/libtiff/doc/TIFF6.pdf</a></p>
 
@@ -537,27 +550,29 @@ through conventional compressors.</p>
 		    NOAA Technical Memorandum NESDIS NGDC-24, DOI: 10.7289/V5C8276M</p>
 
 		<p>Cutler, C. Chapin. (1950). U.S. Patent No. 2605361,
-		    &quot;Differential Quantization of Communication Signals&quot;.
+		    Differential Quantization of Communication Signals.
 		    Filed June 29, 1950, issued July 29, 1952</p>
 
-		<p>Deutsch, L. Peter  (1996). &quot;DEFLATE Compressed Data Format Specification version 1.3&quot;.
+		<p>Deutsch, L. Peter  (1996). DEFLATE Compressed Data Format Specification version 1.3.
 		    IETF. p. 1. sec. Abstract. doi:10.17487/RFC1951. RFC 1951.</p>
 
-		<p>Huffman, D. (1952). &quot;A Method for the Construction of Minimum-Redundancy Codes&quot; (PDF).
+		<p>Huffman, D. (1952). A Method for the Construction of Minimum-Redundancy Codes (PDF).
 		    Proceedings of the IRE. 40 (9): 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
 
-		<p>Kidner, D.B. and Smith, D.H. (1992). &quot;Compression of digital elevation models by Huffman coding&quot;.
+		<p>Kidner, D.B. and Smith, D.H. (1992). Compression of digital elevation models by Huffman coding.
 		    Computers and Geosciences, 18(8), 1013-1034.</p>
 
-		<p>Kidner, D.B. &amp; Smith, D.H. (2003). &quot;Advances in data compression of digital elevation models&quot;.
+		<p>Kidner, D.B. &amp; Smith, D.H. (2003). Advances in data compression of digital elevation models.
 		    Computers &amp; Geosciences 29 (8), 985-1002.</p>
 		
-		     <p>Lewis, M., &#38; Smith, D.H. (1993). "Optimal predictors for the data compression of digital
-                    elevation models using the method of Lagrange multipliers". In <i>Auto-Carto XI Proceedings of the
-                        International Symposium on Computer-Assisted Cartography</i>, Oct 30-Nov 1, 1993. PDF document accessed
+		     <p>Lewis, M., &amp;; Smith, D.H. (1993). Optimal predictors for the data compression of digital
+                    elevation models using the method of Lagrange multipliers. 
+					In <i>Auto-Carto XI Proceedings of the International Symposium on Computer-Assisted Cartography</i>,
+					Oct 30-Nov 1, 1993. PDF document accessed
                     August, 2026 from
                     <a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">
-                        https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf</a></p>
+                        https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf</a>
+						</p>
 
 
 		<p>National Oceanic and Atmospheric Administration [NOAA], 2026. ETOPO Global Relief Model.
@@ -565,11 +580,11 @@ through conventional compressors.</p>
 		<a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model">https://www.ncei.noaa.gov/products/etopo-global-relief-model</a></p>
 
 		<p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005.
-		    &quot;NCEP WMO GRIB2 Documentation&quot;. Accessed January 2020 from
+		    NCEP WMO GRIB2 Documentation. Accessed January 2020 from
 		    <a href="https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/">
 			https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/</a></p>
 
-		<p>Nayuki (2020). &quot;Reference Arithmetic Coding&quot;. Retrieved January 2020 from
+		<p>Nayuki (2020). Reference Arithmetic Coding. Retrieved January 2020 from
 		    <a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
 		<p>Nelson, M. (1991). <em>The Data Compression Book</em>. M&amp;T Publishing Company, Redwood City, CA.</p>
 		
@@ -586,11 +601,11 @@ through conventional compressors.</p>
         <p>Smith, Derek H., & Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.
            Computers & Geosciences, Volume 20, Issues 7-8, August-October 1994, 1137-1141</p>
 
-		<p>SQLite4 (2019). &quot;Variable-Length Integers&quot;.
+		<p>SQLite4 (2019). Variable-Length Integers.
 		    Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">
 			https://sqlite.org/src4/doc/trunk/www/varint.wiki</a>.</p>
 
-		<p>Wikipedia (2020). &quot;Differential pulse-code modulation&quot;.
+		<p>Wikipedia (2020). Differential pulse-code modulation.
 		    Retrieved January 2020 from <a href="https://en.wikipedia.org/wiki/Differential_pulse-code_modulation">
 			https://en.wikipedia.org/wiki/Differential_pulse-code_modulation</a></p>
 			
