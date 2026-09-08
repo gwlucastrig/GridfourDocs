@@ -488,34 +488,70 @@ using the Gridfour Java API running on a medium-scale laptop computer running Wi
 			<td>Huffman</td> 
 			<td class="tdright">125.26 MB</td>
 			<td class="tdright">23.9</td>
-			<td class="tdright">2.1</td>
+			<td class="tdright">1.9</td>
 		</tr>
 		<tr>
 			<td>Huffman & Deflate</td> 
 			<td class="tdright">121.91 MB</td>
 			<td class="tdright">64.7</td>
-			<td class="tdright">3.2</td>
+			<td class="tdright">2.0</td>
 		</tr>
 		<tr>
 			<td>Huffman, Deflate, Optimal Predictors</td> 
 			<td class="tdright">100.32 MB</td>
 			<td class="tdright">114.1</td>
-			<td class="tdright">8.2</td>
+			<td class="tdright">5.1</td>
 		</tr>
 	</tbody>
 </table>
 
 <h2 id="floating-point-rasters">Compression for rasters with floating-point formats</h2>
-<p>Unfortunately, the prediction techniques that work well for integer data do not apply to floating-point formats.
-Because of their extended precision, the residuals when performing float-point calculations tend to have
-a high degree of entropy. Thus, they are no more amenable to compression than a direct approach operating over
-the raw bytes representing floating-point values. Rather than using predictors,
-the current Gridfour implementation takes the approach of splitting floating point values into its components:
-sign bit, exponent (8 bits), and mantissa (23 bits). These components are serialized separately and processed
-through conventional compressors.</p>
+<p>Raster data sets that feature non-integral floating-point values present different
+challenges than the integer formats described above.
+Rasters that feature floating-point data tend to have a higher degree of entropy than integer-based formats.
+And the prediction techniques that  work well for integer data are usually not effective for floating-point formats.
+When a predictor operates over a floating-point raster, the residuals may be of a lower magnitude than
+the source values, but that does not reduce the complexity of the mantissas. The low-order bits simply propagate
+across computations.</p> 
 
-<p>The Gridfour implementation of floating-point compression is described in a separate article at
+<p>A four-byte floating point format has three distinct components: the sign bit, the exponent (8 bits), and
+the mantissa (23 bits). Often, the components have different degrees of entropy. For example, consider a raster
+consisting of all positive values hovering near 1.0. The sign bit is always the same and will have an entropy of zero.
+The exponent byte will have the same, or nearly the same values. So it will also compress effectively.
+But the mantissa will tend to have quite a bit of entropy, especially in the case of a random or nearly random variable.
+So the current Gridfour implementation takes the approach of treating the component elements of its source data
+as separate data sets and passing them to conventional compressors.</p>
+
+<p>Details about the Gridfour approach to compressing floating-point rasters are provided at
 <a href="LosslessCompressionForFloatingPointData.html">Lossless Compression for Floating Point Data</a>.
+The Gridfour project is interested in investigating alternative (potentially better) techniques.</p>
+
+
+<h3 id="ETOPO-2022">The ETOPO 2022 floating-point raster data set</h3>
+<p>In 2022, NOAA released an updated version of their ETOPO data products that used floating point values
+rather than integers. The data set includes products at different resolutions, including one with the same
+1 minute of arc resolution as ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value. 
+Gridfour compresses the data to 417 megabytes, or about 47 percent of its original size.
+While this is an slight improvement over the source NetCDF format (456 megabytes), it is not particularly satisfying.
+The text below shows summary information from the compression results.  The high-order 7 bits
+of the mantissa (the row labeled Mantissa-1) have a lower entropy than the middle and lower bytes (Mantissa-2 and Mantissa-3).
+The <i>Input</i> column indicates the number of bytes before compression, the <i>Compressed</i>
+column indicates the resulting compression.</p>
+
+<pre>
+Gridfour_Float
+     Element             Input      Compressed     (Reduction)    Entropy   Bits/Symbol
+     Sign bits            2700          68.64       ( 2.5422%)      0.18     0.03
+     Exponent            21600         830.03       ( 3.8427%)      0.93     0.31
+     Mantissa-1 delta    18900        9194.47       (48.6480%)      3.32     3.41
+     Mantissa-2 delta    21600       19813.16       (91.7276%)      7.37     7.34
+     Mantissa-3 delta    21600       10546.48       (48.8263%)      3.99     3.91
+
+   Average Bytes/Tile        40474.79        (46.8458%)
+   Average Bytes/Sample          1.87        (46.8458%)
+   Average Bits/Sample          14.99
+</pre>
+
 
 		<h1 id="future-work">Future Work</h1>
 		<p>The introduction to this article made the claim that the Gridfour package is intended
