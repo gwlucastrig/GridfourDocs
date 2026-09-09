@@ -30,13 +30,13 @@
 
                 <div class="titleblock">
                     <p class="blocktitle">
-                        Data compression for numerical raster data
+                        Data Compression for Numerical Raster Data
                     </p>
-                    <p class="blockauthor">by G.W. Lucas</p>
-					<p class="blockauthor">March 2020, updated August 2026</p>
+                    <p class="blockauthor">by G.W. Lucas<br>Posted January 2022. Updated September 2026.</p>
+
                 </div>
 
- 
+
 
 		<h1 id="introduction">Introduction</h1>
 		<p>This document provides details for the design, methods, and algorithms used
@@ -54,38 +54,39 @@
 		    at runtime. The mechanisms that support authoring and reading raster data products can also
 		    serve as a convenient testbed for software developers who are investigating their own data-compression techniques.
 		    Developers can extend the capabilities of Gridfour by writing custom codec (coder-decoder)
-		    classes that are registered with the Gridfour API at runtime. This approach lets investigators
-		    take advantage of Gridfour’s data management capabilities and focus on their core algorithm development.</p>
-			
-			
-			
+		    classes that are registered with the Gridfour API at runtime. This approach lets
+		    Gridfour’s take care of data management tasks so that investigators can focus on their core algorithm development.</p>
+
+
+		<h1 id="techniques">Techniques</h1>
+
 		<h2 id="the-etopo1-example-data-set">An example raster data source: ETOPO1</h2>
 
 		<p>In the discussion that follows, we will use a data set called ETOPO1 to illustrate
-		    key points related to raster data compression. The ETOPO series(for Earth topography) 
-			is a family of global-scale elevation and ocean depth
+		    key points related to raster data compression. The ETOPO series(for Earth topography)
+		    is a family of global-scale elevation and ocean depth
 		    (bathymetry) data set developed by the U.S. National Oceanic and Atmospheric Administration (NOAA, 2026).
-			ETOPO1 is a numeric raster that gives elevations in integer meters referenced to mean sea level,
-			with negative values indicating depth. The raster has a spatial basis. Its
-			grid is defined by latitude and longitude coordinates (Amante, 2009) with grid cells
-			referenced to specific locations on the Earth. Figure 1 below shows a shaded-relief image 
-			that was created using data taken from ETOPO1.</p>
+		    ETOPO1 is a numeric raster that gives elevations in integer meters referenced to mean sea level,
+		    with negative values indicating depth. The raster has a spatial basis. Its
+		    grid is defined by latitude and longitude coordinates (Amante, 2009). Thus its grid cells are
+		    referenced to specific locations on the Earth. Figure 1 below shows a shaded-relief image
+		    that was created using data taken from ETOPO1.</p>
 
 		<figure>
 		    <img class="imageCentered" src="images/General/ShadedReliefGlobalElevation.png" alt="ETOPO1 Shaded Relief">
 		    <figcaption>Figure 1 &ndash; Shaded relief derived from ETOPO1 (data source: NOAA, image: Gridfour)</figcaption>
 		</figure>
 
-	<p>We selected ETOPO1 as an example for a number of reasons. First, at 445 megabytes in size, 
-	it is large enough to be worth compressing. Also, the data is complex enough to be interesting.
-	And, finally,terrain data is something that is familiar that we should all have a good intuition
-	for the way it behaves.</p>
-	
-		<p>The following table summarizes the general properties for ETOPO1.</p> 
+		<p>We selected ETOPO1 as an example for a number of reasons. First, at 445 megabytes in size,
+		    it is large enough to be worth compressing. Also, the data is complex enough to be interesting.
+		    And, finally,terrain data is something that is familiar that we should all have a good intuition
+		    for the way it behaves.</p>
+
+		<p>The following table summarizes the general properties for ETOPO1.</p>
 		<br>
-			<table class="tight-table">
-			<caption>Table 1 &ndash; ETOPO1 properties at a glance</caption>
-			<tbody>
+		<table class="tight-table">
+		    <caption>Table 1 &ndash; ETOPO1 properties at a glance</caption>
+		    <tbody>
 			<tr><td>Rows in raster</td>           <td class="tdright">10800</td></tr>
 			<tr><td>Columns in raster</td>        <td class="tdright">21600</td></tr>
 			<tr><td>Cells in raster</td>          <td class="tdright">233 million</td></tr>
@@ -100,57 +101,56 @@
 			<tr><td>Storage size zip compressed</td>      <td class="tdright">246 megabytes</td></tr>
 			<tr><td>Storage size custom compressed</td>   <td class="tdright">100 megabytes</td></tr>
 			<tr><td>Shannon entropy</td>                  <td class="tdright">12.9 bits/value</td></tr>
-			</tbody>
-			</table>
- 
+		    </tbody>
+		</table>
+
 		<h3 id="entropy">Entropy in ETOPO1</h3>
 		<p>The last entry in the ETOPO1 properties table gives a value for the Shannon entropy
-		of the data source. Entropy, one of the fundamental ideas of information theory,
-		was introduced by Claude Shannon (1948).		
-		For our purposes, we can use a loose definition of the term 
-		<i>entropy</i> to refer to the complexity of a data source. One of the ideas of the
-		custom compression techniques we use in Gridfour is that we can apply transformations
-		to reduce the complexity of our data sources. So the entropy calculation gives us a way
-		of estimating how well those transformations work.</p>
+		    of the data source. Entropy, one of the fundamental ideas of information theory,
+		    was introduced by Claude Shannon (1948).
+		    For our purposes, we can use a loose definition of the term
+		    <i>entropy</i> to refer to the complexity of a data source. One of the ideas of the
+		    custom compression techniques we use in Gridfour is that we can apply transformations
+		    to reduce the complexity of our data sources. So the entropy calculation gives us a way
+		    of estimating how well those transformations work.</p>
 
 		<p>Entropy also gives us insight into
-		the minimum size that a data compression scheme can attain. But there are a number
-		of qualifying factors when applying that insight. For example, ETOPO1 features an
-		entropy of 12.9 bits per value, but both the zip and custom compression achieve values lower
-		than that (7.23 for zip, 3.60 for the custom compression).</p>
+		    the minimum size that a data compression scheme can attain. But there are a number
+		    of qualifying factors when applying that insight. For example, ETOPO1 features an
+		    entropy of 12.9 bits per value, but both the zip and custom compression achieve values lower
+		    than that (7.23 for zip, 3.60 for the custom compression).</p>
 
-		<p>See <a href="EntropyMetricForDataCompression.html">What Entropy tells us about data compression</a>
-		for more details on this topic.</p>
-		
+		<p>For more information on this topic, see <a href="EntropyMetricForDataCompression.html">What Entropy tells us about Data Compression</a>.</p>
+
 		<h2>Standard data compression techniques</h2>
-		<p>Data compression is a mature and extensively researched field of study. While there are a substantial
-		number of different data compression algorithms, two main techniques are widely used:</p>
+		<p>Data compression is a mature and extensively researched field of study. While there are numerous
+		    different data compression algorithms, two main techniques are widely used:</p>
 		<ul>
-		<li>Huffman coding</li>
-		<li>Lempel-Ziv techniques (Zip applications, the Deflate API, etc.)</li>
+		    <li>Huffman coding</li>
+		    <li>Lempel-Ziv techniques (Zip applications, the Deflate API, etc.)</li>
 		</ul>
 		<h3>Huffman coding</h3>
-		<p>Huffman coding is a provably optimal data compression technique (Huffman, 1952). It assigns
-		variable-length bit codes to each unique symbol in a text. The lengths of these bit codes are
-        determined based on a <i>frequency table</i> that relates each symbol to the number of times it occurs in the text.
-		Symbols that occur most frequently
-		are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
-		Even though Huffman coding has been superseded by more recent techniques, it is still
-		used as a core component of several compression formats including the JPEG image specification and
-		the Deflate API.</p>
-		
-		<p>Huffman coding is effective when a text contains a small set of unique symbols that occur
-		with a much higher frequency than all other symbols <i>combined</i>.</p>
-		
-		
-		<h3>Lempel-Ziv techniques (Deflate API)</h3>
-		<p>While the Huffman code operates on individual symbols, Lempel-Ziv techniques are based on 
-		identifying sequences of symbols. Essentially, Lempel-Ziv techniques construct a dynamic dictionary
-        of sequences from an arbitrary text and record bit sequences referring to entries from that dictionary.
-		The Deflate API is based on a combination of the Lempel-Ziv 1977 variation and Huffman coding (Deutsch, 1996).</p>
+		<p>Huffman coding is the oldest provably optimal data compression technique (Huffman, 1952). It assigns
+		    variable-length bit codes to each unique symbol in a text. The lengths of these bit codes are
+		    determined based on a <i>frequency table</i> that relates each symbol to the number of times it occurs
+		    in the a source data set. Symbols (or values) that occur most frequently
+		    are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
+		    Even though Huffman coding has been superseded by more recent techniques, it is still
+		    used as a core component of several compression formats including the JPEG image specification and
+		    the Deflate API.</p>
 
-        <p>Lempel-Ziv techniques, and the Deflate API, are most effective when a text contains several
-			sequences of symbols that occur multiple times.</p>
+		<p>Huffman coding is effective when a text contains a small set of unique symbols that occur
+		    with a significantly higher frequency than all other symbols <i>combined</i>.</p>
+
+
+		<h3>Lempel-Ziv techniques (Deflate API)</h3>
+		<p>While the Huffman code operates on individual symbols, Lempel-Ziv techniques are based on
+		    identifying sequences of symbols. Essentially, Lempel-Ziv techniques construct a dynamic dictionary
+		    of sequences from an arbitrary text and record bit sequences referring to entries from that dictionary.
+		    The Deflate API is based on a combination of the Lempel-Ziv 1977 variation and Huffman coding (Deutsch, 1996).</p>
+
+		<p>Lempel-Ziv techniques, and the Deflate API, are most effective when a text contains several
+		    sequences of symbols that occur multiple times.</p>
 
 		<h2 id="why-custom_compression">Why do we need custom compression for raster data?</h2>
 
@@ -158,19 +158,19 @@
 		    So, at first glance, it may not be apparent why we would be interested in custom solutions for numerical
 		    raster formats. But, as Kidner and Smith pointed out, "most data and image compression algorithms fail
 		    to capitalize fully on the inherent redundancy in spatial data" (2003).</p>
-			
-			<p>The limitations of conventional techniques when applied to spatial-based raster data are apparent
-			in the compression results for ETOPO1. The Windows Zip utility reduces it from 445 megabytes down to 246, or 
-			55 percent of its original size.  But the same program reduces this HTML document to 31 percent of its size.
-			Clearly, mainstream techniques work better on plain text than they do on numerical rasters.</p>
-			
-			<p>Conventional techniques are limited in that they do not account for the numerical relationships between
-			adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
-			showed, we can take advantage of these relationships to transform the data into a form that
-            is more tractable to data compression. For example, the Gridfour implementation reduces the size
-            of ETOPO1 to 22 percent of its original size while losslessly preserving the its content. </p>
-			
-	
+
+		<p>The limitations of conventional techniques when applied to spatial-based raster data are apparent
+		    in the compression results for ETOPO1. The Windows Zip utility reduces it from 445 megabytes down to 246, or
+		    55 percent of its original size.  But the same program reduces this HTML document to 31 percent of its size.
+		    Clearly, mainstream techniques work better on HTML or plain text than they do on numerical rasters.</p>
+
+		<p>Conventional techniques are limited in that they do not account for the numerical relationships between
+		    adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
+		    showed, we can take advantage of these relationships to transform the data into a form that
+		    is more tractable to data compression. For example, the Gridfour uses custom compression to reduce the size
+		    of ETOPO1 to 22 percent of its original size while losslessly preserving the its content. </p>
+
+
 
 		<h2>How does spatially-aware compression reduce raster data size?</h2>
 		<p>One of the seminal ideas of raster data compression is that there is often only a small variation
@@ -190,49 +190,49 @@
 
 		<p>The Gridfour API implements both the differencing and triangle predictors. Details are given below.
 		    It also includes a more advanced algorithm based on Lagrange Multipliers that was proposed by
-			Smith and Lewis in 1994.</p>
+		    Smith and Lewis in 1994.</p>
 
-		
-			
-		<h1 id="ETOPO1-resists-compression">Why ETOPO1 resists conventional data compression</h1>
+
+
+		<h2 id="ETOPO1-resists-compression">Why ETOPO1 resists conventional data compression</h2>
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
-		At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
-		for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
-		symbols in a text, an configuration which would be expected to reduce the compressed size of a data set.
-		But even though the near-zero occur more often than other values across the range,
-		they do not dominate the frequency table for encoded symbols. In fact, they represent less than
-		five percent of the total number of grid cells in the raster. The cost of encoding all data values in the
-		raster outweighs any saving that we might see for any particular subset of the whole.</p>
+		    At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
+		    for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
+		    symbols in a text, an configuration which would be expected to reduce the compressed size of a data set.
+		    But even though the near-zero values occur more often than others across the range,
+		    they do not dominate the frequency table for encoded symbols. In fact, they represent less than
+		    five percent of the total number of grid cells in the raster. The cost of encoding all data values in the
+		    raster outweighs any saving that we might see for any particular subset of the whole.</p>
 		<p>This situation reflects a trend that we often see in data sets such as ETOPO1. Raster products
-		commonly have a broad set of unique values with similar frequencies of occurance. This characteristic
-		drives up the Shannon entropy for the data set and leads toward less successful data compression.
-		Additionally, most compression implementations carry a non-trivial overhead based on the
-		number of unique symbols that occur in the source data. So the large range-of-values we see in
-		many raster data products can have an even greater impact on the final size of a compressed data set.</p> 
-		
-		 <figure>
-		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
-		 <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
-		 </figure>
-		 
-		 <p>Figure 3 below shows what happens when we apply Kidner and Smith's triangle predictor techniques to ETOPO1.
-		 We obtain a set of residuals that are much more amenable to data compression than the original
-		 values from the raster product. In this case, the spike of near-zero residuals actually does
-		 dominate the frequency table for encoded symbols. Furthermore, the range of unique residual values
-		 reduces to a smaller interval (-2970 to +1953). Finally, the overall entropy for the data set is
-		 reduced from 12.9 for the raw samples to 4.99 for the residuals. Later in these notes, we will consider
-		 ways of reducing that value even further.</p>
-		 
-		 	 <figure>
-		 <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationPredictionResiduals.png"
-		 alt="Counts for residuals from predicted values for ETOPO1">
-		 <figcaption>Figure 3 &ndash; Counts for residuals from predicted values for ETOPO1..</figcaption>
-		 </figure>
-		 
-		 
-		 <h1 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to raster data</h1>
-		 <p>Predictive techniques make a critical assumption about the nature of numerical raster data 
-		 products with a spatial basis. They assume that
+		    commonly have a broad set of unique values with similar frequencies of occurance. This characteristic
+		    drives up the Shannon entropy for the data set and leads toward less successful data compression.
+		    Additionally, most compression implementations carry a non-trivial overhead based on the
+		    number of unique symbols that occur in the source data. So the large range-of-values we see in
+		    many raster data products can have an even greater impact on the final size of a compressed data set.</p>
+
+		<figure>
+		    <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationCounts.png" alt="Counts for ETOPO1 elevation values">
+		    <figcaption>Figure 2 &ndash; Counts for values observed in ETOPO1 data set.</figcaption>
+		</figure>
+
+		<p>Figure 3 below shows what happens when we apply Kidner and Smith's triangle predictor techniques to ETOPO1.
+		    We obtain a set of residuals that are more amenable to data compression than the original
+		    values from the raster product. In the post-predictor results, the spike of near-zero residuals actually does
+		    dominate the frequency table. Furthermore, the range of unique residual values
+		    reduces to a smaller interval (-2970 to +1953). Finally, the overall entropy for the data set is
+		    reduced from 12.9 for the raw samples to 4.99 for the residuals. Later in these notes, we will consider
+		    ways of reducing that value even further.</p>
+
+		<figure>
+		    <img class="imageCentered"  src="images/GVRS_Compression/ETOPO1_GlobalElevationPredictionResiduals.png"
+			 alt="Counts for residuals from predicted values for ETOPO1">
+		    <figcaption>Figure 3 &ndash; Counts for residuals from predicted values for ETOPO1..</figcaption>
+		</figure>
+
+
+		<h2 id="predictive-techniques-for-raster-data-compression">Applying predictive techniques to raster data</h2>
+		<p>Predictive techniques make a critical assumption about the nature of numerical raster data
+		    products with a spatial basis. They assume that
 		    the characteristics of two points closely located in space will tend to be similar.
 		    In other words, it assumes that the <em>values</em> of elements that are closely located
 		    spatially (i.e. in terms of grid coordinates) will also be close together numerically.
@@ -241,175 +241,177 @@
 		    the value of a neighbor. This assumption is generally true in real-world examples
 		    such as elevation data.  We expect that two points a few hundred meters
 		    apart are more likely to be similar than two points placed
-		    far apart.  This idea is sometimes referred
+		    half way around the world.  This idea of similarity based on proximity is sometimes referred
 		    to as &quot;spatial autocorrelation&quot; and has been extensively studied in
 		    Geographic Information Analysis and other fields.</p>
-			
-		<h2 id="the-simplest-predictive-technique">The Simplest Predictive Technique</h2>
+
+		<h2 id="the-simplest-predictive-technique">The simplest predictive technique</h2>
 		<p>The simplest predictor technique we apply to raster data is the differencing predictor.
 		    As mentioned above, the differencing predictor is used in a number of formats
-			including the TIFF image specification. We implement the differencing technique using
-			the following general outline:</p>
-			<ol>
-			<li>Define some sequence for specifying the values of the grid cells in the raster in order (row-major order, etc.).</li>
-			<li>Reserve the first value of the first grid cell  in the sequence as a "seed" value.</li>
-			<li>For all other cells, predict that the value for the cell will be the same as its predecessor</li>
-			<li>The difference of the actual value and the prediction is the residual. Record the residuals for all cells</li>
-			<li>Pass the collection of residuals to a conventional data compression routine.</li>
-			<li>The result will often be much smaller than a direct compression of the original values.</li>
-			</ul>
-			
-			<p>In Gridfour, the seed value is not included as part of the compression, but is treated
+		    including the TIFF image specification. We implement the differencing technique using
+		    the following general outline:</p>
+		<ol>
+		    <li>Define some sequence for specifying the values of the grid cells in the raster in order (row-major order, etc.).</li>
+		    <li>Reserve the first value of the first grid cell  in the sequence as a "seed" value.</li>
+		    <li>For all other cells, predict that the value for the cell will be the same as its predecessor</li>
+		    <li>The difference of the actual value and the prediction is the residual. Record the residuals for all cells</li>
+		    <li>Pass the collection of residuals to a conventional data compression routine.</li>
+		    <li>The result will often be much smaller than a direct compression of the original values.</li>
+		    </ul>
+
+		    <p>In Gridfour, the seed value is not included as part of the compression, but is treated
 			as an overhead element.</p>
 
-			<p>For the most part, implementing a differencing predictor is straightforward. The one area of significant variation
+		    <p>For the most part, implementing a differencing predictor is straightforward. The one area of significant variation
 			lies in how we define the traversal sequence for the grid cells in the raster. The selection
 			of an ordering scheme affects the compression ratio for the output. The key assumption
 			for the differencing technique is that the numerical values for adjacent cells are relatively
 			close. So it is important that the traversal sequence preserves adjacency. Now consider the case
 			in which an implementation traverses a grid in row-major order as it does in the TIFF standard.
-            The process	accesses grid cells one at a time
-            across a row. Adjacency is preserved. But, at the end of a row, it jumps back to the first cell in the
-            next row. For a large raster, that cell may be far removed from its predecessor.<p>
+			The process	accesses grid cells one at a time
+			across a row. Adjacency is preserved. But, at the end of a row, it jumps back to the first cell in the
+			next row. For a large raster, that cell may be far removed in space from its predecessor.<p>
 
-			<p>There are patterns for traversing a raster that do preserve adjacency. The GRIB2 format
-			includes a specification in which rows are traversed in alternating order (NCEP 2005, table 5.6). 
+		    <p>There are patterns for traversing a raster that do preserve adjacency. The GRIB2 format
+			includes a specification in which rows are traversed in alternating order (NCEP 2005, table 5.6).
 			The first row is traversed left to right, the next right to left, etc.  This zig-zag pattern preserves
-			adjacency, but has a disadvantage in that the change in direction inverts the signs of the 
+			adjacency, but has a disadvantage in that the change in direction inverts the signs of the
 			differences. Consider the case of a raster that has a trend of values slowly increasing from
 			left to right. The left-to-right traversal will result in positive values. The right-to-left
 			traversal will result in an equal number of negative values.  But we've seen that
 			data compression generally works better for a smaller set of unique symbols than for a larger
 			set. Ideally, we prefer a pattern where the traversal covers the grid in the
 			same direction to the largest degree feasible.</p>
-			
-			<p>Figure 4 shows the pattern used in Gridfour's differencing predictor. The difference is
+
+		    <p>Figure 4 shows the pattern used in Gridfour's differencing predictor. The difference is
 			always computed using an adjacent cell. But, at the transition from row to row, the
 			computation uses the vertically adjacent cell rather than the horizontal.</p>
-			
-			 <figure>
-		<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternDifferencing.png"
-		alt="Pattern for Differencing-Model Predictive Resolution Transform"></p>
-		<figcaption>Figure 4. &ndash; Traversal pattern for Gridfour differencing predictor</figcaption>
-		</figure>
-		
-		<p>It is worth repeating that the use of the differencing predictor for raster data is not unique to the Gridfour project.
-		    It is used in a number of specifications including the GRIB2 raster data format
-		    (NCEP 2005, table 5.6) and the TIFF image format
-		    (Adobe, 1992, p. 64, &quot;Section 14: Differencing Predictor&quot;).
+
+		    <figure>
+			<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternDifferencing.png"
+				alt="Pattern for Differencing-Model Predictive Resolution Transform"></p>
+			<figcaption>Figure 4. &ndash; Traversal pattern for Gridfour differencing predictor</figcaption>
+		    </figure>
+
+		    <p>It is worth repeating that the use of the differencing predictor for raster data is not unique to the Gridfour project.
+			It is used in a number of specifications including the GRIB2 raster data format
+			(NCEP 2005, table 5.6) and the TIFF image format
+			(Adobe, 1992, p. 64, &quot;Section 14: Differencing Predictor&quot;).
 			The PNG format includes a differencing predictor,
 			but it treats subsequent grid rows as separate specifications rather than worrying about
 			adjacency issues at the transition from row to row (World Wide Web Consortium, 2003, section 9 "Filtering").
-			</p>
-		<h2 id="other-predictor-models">Other Predictor Models</h2>
-		<p>The standard version of Gridfour implements two additional predictor models:
-		    the Linear Predictor and the Triangle Predictor.</p>
-		<p>The Linear Predictor model predicts that the data varies as a linear function. The value
-		    for the next sample in a sequence is predicted using a straight-line computed from the two
-		    that preceded it.  The predictor is applied on a row-by-row basis. The vertical coordinate
-		    of the points that precede the target point are assigned the values Z<sub>A</sub>, Z<sub>B</sub> respectively.
-		    If we assume that the grid points are spaced at equal intervals,
-		    then the predicted value, Z<sub>P</sub>, is given by Z<sub>P</sub>&thinsp;=&thinsp;2&thinsp;&#10005;&thinsp;Z<sub>B</sub>&thinsp;-&thinsp;Z<sub>A</sub>.</p>
-		<p>The Triangle Predictor was described by Kidner &amp; Smith (1992).  It uses three neighboring
-		    points A, B, and C, to predict the value of a target sample as shown in the image below.
-		    The vertical coordinate of the points are assigned the values Z<sub>A</sub>, Z<sub>B</sub>, and Z<sub>C</sub> respectively.
-		    By treating the grid as having a fixed spacing between columns, <em>s</em>, and a fixed spacing between rows, <em>t</em>,
-		    the prediction computation is simplified to Z<sub>P</sub> = Z<sub>B</sub>+Z<sub>C</sub>-Z<sub>A</sub>.</p>
-		<p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternTriangle.png" alt="Pattern for Triangle-Model Predictive-Residual Transform"></p>
-		<p>To see how this relationship is derived, start by taking each sample and the predicted
-		    point as vectors:</p>
-		<p><img src="images/GVRS_Compression/TriangleAlgebra1.png" alt="Variables for triangle predictor"> </p>
-		<p>From linear algebra, we can compute the normal to a plane and locate a point <i>P</i> on that plane
-		    using the following:</p>
-		<p><img src="images/GVRS_Compression/TriangleAlgebra2.png" alt="Variables for triangle predictor"> </p>
-		<p>When we solve for Z<sub>P</sub>, the <em>x</em>, <em>y</em>, <em>s</em>, and <em>t</em> variables cancel out and we find
-		    the simple computation used by the Triangle Predictor model.</p>
-		<p>Both the Linear and the Triangle Predictor require special handling to initialize
-		    the grid before applying the prediction computations. In the case of the Linear
-		    Predictor, Gridfour uses the seed value and the pattern established for the Differencing
-		    Predictor to pre-populate the first two columns of the grid. In the case of the
-		    Triangle Predictor, the first row and first column are populated using same approach.
-		    Once the grid is initialized, the specific predictors
-		    can be used for the remaining grid cells.</p>
-			
-		<h2 id="serializing-the-residuals">Serializing the Residuals</h2>
-		<p>Once the residuals are computed using a predictor-residual model,
-		    they are passed to compression processes based on conventional data
-		    compression algorithms such as the Huffman and Deflate APIs
-		    described above. One further challenge remains.  Recall that when we processed ETOPO1
+		    </p>
+		    <h2 id="other-predictor-models">Other predictor models</h2>
+		    <p>The standard version of Gridfour implements two additional predictor models:
+			the linear predictor and the triangle predictor.</p>
+		    <p>The linear predictor model predicts that the data varies as a linear function. The value
+			for the next sample in a sequence is predicted using a straight-line computed from the two
+			that preceded it.  The predictor is applied on a row-by-row basis. The vertical coordinate
+			of the points that precede the target point are assigned the values Z<sub>A</sub>, Z<sub>B</sub> respectively.
+			If we assume that the grid points are spaced at equal intervals,
+			then the predicted value, Z<sub>P</sub>, is given by
+			Z<sub>P</sub>&thinsp;=&thinsp;2&thinsp;&#10005;&thinsp;Z<sub>B</sub>&thinsp;-&thinsp;Z<sub>A</sub>.</p>
+		    <p>The triangle predictor was described by Kidner &amp; Smith (1992).  It uses three neighboring
+			points A, B, and C, to predict the value of a target sample as shown in the image below.
+			The vertical coordinate of the points are assigned the values Z<sub>A</sub>, Z<sub>B</sub>, and Z<sub>C</sub> respectively.
+			By treating the grid as having a fixed spacing between columns, <em>s</em>, and a fixed spacing between rows, <em>t</em>,
+			the prediction computation is simplified to
+			Z<sub>P</sub>&thinsp;=&thinsp;Z<sub>B</sub>&thinsp;+&thinsp;Z<sub>C</sub>&thinsp;-Z<sub>A</sub>.</p>
+		    <p><img class="imageCentered" src="images/GVRS_Compression/CompressionPatternTriangle.png" alt="Pattern for Triangle-Model Predictive-Residual Transform"></p>
+		    <p>To see how this relationship is derived, start by taking each sample and the predicted
+			point as vectors:</p>
+		    <p><img src="images/GVRS_Compression/TriangleAlgebra1.png" alt="Variables for triangle predictor"> </p>
+		    <p>From linear algebra, we can compute the normal to a plane and locate a point <i>P</i> on that plane
+			using the following:</p>
+		    <p><img src="images/GVRS_Compression/TriangleAlgebra2.png" alt="Variables for triangle predictor"> </p>
+		    <p>When we solve for Z<sub>P</sub>, the <em>x</em>, <em>y</em>, <em>s</em>, and <em>t</em> variables cancel out and we find
+			the simple computation used by the triangle predictor model.</p>
+		    <p>Both the linear and the triangle predictor require special handling to initialize
+			the grid before applying the prediction computations. In the case of the linear
+			predictor, Gridfour uses the seed value and the pattern established for the differencing
+			predictor to pre-populate the first two columns of the grid. In the case of the
+			triangle predictor, the first row and first column are populated using same approach.
+			Once the grid is initialized, the specific predictors
+			can be used for the remaining grid cells.</p>
+
+		    <h2 id="serializing-the-residuals">Serializing the residuals</h2>
+		    <p>Once the residuals are computed using a predictor-residual model,
+			they are passed to compression processes based on conventional data
+			compression algorithms such as the Huffman and Deflate APIs
+			described above. One further challenge remains.  Recall that when we processed ETOPO1
 			using the triangle predictor, it yielded residuals in the range -2970 to 1953.
 			For other input data sets, the potential range of residuals can be much larger,
 			up to and including the full range of signed integer types.</p>
-			
-			<p>While the Gridfour
-			implementation of canonical Huffman coding can accept integers as input,
+
+		    <p>While the Gridfour implementation of canonical Huffman coding can accept integers as input,
 			the Deflate API is designed to accept bytes. So in order to process residuals
 			using Deflate, we need to marshal the residual values into the form of bytes.</p>
-		 
-		<p>It is feasible to simply split out the integer residual
-		    values into the component bytes, but doing so would tend to dilute the
-		    redundancy in the output data. Furthermore, a significant number
-		    of the residuals are quite small (using the Triangle Predictor, 87.9 percent
-		    of the residuals computed for ETOPO1 have an absolute value less than 15).
+
+		    <p>It is feasible to simply split out the integer residual
+			values into the component bytes, but doing so would tend to dilute the
+			redundancy in the output data. Furthermore, a significant number
+			of the residuals are quite small (using the triangle predictor, 87.9 percent
+			of the residuals computed for ETOPO1 have an absolute value less than 15).
 			So marshaling residuals to a 4-byte form would tend to fill the input
 			into Deflate with a large number of superfluous zero-valued bytes.</p>
+
+		    <p>To serialize the residuals for processing by Deflate, Gridfour uses a scheme that it calls the M32 code.
+			M32 is an integer-to-byte coding scheme that adjusts the number of bytes
+			in the output to reflect the magnitude of each term in the input.
+			In that regard, it uses an approach similar to that used for the widely used UTF-8 character encoding.
+			As in the case of UTF-8, the first byte in the sequence
+			can represent either a literal value or a format-indicator that
+			specifies the number of bytes to follow. M32 also resembles the
+			variable-length integer code used by SQLite4 (SQLite4, 2019), except that
+			it supports negative values as well as positive. The first byte
+			in the output is essentially a hybrid value. For small-magnitude values (
+			in the range -126 to +126), it is just a signed-byte representation
+			of the input value. The values -127 and +127 are used to introduce
+			multi-byte sequences. And the value -128 is used to indicate the
+			minimum 32-bit integer value, -2147483648, which Gridfour often
+			uses as a null-data code. In the multi-byte sequences, the bytes that
+			follow the introducer give bits for the numerical value in
+			big-endian order. Each byte carries 7 bits of information with
+			the high-order bit used to indicate if additional bytes follow.
+			The length of the sequence depends on the magnitude of the residual
+			to be coded. In the worst case, 6 bytes are required to encode
+			a large magnitude residual (1 byte for the introducer, 5 bytes for the content).</p>
 			
-		<p>To serialize the residuals for processing by Deflate, Gridfour uses a scheme that it calls the M32 code.
-		    M32 is an integer-to-byte coding scheme that adjusts the number of bytes
-		    in the output to reflect the magnitude of each term in the input.
-		    In that regard, it uses an approach similar to that used for the widely used UTF-8 character encoding.
-		    As in the case of UTF-8, the first byte in the sequence
-		    can represent either a literal value or a format-indicator that
-		    specifies the number of bytes to follow. M32 also resembles the
-		    variable-length integer code used by SQLite4 (SQLite4, 2019), except that
-		    it supports negative values as well as positive. The first byte
-		    in the output is essentially a hybrid value. For small-magnitude values (
-		    in the range -126 to +126), it is just a signed-byte representation
-		    of the input value. The values -127 and +127 are used to introduce
-		    multi-byte sequences. And the value -128 is used to indicate the
-		    minimum 32-bit integer value, -2147483648, which Gridfour often
-		    uses as a null-data code. In the multi-byte sequences, the bytes that
-		    follow the introducer give bits for the numerical value in
-		    big-endian order. Each byte carries 7 bits of information with
-		    the high-order bit used to indicate if additional bytes follow.
-		    The length of the sequence depends on the magnitude of the residual
-		    to be coded. In the worst case, 6 bytes are required to encode
-		    a large magnitude residual (1 byte for the introducer, 5 bytes for the content).</p>
-		<p>The M32 coding scheme is effective in the case where the computed residuals
-		    tend to be small because it preserves the one-byte-per-value relationship.
-		    Again, in the case of larger residuals, the M32 code can actually be longer
-		    than the 4 bytes needed for a simple integer. Fortunately, a good predictor
-		    will usually produce small residuals. In fact, for the elevation data sets used when developing
-		    Gridfour, the average length of the M32 code sequences is
-		    about 1.013 bytes per grid value.</p>
-			
-			   <h2 id="tiling-schemes-and-data-compression">Tiling Schemes and Data Compression</h2>
-			   <p>Although it may not seem an obvious part of a data compression scheme, there
-			   is one other consideration that can have a substantial influence on compression results:
-			   the way we choose to subdivide large rasters into smaller grids.</p>
-			   
-                <p>Many raster products are large enough that it is not feasible to process the
-				entire data set all at once.  Gridfour manages large rasters by subdividing the grid
-				into a number of smaller, uniformly sized subgrids called <i>tiles</i> as shown in
-				Figure 5 below.</p>
- 
-				<figure>
-                <img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme"> 
-				<figcaption>Figure 5 &ndash; An example tiling scheme</figcaption>
-				</figure>
-				
-                <p>The Gridfour API implements logic that allows tiles to be compressed and decompressed
-				independently. This approach is significant in terms of data compression because,  
-                    in many data sets, the statistical properties of the data often varies across the
-                    domain of the data. For example, in the ETOPO1 elevation/bathymetry example, we would expect to see very
-                    different terrain (and very different data compression characteristics) over the Nullarbor Plain
-                    in Australia versus the steep drop offs along the Continental Shelf. Processing the raster
-					as a single entity would combine data distributed across heterogenous areas. And, because
-					compression depends on redundancy and uniformity, the extra complexity inherent in mixing
-					together statistically different regions would lead to less successful results.</p>
-					
-			<p> In spatial analysis, this tendency of the statistical properties of data to change across
-		    a data set is referred to as <em>non-stationarity</em>. A well-chosen tiling scheme allows an
+		    <p>The M32 coding scheme is effective in the case where the computed residuals
+			tend to be small because it preserves the one-byte-per-value relationship.
+			Again, in the case of larger residuals, the M32 code can actually be longer
+			than the 4 bytes needed for a simple integer. Fortunately, a good predictor
+			will usually produce small residuals. In fact, for the elevation data sets used when developing
+			Gridfour, the average length of the M32 code sequences is
+			about 1.013 bytes per grid value.</p>
+
+		    <h2 id="tiling-schemes-and-data-compression">Tiling schemes and data compression</h2>
+		    <p>Although it may not seem an obvious part of a data compression scheme, there
+			is one other consideration that can have a substantial influence on compression results:
+			the way we choose to subdivide large rasters into smaller grids.</p>
+
+		    <p>Many raster products are large enough that it is not feasible to process the
+			entire data set all at once.  Gridfour manages large rasters by subdividing the grid
+			into a number of smaller, uniformly sized subgrids called <i>tiles</i> as shown in
+			Figure 5 below.</p>
+
+		    <figure>
+			<img class="imageCentered" src="images/General/TilingScheme.png" alt="Tiling Scheme">
+			<figcaption>Figure 5 &ndash; An example tiling scheme</figcaption>
+		    </figure>
+
+		    <p>The Gridfour API implements logic that allows tiles to be compressed and decompressed
+			independently. This approach is significant in terms of data compression because,
+			in many data sets, the statistical properties of the data often varies across the
+			domain of the data. For example, in the ETOPO1 elevation/bathymetry example, we would expect to see very
+			different terrain (and very different data compression characteristics) over the Nullarbor Plain
+			in Australia versus the steep drop offs along the Continental Shelf. Processing the raster
+			as a single entity would combine data distributed across heterogenous areas. And, because
+			compression depends on redundancy and uniformity, the extra complexity inherent in mixing
+			together statistically different regions would lead to less successful results.</p>
+
+		    <p> In spatial analysis, this tendency of the statistical properties of data to change across
+			a data set is referred to as <em>non-stationarity</em>. A well-chosen tiling scheme allows an
 			API to separate data into subsets that feature a self-consistent set of statistics.
 			For example, it can signficantly reduce the entropy (both pre and post prediction).
 			In the case of ETOPO1, dividing the grid into 120x180 grid cell tiles yields an entropy of 9.39
@@ -418,29 +420,20 @@
 			and different compression techniques depending on the local behavior of the data in each tile.
 			Thus, the specification of tiles becomes an important consideration in applying data
 			compression to a large raster.</p>
-			
-			<p>On the other hand, partitioning the data into
-			smaller subgrids can have a disadvantage because
-			it reduces the overall size of a block of data to be compressed. Most practical compression implementations
-			include overhead beyond the storage required for the actual data.
-			This overhead tends to be of a more-or-less fixed size. For a small
-			data set, that overhead may comprise a significant amount of the overall storage required for
-			the data. But as the size of the data set increases, the relative contribution of the
-			overhead is reduced.</p>
-	 
-		<h2 id="standard-results">Results using the standard compression codecs</h2>
-		<p>The text below presents an analysis for the results of data compression using the
-		standard Gridfour codecs (canonical Huffman and Deflate). The Gridfour API tests both
-		codecs and predictors and chooses to use the combination that yields the smallest result.
-		The canonical Huffman produces the smaller result in 44.6 percent of the cases,
-		the Deflate predictor 55.4 percent. The entropy values are computed for the post-prediction
-		results.  Tiles that start with a high entropy before prediction usually yield somewhat
-		higher entropy post-prediction. The triangle predictor is more powerful than the others.
-		But when the source tile has low entropy, the predictors tend to be of approximately equal effectiveness.
-		For low entropy cases, the less powerful predictors may be selected because they feature slightly
-		less overhead than the triangle predictor.
 
-		<pre>
+		    <h2 id="standard-results">Results using the standard compression codecs</h2>
+		    <p>The text below presents an analysis for the results of data compression using the
+			standard Gridfour codecs (canonical Huffman and Deflate). The Gridfour API tests both
+			codecs and predictors and chooses to use the combination that yields the smallest result.
+			The canonical Huffman produces the smaller result in 44.6 percent of the cases,
+			the Deflate predictor 55.4 percent. The entropy values are computed for the post-prediction
+			results.  Tiles that start with a high entropy before prediction usually yield somewhat
+			higher entropy post-prediction. The triangle predictor is more powerful than the others.
+			But when the source tile has low entropy, the predictors tend to be of approximately equal effectiveness.
+			For low entropy cases, the less powerful predictors may be selected because they feature slightly
+			less overhead than the triangle predictor.
+
+		    <pre>
 GVRS Canonical Huffman                        Compressed Output    |     Predictor Residuals
   Predictor                Times Used       bits/sym    bits/tile  |  esc-bits    avg-unique  entropy | code table
    Differencing              172 ( 1.6 %)     1.83       39426.2   |      0.2        21.7      1.69   |  173.9
@@ -454,92 +447,92 @@ Gridfour_Deflate                              Compressed Output    |      Predic
    Linear                    502 ( 4.6 %)     2.52       54411.7   |   21641.7        95.4      2.60
    Triangle                 4771 (44.2 %)     5.22      112724.1   |   21752.8       183.7      5.34
    All Predictors           5986 (55.4 %)     4.52       97650.2   |   21725.4       156.9      4.61
-</pre>
+		    </pre>
 
-<h2 id="optimal-predictors-using-lagrange-multipliers">Optimal predictors using Lagrange multipliers</h2>
-The Gridfour API features an additional predictor that is based on the method of Lagrange multipliers.
-The predictor extends the number of neighboring grid cells that are used in a prediction to 12.
-It estimates a value based on a linear combination of the neighbor values. Coefficients for the
-weighted sum are selected for each tile using a Lagrange multiplier solution.  The result is a highly effective
-data compression scheme.</p>
+		    <h2 id="optimal-predictors-using-lagrange-multipliers">Optimal predictors using Lagrange multipliers</h2>
+		    The Gridfour API features an additional predictor that is based on the method of Lagrange multipliers.
+		    The predictor extends the number of neighboring grid cells that are used in a prediction to 12.
+		    It estimates a value based on a linear combination of the neighbor values. Coefficients for the
+		    weighted sum are selected for each tile using a Lagrange multiplier solution.  The result is a highly effective
+		    data compression scheme.</p>
 
-<p>The Lagrange Multiplier technique is essentially a multi-variable linear regression with the added constraint
-that the average residual is zero. The algorithm was first described by Lewis & Smith (1993).
-Details for the Gridfour implementation are provided in a separate article at
-<a href="CompressionUsingOptimalPredictors.html">Lossless compression for raster data using optimal predictors</a>.</p>
+		    <p>The Lagrange Multiplier technique is essentially a multi-variable linear regression with the added constraint
+			that the average residual is zero. The algorithm was first described by Lewis & Smith (1993).
+			Details for the Gridfour implementation are provided in a separate article at
+			<a href="CompressionUsingOptimalPredictors.html">Lossless Compression for Raster Data using Optimal Predictors</a>.</p>
 
-<p>The optimal predictor achieves the best compression ratios of any solution currently implemented by
-Gridfour. But that performance comes at the cost of extra processing time for both compression and decompression. 
-So it is treated as an optional selection in the Gridfour API. Table 2 below gives compression and decompression
-statistics for different codec and predictor configurations when processing the ETOPO1 data set. Tests were performed
-using the Gridfour Java API running on a medium-scale laptop computer running Windows.</p>
- 
-<table class="tight-table">
-	<caption>Table 2 &ndash; Performance </caption>
-	<thead>
-		<tr>
-			<th scope="col">Codec/Predictor</th>
-			<th scope="col">Storage size</th>
-			<th scope="col">Compress<br>(seconds)</th>
-			<th scope="col">Decompress<br>(seconds)</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>Huffman</td> 
-			<td class="tdright">125.26 MB</td>
-			<td class="tdright">23.9</td>
-			<td class="tdright">1.9</td>
-		</tr>
-		<tr>
-			<td>Huffman & Deflate</td> 
-			<td class="tdright">121.91 MB</td>
-			<td class="tdright">64.7</td>
-			<td class="tdright">2.0</td>
-		</tr>
-		<tr>
-			<td>Huffman, Deflate, Optimal Predictors</td> 
-			<td class="tdright">100.32 MB</td>
-			<td class="tdright">114.1</td>
-			<td class="tdright">5.1</td>
-		</tr>
-	</tbody>
-</table>
+		    <p>The optimal predictor achieves the best compression ratios of any solution currently implemented by
+			Gridfour. But that performance comes at the cost of extra processing time for both compression and decompression.
+			So it is treated as an optional selection in the Gridfour API. Table 2 below gives compression and decompression
+			statistics for different codec and predictor configurations when processing the ETOPO1 data set. Tests were performed
+			using the Gridfour Java API running on a medium-scale laptop computer running Windows.</p>
 
-<h2 id="floating-point-rasters">Compression for rasters with floating-point formats</h2>
-<p>Raster data sets that feature non-integral floating-point values present different
-challenges than the integer formats described above.
-Rasters that feature floating-point data tend to have a higher degree of entropy than integer-based formats.
-And the prediction techniques that  work well for integer data are usually not effective for floating-point formats.
-When a predictor operates over a floating-point raster, the residuals may be of a lower magnitude than
-the source values, but that does not reduce the complexity of the mantissas. The low-order bits simply propagate
-across computations.</p> 
+		    <table class="tight-table">
+			<caption>Table 2 &ndash; Performance </caption>
+			<thead>
+			    <tr>
+				<th scope="col">Codec/Predictor</th>
+				<th scope="col">Storage size</th>
+				<th scope="col">Compress<br>(seconds)</th>
+				<th scope="col">Decompress<br>(seconds)</th>
+			    </tr>
+			</thead>
+			<tbody>
+			    <tr>
+				<td>Huffman</td>
+				<td class="tdright">125.26 MB</td>
+				<td class="tdright">23.9</td>
+				<td class="tdright">1.9</td>
+			    </tr>
+			    <tr>
+				<td>Huffman & Deflate</td>
+				<td class="tdright">121.91 MB</td>
+				<td class="tdright">64.7</td>
+				<td class="tdright">2.0</td>
+			    </tr>
+			    <tr>
+				<td>Huffman, Deflate, Optimal Predictors</td>
+				<td class="tdright">100.32 MB</td>
+				<td class="tdright">114.1</td>
+				<td class="tdright">5.1</td>
+			    </tr>
+			</tbody>
+		    </table>
 
-<p>A four-byte floating point format has three distinct components: the sign bit, the exponent (8 bits), and
-the mantissa (23 bits). Often, the components have different degrees of entropy. For example, consider a raster
-consisting of all positive values hovering near 1.0. The sign bit is always the same and will have an entropy of zero.
-The exponent byte will have the same, or nearly the same values. So it will also compress effectively.
-But the mantissa will tend to have quite a bit of entropy, especially in the case of a random or nearly random variable.
-So the current Gridfour implementation takes the approach of treating the component elements of its source data
-as separate data sets and passing them to conventional compressors.</p>
+		    <h2 id="floating-point-rasters">Compression for rasters with floating-point formats</h2>
+		    <p>Raster data sets that feature non-integral floating-point values present different
+			challenges than the integer formats described above.
+			Rasters that feature floating-point data tend to have a higher degree of entropy than integer-based formats.
+			And the prediction techniques that  work well for integer data are usually not effective for floating-point formats.
+			When a predictor operates over a floating-point raster, the residuals may be of a lower magnitude than
+			the source values, but that does not reduce the complexity of the mantissas. The low-order bits simply propagate
+			across computations.</p>
 
-<p>Details about the Gridfour approach to compressing floating-point rasters are provided at
-<a href="LosslessCompressionForFloatingPointData.html">Lossless Compression for Floating Point Data</a>.
-The Gridfour project is interested in investigating alternative (potentially better) techniques.</p>
+		    <p>A four-byte floating point format has three distinct components: the sign bit, the exponent (8 bits), and
+			the mantissa (23 bits). Often, the components have different degrees of entropy. For example, consider a raster
+			consisting of all positive values hovering near 1.0. The sign bit is always the same and will have an entropy of zero.
+			The exponent byte will have the same, or nearly the same values. So it will also compress effectively.
+			But the mantissa will tend to have quite a bit of entropy, especially in the case of a random or nearly random variable.
+			So the current Gridfour implementation takes the approach of treating the component elements of its source data
+			as separate data sets and passing them to conventional compressors.</p>
+
+		    <p>Details about the Gridfour approach to compressing floating-point rasters are provided at
+			<a href="LosslessCompressionForFloatingPointData.html">Lossless Compression for Floating Point Data</a>.
+			The Gridfour project is interested in investigating alternative (potentially better) techniques.</p>
 
 
-<h3 id="ETOPO-2022">The ETOPO-2022 floating-point raster data set</h3>
-<p>In 2022, NOAA released an updated version of their ETOPO data products that used floating point values
-rather than integers. The data set includes products at different resolutions, including one with the same
-1 minute of arc resolution as ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value. 
-Gridfour compresses the data to 417 megabytes, or about 47 percent of its original size.
-While this is an slight improvement over the source NetCDF format (456 megabytes), it is not particularly satisfying.
-The text below shows summary information from the compression results.  The high-order 7 bits
-of the mantissa (the row labeled Mantissa-1) have a lower entropy than the middle and lower bytes (Mantissa-2 and Mantissa-3).
-The <i>Input</i> column indicates the number of bytes before compression, the <i>Compressed</i>
-column indicates the resulting compression:</p>
+		    <h3 id="ETOPO-2022">The ETOPO-2022 floating-point raster data set</h3>
+		    <p>In 2022, NOAA released an updated version of their ETOPO data products that used floating point values
+			rather than integers. The data set includes products at different resolutions, including one with the same
+			1 minute of arc resolution as ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value.
+			Gridfour compresses the data to 417 megabytes, or about 47 percent of its original size.
+			While this is an slight improvement over the source NetCDF format (456 megabytes), it is not particularly satisfying.
+			The text below shows summary information from the compression results.  The high-order 7 bits
+			of the mantissa (the row labeled Mantissa-1) have a lower entropy than the middle and lower bytes (Mantissa-2 and Mantissa-3).
+			The <i>Input</i> column indicates the number of bytes before compression, the <i>Compressed</i>
+			column indicates the resulting compression:</p>
 
-<pre>
+		    <pre>
 Gridfour_Float
      Element             Input      Compressed     (Reduction)    Entropy   Bits/Symbol
      Sign bits            2700          68.64       ( 2.5422%)      0.18     0.03
@@ -551,104 +544,104 @@ Gridfour_Float
    Average Bytes/Tile        40474.79        (46.8458%)
    Average Bytes/Sample          1.87        (46.8458%)
    Average Bits/Sample          14.99
-</pre>
+		    </pre>
 
 
-		<h1 id="future-work">Future Work</h1>
-		<p>The introduction to this article made the claim that the Gridfour package is intended
-		    to serve as a testbed for investigators and software developers who wish to
-		    experiment with their own solutions for raster data compression. We hope that by
-		    describing the current implementations, we demonstrated some of the reasons that
-		    we think that claim is valid.</p>
-		<p>There are many promising avenues to explore for better solutions
-		    to the raster data compression problem. Kidner and Smith (2003) used a more
-		    powerful predictor based on Lagrange multipliers and arithmetic coding.
+		    <h1 id="future-work">Future Work</h1>
+		    <p>The introduction to this article made the claim that the Gridfour package is intended
+			to serve as a testbed for investigators and software developers who wish to
+			experiment with their own solutions for raster data compression. We hope that by
+			describing the current implementations, we demonstrated some of the reasons that
+			we think that claim is valid.</p>
+		    <p>There are many promising avenues to explore for better solutions
+			to the raster data compression problem. Kidner and Smith (2003) used a more
+			powerful predictor based on Lagrange multipliers and arithmetic coding.
 			The Gridfour implementation of this feature is covered in our project notes
-			<a href="CompressionUsingOptimalPredictors.html">Lossless compression for raster data using optimal predictors</a>.
-		    Some commercial and public solutions, including the JPEG 2000 standard, 
-		    use wavelet functions. Data compression continues to be an area
-		    of active interest in the software community, and we fully expect that
-		    new techniques are waiting to be discovered.</p>
-		<p>The Gridfour project is especially interested in lossless, or nearly lossless, techniques
-		    for compressing real-valued data.  The current Gridfour implementation implements compression
-		    for floating point data, but the results are not as successful as they are for integers.
+			<a href="CompressionUsingOptimalPredictors.html">Lossless Compression for Raster Data using Optimal Predictors</a>.
+			Some commercial and public solutions, including the JPEG 2000 standard,
+			use wavelet functions. Data compression continues to be an area
+			of active interest in the software community, and we fully expect that
+			new techniques are waiting to be discovered.</p>
+		    <p>The Gridfour project is especially interested in lossless, or nearly lossless, techniques
+			for compressing real-valued data.  The current Gridfour implementation implements compression
+			for floating point data, but the results are not as successful as they are for integers.
 			We would like to investigate further solutions for floating-point formats.</p>
-		<p>If you are investigating raster-based data compression, we wish you the best
-		    of luck and hope that insights from Gridfour can help you on your way. And, as always,
-		    we welcome your ideas and suggestions.</p>
-		<h1 id="references">References</h1>
-		<p>Adobe Systems, Inc. (1992). <i>TIFF Revision 6.0 Final – June 3, 1992</i>.
-		    Retrieved from <a href="https://download.osgeo.org/libtiff/doc/TIFF6.pdf">
-			https://download.osgeo.org/libtiff/doc/TIFF6.pdf</a></p>
+		    <p>If you are investigating raster-based data compression, we wish you the best
+			of luck and hope that insights from Gridfour can help you on your way. And, as always,
+			we welcome your ideas and suggestions.</p>
+		    <h1 id="references">References</h1>
+		    <p>Adobe Systems, Inc. (1992). <i>TIFF Revision 6.0 Final – June 3, 1992</i>.
+			Retrieved from <a href="https://download.osgeo.org/libtiff/doc/TIFF6.pdf">
+			    https://download.osgeo.org/libtiff/doc/TIFF6.pdf</a></p>
 
-		<p>
-		    Amante, C. and B. W. Eakins (2009). ETOPO1 1 Arc-Minute Global Relief Model:
-		    Procedures, Data Sources and Analysis.
-		    NOAA Technical Memorandum NESDIS NGDC-24, DOI: 10.7289/V5C8276M</p>
+		    <p>
+			Amante, C. and B. W. Eakins (2009). ETOPO1 1 Arc-Minute Global Relief Model:
+			Procedures, Data Sources and Analysis.
+			NOAA Technical Memorandum NESDIS NGDC-24, DOI: 10.7289/V5C8276M</p>
 
-		<p>Cutler, C. Chapin. (1950). U.S. Patent No. 2605361,
-		    Differential Quantization of Communication Signals.
-		    Filed June 29, 1950, issued July 29, 1952</p>
+		    <p>Cutler, C. Chapin. (1950). U.S. Patent No. 2605361,
+			Differential Quantization of Communication Signals.
+			Filed June 29, 1950, issued July 29, 1952</p>
 
-		<p>Deutsch, L. Peter  (1996). DEFLATE Compressed Data Format Specification version 1.3.
-		    IETF. p. 1. sec. Abstract. doi:10.17487/RFC1951. RFC 1951.</p>
+		    <p>Deutsch, L. Peter  (1996). DEFLATE Compressed Data Format Specification version 1.3.
+			IETF. p. 1. sec. Abstract. doi:10.17487/RFC1951. RFC 1951.</p>
 
-		<p>Huffman, D. (1952). A Method for the Construction of Minimum-Redundancy Codes (PDF).
-		    Proceedings of the IRE. 40 (9): 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
+		    <p>Huffman, D. (1952). A Method for the Construction of Minimum-Redundancy Codes (PDF).
+			Proceedings of the IRE. 40 (9): 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
 
-		<p>Kidner, D.B. and Smith, D.H. (1992). Compression of digital elevation models by Huffman coding.
-		    Computers and Geosciences, 18(8), 1013-1034.</p>
+		    <p>Kidner, D.B. and Smith, D.H. (1992). Compression of digital elevation models by Huffman coding.
+			Computers and Geosciences, 18(8), 1013-1034.</p>
 
-		<p>Kidner, D.B. &amp; Smith, D.H. (2003). Advances in data compression of digital elevation models.
-		    Computers &amp; Geosciences 29 (8), 985-1002.</p>
-		
-		     <p>Lewis, M., &amp;; Smith, D.H. (1993). Optimal predictors for the data compression of digital
-                    elevation models using the method of Lagrange multipliers. 
-					In <i>Auto-Carto XI Proceedings of the International Symposium on Computer-Assisted Cartography</i>,
-					Oct 30-Nov 1, 1993. PDF document accessed
-                    August, 2026 from
-                    <a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">
-                        https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf</a>
-						</p>
+		    <p>Kidner, D.B. &amp; Smith, D.H. (2003). Advances in data compression of digital elevation models.
+			Computers &amp; Geosciences 29 (8), 985-1002.</p>
+
+		    <p>Lewis, M., &amp;; Smith, D.H. (1993). Optimal predictors for the data compression of digital
+			elevation models using the method of Lagrange multipliers.
+			In <i>Auto-Carto XI Proceedings of the International Symposium on Computer-Assisted Cartography</i>,
+			Oct 30-Nov 1, 1993. PDF document accessed
+			August, 2026 from
+			<a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">
+			    https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf</a>
+		    </p>
 
 
-		<p>National Oceanic and Atmospheric Administration [NOAA], 2026. ETOPO Global Relief Model.
-		National Centers for Environmental Information website accessed September 2026 from 
-		<a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model">https://www.ncei.noaa.gov/products/etopo-global-relief-model</a></p>
+		    <p>National Oceanic and Atmospheric Administration [NOAA], 2026. ETOPO Global Relief Model.
+			National Centers for Environmental Information website accessed September 2026 from
+			<a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model">https://www.ncei.noaa.gov/products/etopo-global-relief-model</a></p>
 
-		<p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005.
-		    NCEP WMO GRIB2 Documentation. Accessed January 2020 from
-		    <a href="https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/">
-			https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/</a></p>
+		    <p>National Weather Service -- National Centers for Environmental Prediction [NCEP], 2005.
+			NCEP WMO GRIB2 Documentation. Accessed January 2020 from
+			<a href="https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/">
+			    https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/</a></p>
 
-		<p>Nayuki (2020). Reference Arithmetic Coding. Retrieved January 2020 from
-		    <a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
-		<p>Nelson, M. (1991). <em>The Data Compression Book</em>. M&amp;T Publishing Company, Redwood City, CA.</p>
-		
-		<p>Paeth, Alan W. (1991). Arvo, James (ed.). "Image File Compression Made Easy". 
-		<i>Graphics Gems 2</i>. Academic Press, San Diego: 93–100. 
-		doi:10.1016/B978-0-08-050754-5.50029-3. ISBN 0-12-064480-0.</p>
+		    <p>Nayuki (2020). Reference Arithmetic Coding. Retrieved January 2020 from
+			<a href="https://www.nayuki.io/page/reference-arithmetic-coding">https://www.nayuki.io/page/reference-arithmetic-coding</a></p>
+		    <p>Nelson, M. (1991). <em>The Data Compression Book</em>. M&amp;T Publishing Company, Redwood City, CA.</p>
 
-        <p>Shannon, C. (1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal. 27 (3)</i>: 
-                   379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
-                   Reprint with corrections hosted by the Harvard University Mathematics Department at
-                   <a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">
-                   https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf</a> (accessed November 2024).</p>
+		    <p>Paeth, Alan W. (1991). Arvo, James (ed.). "Image File Compression Made Easy".
+			<i>Graphics Gems 2</i>. Academic Press, San Diego: 93–100.
+			doi:10.1016/B978-0-08-050754-5.50029-3. ISBN 0-12-064480-0.</p>
 
-        <p>Smith, Derek H., & Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.
-           Computers & Geosciences, Volume 20, Issues 7-8, August-October 1994, 1137-1141</p>
+		    <p>Shannon, C. (1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal. 27 (3)</i>:
+			379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
+			Reprint with corrections hosted by the Harvard University Mathematics Department at
+			<a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">
+			    https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf</a> (accessed November 2024).</p>
 
-		<p>SQLite4 (2019). Variable-Length Integers.
-		    Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">
-			https://sqlite.org/src4/doc/trunk/www/varint.wiki</a>.</p>
+		    <p>Smith, Derek H., & Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.
+			Computers & Geosciences, Volume 20, Issues 7-8, August-October 1994, 1137-1141</p>
 
-		<p>Wikipedia (2020). Differential pulse-code modulation.
-		    Retrieved January 2020 from <a href="https://en.wikipedia.org/wiki/Differential_pulse-code_modulation">
-			https://en.wikipedia.org/wiki/Differential_pulse-code_modulation</a></p>
-			
-		<p>World Wide Web Consortium. (2003). Portable Network Graphics (PNG) specification (Second edition) (W3C Recommendation).
-		https://www.w3.org/TR/2003/REC-PNG-20031110/</p>
-			
+		    <p>SQLite4 (2019). Variable-Length Integers.
+			Retrieved October 2019 from <a href="https://sqlite.org/src4/doc/trunk/www/varint.wiki">
+			    https://sqlite.org/src4/doc/trunk/www/varint.wiki</a>.</p>
+
+		    <p>Wikipedia (2020). Differential pulse-code modulation.
+			Retrieved January 2020 from <a href="https://en.wikipedia.org/wiki/Differential_pulse-code_modulation">
+			    https://en.wikipedia.org/wiki/Differential_pulse-code_modulation</a></p>
+
+		    <p>World Wide Web Consortium. (2003). Portable Network Graphics (PNG) specification (Second edition) (W3C Recommendation).
+			https://www.w3.org/TR/2003/REC-PNG-20031110/</p>
+
 	    </div>
 	</div>
     </body>
