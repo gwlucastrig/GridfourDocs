@@ -66,7 +66,6 @@
 
 	<aside id="sidebar">
   <nav>
-    <h3>Contents</h3>
     <ul>
       <li><a href="#introduction">Introduction</a></li>
       <li><a href="#techniques">Techniques</a>
@@ -76,8 +75,8 @@
           <li><a href="#why-custom_compression">Why Custom Compression?</a></li>
           <li><a href="#ETOPO1-resists-compression">Why ETOPO1 Resists Compression</a></li>
           <li><a href="#predictive-techniques-for-raster-data-compression">Predictive Techniques</a></li>
-          <li><a href="#the-simplest-predictive-technique">Simplest Predictive Technique</a></li>
-          <li><a href="#other-predictor-models">Other Predictor Models</a></li>
+          <li><a href="#the-simplest-predictive-technique">Differencing Predictor</a></li>
+          <li><a href="#other-predictor-models">Linear and Triangle Predictors</a></li>
           <li><a href="#serializing-the-residuals">Serializing Residuals</a></li>
           <li><a href="#tiling-schemes-and-data-compression">Tiling Schemes</a></li>
           <li><a href="#standard-results">Standard Results</a></li>
@@ -329,7 +328,7 @@
 		    to as &quot;spatial autocorrelation&quot; and has been extensively studied in
 		    Geographic Information Analysis and other fields.</p>
 
-		<h2 id="the-simplest-predictive-technique">The simplest predictive technique</h2>
+		<h2 id="the-simplest-predictive-technique">A simple technique: the differencing predictor</h2>
 		<p>The simplest predictor technique we apply to raster data is the differencing predictor.
 		    As mentioned above, the differencing predictor is used in a number of formats
 		    including the TIFF image specification. We implement the differencing technique using
@@ -385,7 +384,7 @@
 			but it treats subsequent grid rows as separate specifications rather than worrying about
 			adjacency issues at the transition from row to row (World Wide Web Consortium, 2003, section 9 "Filtering").
 		    </p>
-		    <h2 id="other-predictor-models">Other predictor models</h2>
+		    <h2 id="other-predictor-models">More powerful techniques: the linear and triangle predictors</h2>
 		    <p>The standard version of Gridfour implements two additional predictor models:
 			the linear predictor and the triangle predictor.</p>
 		    <p>The linear predictor model predicts that the data varies as a linear function. The value
