@@ -133,7 +133,7 @@
 
 
 		<h1 id="introduction">Introduction</h1>
-		<p>This document provides details for the design, methods, and algorithms used
+		<p>This document describes the design, methods, and algorithms used
 		    by the Gridfour raster data compression implementation.</p>
 
 		<p>The Gridfour software project explores data compression
@@ -157,7 +157,7 @@
 		<h2 id="the-etopo1-example-data-set">An example raster data source: ETOPO1</h2>
 
 		<p>In the discussion that follows, we will use a data set called ETOPO1 to illustrate
-		    key points related to raster data compression. The ETOPO series(for Earth topography)
+		    key points related to raster data compression. The ETOPO series (for Earth topography)
 		    is a family of global-scale elevation and ocean depth
 		    (bathymetry) data set developed by the U.S. National Oceanic and Atmospheric Administration (NOAA, 2026).
 		    ETOPO1 is a numeric raster that gives elevations in integer meters referenced to mean sea level,
@@ -172,8 +172,8 @@
 		</figure>
 
 		<p>We selected ETOPO1 as an example for a number of reasons. First, at 445 megabytes in size,
-		    it is large enough to be worth compressing. Also, the data is complex enough to be interesting.
-		    And, finally,terrain data is something that is familiar that we should all have a good intuition
+		    it is large enough to be worth compressing. Also, the data is rich enough to be statistically interesting.
+		    And, finally, terrain data is something that is familiar that we should all have a good intuition
 		    for the way it behaves.</p>
 
 		<p>The following table summarizes the general properties for ETOPO1.</p>
@@ -261,8 +261,9 @@
 		<p>Conventional techniques are limited in that they do not account for the numerical relationships between
 		    adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
 		    showed, we can take advantage of these relationships to transform the data into a form that
-		    is more tractable to data compression. For example, the Gridfour uses custom compression to reduce the size
-		    of ETOPO1 to 22 percent of its original size while losslessly preserving its content. </p>
+		    is more amenable to data compression. For example,  Gridfour uses custom compression to reduce the size
+		    of ETOPO1 to 22 percent of its original size. And, because the compression is lossless, it faithfully
+			preserves the original content.</p>
 
 
 
@@ -292,13 +293,13 @@
 		<p>Figure 2 below illustrates some of the factors that make ETOPO1 resistant to conventional data compression.
 		    At first glance, the prominent spike near elevation zero (the shoreline) might appear to be a natural
 		    for Huffman coding. Because Huffman assigns the shortest bit sequences to the most frequently occuring
-		    symbols in a text, an configuration which would be expected to reduce the compressed size of a data set.
+		    symbols in a text, a configuration which would be expected to reduce the compressed size of a data set.
 		    But even though the near-zero values occur more often than others across the range,
 		    they do not dominate the frequency table for encoded symbols. In fact, they represent less than
-		    five percent of the total number of grid cells in the raster. The cost of encoding all data values in the
-		    raster outweighs any saving that we might see for any particular subset of the whole.</p>
+		    five percent of the total number of grid cells in the raster. The cost of encoding the full range of values in the
+		    raster outweighs any saving that we might see for any particular subset of the distribution.</p>
 		<p>This situation reflects a trend that we often see in data sets such as ETOPO1. Raster products
-		    commonly have a broad set of unique values with similar frequencies of occurance. This characteristic
+		    commonly have a broad set of unique values with similar frequencies of occurence. This characteristic
 		    drives up the Shannon entropy for the data set and leads toward less successful data compression.
 		    Additionally, most compression implementations carry a non-trivial overhead based on the
 		    number of unique symbols that occur in the source data. So the large range-of-values we see in
@@ -374,8 +375,7 @@
 			left to right. The left-to-right traversal will result in positive values. The right-to-left
 			traversal will result in an equal number of negative values.  But we've seen that
 			data compression generally works better for a smaller set of unique symbols than for a larger
-			set. Ideally, we prefer a pattern where the traversal covers the grid in the
-			same direction to the largest degree feasible.</p>
+			set. Ideally, we prefer a grid-traversal pattern that preserves direction as consistently as possible.</p>
 
 		    <p>Figure 4 shows the pattern used in Gridfour's differencing predictor. The difference is
 			always computed using an adjacent cell. But, at the transition from row to row, the
@@ -400,7 +400,7 @@
 			the linear predictor and the triangle predictor.</p>
 		    <p>The linear predictor model predicts that the data varies as a linear function. The value
 			for the next sample in a sequence is predicted using a straight-line computed from the two
-			that preceded it.  The predictor is applied on a row-by-row basis. The vertical coordinate
+			samples that preceded it.  The predictor is applied on a row-by-row basis. The vertical coordinate
 			of the points that precede the target point are assigned the values Z<sub>A</sub>, Z<sub>B</sub> respectively.
 			If we assume that the grid points are spaced at equal intervals,
 			then the predicted value, Z<sub>P</sub>, is given by
@@ -617,8 +617,8 @@ Gridfour_Deflate                              Compressed Output    |      Predic
 
 		    <h3 id="ETOPO-2022">The ETOPO-2022 floating-point raster data set</h3>
 		    <p>In 2022, NOAA released an updated version of their ETOPO data products that used floating point values
-			rather than integers. The data set includes products at different resolutions, including one with the same
-			1 minute of arc resolution as ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value.
+			rather than integers. The data set includes products at different resolutions, including a
+			1-minute-of-arc product equivalent to ETOPO1. That file is 890 megabytes and has an overall entropy of 21.1 bits/value.
 			Gridfour compresses the data to 417 megabytes, or about 47 percent of its original size.
 			While this is an slight improvement over the source NetCDF format (456 megabytes), it is not particularly satisfying.
 			The text below shows summary information from the compression results.  The high-order 7 bits
