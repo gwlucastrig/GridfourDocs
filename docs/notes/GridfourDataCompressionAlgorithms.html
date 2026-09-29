@@ -70,7 +70,7 @@
   }
 }
 
-}
+ 
   
 </style>
     <body>
@@ -149,7 +149,7 @@
 		    serve as a convenient testbed for software developers who are investigating their own data-compression techniques.
 		    Developers can extend the capabilities of Gridfour by writing custom codec (coder-decoder)
 		    classes that are registered with the Gridfour API at runtime. This approach lets
-		    Gridfour’s take care of data management tasks so that investigators can focus on their core algorithm development.</p>
+		    Gridfour's logic take care of data management tasks so that investigators can focus on their core algorithm development.</p>
 
 
 		<h1 id="techniques">Techniques</h1>
@@ -227,7 +227,7 @@
 		<p>Huffman coding is the oldest provably optimal data compression technique (Huffman, 1952). It assigns
 		    variable-length bit codes to each unique symbol in a text. The lengths of these bit codes are
 		    determined based on a <i>frequency table</i> that relates each symbol to the number of times it occurs
-		    in the a source data set. Symbols (or values) that occur most frequently
+		    in the source data set. Symbols (or values) that occur most frequently
 		    are assigned the shortest codes. Symbols that occur less frequently are assigned longer codes.
 		    Even though Huffman coding has been superseded by more recent techniques, it is still
 		    used as a core component of several compression formats including the JPEG image specification and
@@ -262,7 +262,7 @@
 		    adjacent values in a spatial data set. But, as Kidner and Smith (1992), and others (Adobe 1992, Paeth 1991, etc.)
 		    showed, we can take advantage of these relationships to transform the data into a form that
 		    is more tractable to data compression. For example, the Gridfour uses custom compression to reduce the size
-		    of ETOPO1 to 22 percent of its original size while losslessly preserving the its content. </p>
+		    of ETOPO1 to 22 percent of its original size while losslessly preserving its content. </p>
 
 
 
@@ -364,7 +364,7 @@
 			in which an implementation traverses a grid in row-major order as it does in the TIFF standard.
 			The process	accesses grid cells one at a time
 			across a row. Adjacency is preserved. But, at the end of a row, it jumps back to the first cell in the
-			next row. For a large raster, that cell may be far removed in space from its predecessor.<p>
+			next row. For a large raster, that cell may be far removed in space from its predecessor.</p>
 
 		    <p>There are patterns for traversing a raster that do preserve adjacency. The GRIB2 format
 			includes a specification in which rows are traversed in alternating order (NCEP 2005, table 5.6).
@@ -507,7 +507,7 @@
 		    <p> In spatial analysis, this tendency of the statistical properties of data to change across
 			a data set is referred to as <em>non-stationarity</em>. A well-chosen tiling scheme allows an
 			API to separate data into subsets that feature a self-consistent set of statistics.
-			For example, it can signficantly reduce the entropy (both pre and post prediction).
+			For example, it can significantly reduce the entropy (both pre and post prediction).
 			In the case of ETOPO1, dividing the grid into 120x180 grid cell tiles yields an entropy of 9.39
 			bits/value averaged across all tiles compared to the 12.9 bits/value computed for the
 			raster as a whole. Organizing the grid as tiles also allows the API to apply different predictors
