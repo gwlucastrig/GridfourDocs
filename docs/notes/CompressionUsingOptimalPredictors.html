@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lossless Compression for Raster Data using Optimal Predictors</title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -62,7 +62,7 @@
                     technique itself. The second discusses implementation details for a Java-based API
                     that is available through the Gridfour Software Project. One of the goals of the
                     Gridfour project is to explore data compression techniques for raster (grid) based data sources.
-                    To that end, we have created an software library called GVRS that provides a testbed for
+                    To that end, we have created a software library called GVRS that provides a testbed for
                     experimenting with compression techniques. While the second part of this article does
                     touch on GVRS, the focus of these notes is the Optimal Predictor technique itself.
                     Therefore, I've tried to limit the discussion of Gridfour-specific elements to those
@@ -564,11 +564,11 @@
                     but there are no valid positions that would allow the predictor to compute points
                     in the uncovered regions. The two columns on the left, two rows on the bottom,
                     and two columns to the right are all uncovered. Therefore, an implementation of Optimal Predictors
-                    must include alternate logic to pre-populate those cells before appling the 12-coefficient predictor.</p>
+                    must include alternate logic to pre-populate those cells before applying the 12-coefficient predictor.</p>
 
                 <img alt="Uncovered cells" src="images/OptimalPredictors/SLGrid_CoveredAndUncoveredCells.png" />
 
-                <p>The Gridfour implementation of the Smith and Lewis algorithm begins processing by using
+                <p>The Gridfour implementation of the Smith and Lewis algorithm begins processing using
                     its simpler predictors to prepopulate the first two rows and first two columns of the grid.
                     It then applies Optimal Predictors to populate the interior. The last two columns
                     in the grid are also uncovered. So as each row is processed using Optimal Predictors,
