@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>What entropy tells us about data compression</title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <link rel="stylesheet" href="css/text.css">
+        <link rel="stylesheet" href="css/layout.css">
     </head>
 
 
@@ -90,11 +90,11 @@
                 <h2>The entropy calculation</h2>
 
                 <p>Let’s look at Shannon’s entropy calculation. Consider a
-                    text to be a data set <img alt="data set" src="EntropyMetricForDataCompression_files/image001.png" style="vertical-align:top" />
+                    text to be a data set <img alt="data set" src="EntropyMetricForDataCompression_files/image001.png" style="vertical-align:top">
                     that consists of a set of unique values
-                    <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" />
+                    <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" >
                     each occurring in the body of the text with a distinct probability
-                    <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" />.
+                    <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" >.
                     These values may be letters of the alphabet, numerical values for a raster data product, or
                     any information that can be serialized and encoded.  For our purposes, we can
                     write Shannon’s entropy equation as</p>
@@ -157,7 +157,7 @@
 
 
 
-                <p>Let  <img width=26 height=24 src="EntropyMetricForDataCompression_files/image007.png" style="vertical-align:top">
+                <p>Let  <img width=26 height=24 alt="P i|j" src="EntropyMetricForDataCompression_files/image007.png" style="vertical-align:top">
                     be the conditional probability that the present symbol is the j-th entry in the symbol
                     set given that the previous symbol is the i-th symbol. Then the second-order entropy
                     can be computed as</p>
@@ -167,7 +167,7 @@
 
                 <p>The second-order entropy for this document is 3.54.  Higher-order computations follow the pattern shown
                     in the formula above. We can extend it for third-order entropy where
-                    <img width=37 height=24 src="EntropyMetricForDataCompression_files/image009.png" style="vertical-align:top">
+                    <img width=37 height=24 alt="P k|i,j" src="EntropyMetricForDataCompression_files/image009.png" style="vertical-align:top">
                     is the conditional probability that the present
                     symbol is the k-th entry in the symbol set given that the previous two symbols
                     were the i-th and j-th entries</p>
@@ -205,7 +205,7 @@
                     sequence for the encoded text is 111000.</p>
 
                 <figure>
-                    <img border=0 width=518 height=304 src="EntropyMetricForDataCompression_files/image011.png">
+                    <img width=518 height=304 src="EntropyMetricForDataCompression_files/image011.png">
                     <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>, Ydelo, 2021).</figcaption>
                 </figure>
 
@@ -224,7 +224,7 @@
                     as efficient if it is close to the entropy value. One way to define efficiency is using the formula below:</p>
 
 
-                <img  class="imageCentered" width=351 height=43 src="EntropyMetricForDataCompression_files/image015.png">
+                <img  class="imageCentered" alt="Efficiency formula" width=351 height=43 src="EntropyMetricForDataCompression_files/image015.png">
 
 
                 <p>For example, the <a href="https://github.com/gwlucastrig/gridfour">Gridfour software project</a> includes
@@ -292,7 +292,7 @@
                     output, a general trend is clearly visible.</p>
 
                 <figure>
-                    <img border=0 width=496 height=305 src="EntropyMetricForDataCompression_files/image016.png">
+                    <img  width=496 height=305 src="EntropyMetricForDataCompression_files/image016.png">
                     <figcaption>Figure 3 &ndash;  First-order entropy versus Deflate bits-per-symbol for SRTM data (data source: NASA, 2020).</figcaption>
                 </figure>
 
