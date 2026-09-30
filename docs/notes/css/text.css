@@ -269,12 +269,12 @@ tr:hover {
 }
 
 figure   {
-  display: flex;
+  display: block;
   justify-content: center;
 }
 
 figcaption {
-	text-align: center;
+	text-align: left;
 }
 
 
