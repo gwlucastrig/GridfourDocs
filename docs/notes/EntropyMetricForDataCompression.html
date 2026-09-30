@@ -53,7 +53,7 @@
 
                 <h1>Entropy</h1>
 
-                <p>In the 1940’s, Shannon developed a mathematically rigorous
+                <p>In the 1940s, Shannon developed a mathematically rigorous
                     treatment of the problem of transmitting digital data over a noisy
                     communications channel (Soni &amp; Goodman, p. 115).  The resulting 77 page
                     paper has been called “one of the great analytical achievements of the 20<sup>th</sup>
@@ -278,8 +278,9 @@
                 </pre>
 
 
-                <p>The entropy definition is not a good match for the
-                    process implemented for the Deflate technique. In fact, the bits-per-symbol averages
+                <p>The entropy definition is a useful diagnostic metric for Deflate, 
+					but it is not a strict lower-bound model for the algorithm.
+					In fact, the bits-per-symbol averages
                     obtained from Deflate may be less than the computed entropy rates. So, in the
                     case of Deflate, the entropy rate does not represent a lower bound for the
                     compression technique. Even so, there is often a loose coupling between the
@@ -303,7 +304,9 @@
                     the entropy metric provides a tool for evaluating the effectiveness of a data
                     compression technique. Cases where the entropy rate indicates that a data
                     compressor performs poorly may indicate opportunities for refining an algorithm
-                    or investigating the correctness of a particular implementation.</p>
+                    or investigating the correctness of a particular implementation.
+					Use entropy to estimate source complexity, use Huffman as a baseline, 
+					and use Deflate/LZ-based methods when order-dependent structure matters</p>
 
                 <p>Case studies that explore how entropy relates to the compression characteristics
                     of specific data sets are provided in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II</a>
