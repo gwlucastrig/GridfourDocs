@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>What entropy tells us about data compression</title>
-        <link rel="stylesheet" href="css/text.css">
-        <link rel="stylesheet" href="css/layout.css">
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -99,7 +99,7 @@
                     any information that can be serialized and encoded.  For our purposes, we can
                     write Shannon’s entropy equation as</p>
 
-                <img class="imageCentered" alt="Shannon's entropy formula first-order" width=195 height=63 src="EntropyMetricForDataCompression_files/EntropyFormula.png">
+                <img class="imageCentered" alt="Shannon's entropy formula first-order" width="195" height="63" src="EntropyMetricForDataCompression_files/EntropyFormula.png">
 
 
                 <p>Because we are interested in digital applications, we use
@@ -157,22 +157,22 @@
 
 
 
-                <p>Let  <img width=26 height=24 alt="P i|j" src="EntropyMetricForDataCompression_files/image007.png" style="vertical-align:top">
+                <p>Let  <img width="26" height="24" alt="P i|j" src="EntropyMetricForDataCompression_files/image007.png" style="vertical-align:top">
                     be the conditional probability that the present symbol is the j-th entry in the symbol
                     set given that the previous symbol is the i-th symbol. Then the second-order entropy
                     can be computed as</p>
 
-                <img class="imageCentered" alt="Second-order entropy formula" width=268 height=63 src="EntropyMetricForDataCompression_files/EntropyFormulaSecondOrder.png">
+                <img class="imageCentered" alt="Second-order entropy formula" width="268" height="63" src="EntropyMetricForDataCompression_files/EntropyFormulaSecondOrder.png">
 
 
                 <p>The second-order entropy for this document is 3.54.  Higher-order computations follow the pattern shown
                     in the formula above. We can extend it for third-order entropy where
-                    <img width=37 height=24 alt="P k|i,j" src="EntropyMetricForDataCompression_files/image009.png" style="vertical-align:top">
+                    <img width="37" height="24" alt="P k|i,j" src="EntropyMetricForDataCompression_files/image009.png" style="vertical-align:top">
                     is the conditional probability that the present
                     symbol is the k-th entry in the symbol set given that the previous two symbols
                     were the i-th and j-th entries</p>
 
-                <img  class="imageCentered" alt="Third-order entropy formula"  width=349 height=63 src="EntropyMetricForDataCompression_files/EntropyFormulaThirdOrder.png">
+                <img  class="imageCentered" alt="Third-order entropy formula"  width="349" height="63" src="EntropyMetricForDataCompression_files/EntropyFormulaThirdOrder.png">
 
 
                 <h2>Entropy coding, the Huffman technique, and efficient data compression</h2>
@@ -205,8 +205,10 @@
                     sequence for the encoded text is 111000.</p>
 
                 <figure>
-                    <img width=518 height=304 src="EntropyMetricForDataCompression_files/image011.png">
-                    <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source: <a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>, Ydelo, 2021).</figcaption>
+                    <img width="518" height=""304" src="EntropyMetricForDataCompression_files/image011.png">
+                    <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source:
+					<a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>,
+					Ydelo, 2021).</figcaption>
                 </figure>
 
 
@@ -224,7 +226,7 @@
                     as efficient if it is close to the entropy value. One way to define efficiency is using the formula below:</p>
 
 
-                <img  class="imageCentered" alt="Efficiency formula" width=351 height=43 src="EntropyMetricForDataCompression_files/image015.png">
+                <img  class="imageCentered" alt="Efficiency formula" width="351" height="43" src="EntropyMetricForDataCompression_files/image015.png">
 
 
                 <p>For example, the <a href="https://github.com/gwlucastrig/gridfour">Gridfour software project</a> includes
@@ -293,7 +295,7 @@
                     output, a general trend is clearly visible.</p>
 
                 <figure>
-                    <img  width=496 height=305 src="EntropyMetricForDataCompression_files/image016.png">
+                    <img  width="496" height="305" src="EntropyMetricForDataCompression_files/image016.png">
                     <figcaption>Figure 3 &ndash;  First-order entropy versus Deflate bits-per-symbol for SRTM data (data source: NASA, 2020).</figcaption>
                 </figure>
 
@@ -315,8 +317,12 @@
                 <h1>References</h1>
                 <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, USA: Research Laboratory of Electronics at MIT.</p>
                 <p>Huffman, D. (1952). A method for the construction of minimum-redundancy Codes. <i>Proceedings of the IRE. 40 (9)</i>: 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
-                <p>MIT editors. (2001, July 1). Claude Shannon: reluctant father of the digital age. <i>MIT Technology Review</i>. Accessed from https://www.technologyreview.com/2001/07/01/235669/claude-shannon-reluctant-father-of-the-digital-age/</p>
-                <p>National Aeronautics and Space Administration [NASA]. (2020). Shuttle Radar Topography Mission (SRTM) https://www2.jpl.nasa.gov/srtm/ Data was downloaded from the USGS Earth Explorer web site at https://earthexplorer.usgs.gov/.</p>
+                <p>MIT editors. (2001, July 1). Claude Shannon: reluctant father of the digital age. <i>MIT Technology Review</i>.
+				Accessed from https://www.technologyreview.com/2001/07/01/235669/claude-shannon-reluctant-father-of-the-digital-age/</p>
+				
+                <p>National Aeronautics and Space Administration [NASA]. (2020). Shuttle Radar Topography Mission (SRTM)
+				 https://www2.jpl.nasa.gov/srtm/ Data was downloaded from the USGS Earth Explorer web site at
+				 https://earthexplorer.usgs.gov/.</p>
 				
 				<p>Shannon, C. (1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal. 27 (3)</i>: 
 	               379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
