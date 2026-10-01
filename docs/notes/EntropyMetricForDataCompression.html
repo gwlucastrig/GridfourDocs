@@ -6,6 +6,7 @@
         <title>What entropy tells us about data compression</title>
         <link rel="stylesheet" href="css/text.css" >
         <link rel="stylesheet" href="css/layout.css" >
+		<link rel="stylesheet" href="css/sidebar.css" >
     </head>
 
 
@@ -24,7 +25,32 @@
                 </ul>
                 <p>&nbsp;</p>
             </div>
-
+            <aside id="sidebar" aria-label="Table of contents">
+			<nav>
+                <h2>Contents</h2>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li>
+                        <a href="#entropy">Entropy</a>
+                        <ul>
+                            <li><a href="#entropy-calculation">The entropy calculation</a></li>
+                            <li><a href="#applying-entropy">Applying entropy</a></li>
+                            <li><a href="#higher-order-models">Higher-order models</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#entropy-coding">Entropy coding</a>
+                        <ul>
+                            <li><a href="#huffman-coding">Huffman coding</a></li>
+                            <li><a href="#implementation-details">Implementation details</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#deflate">Beyond entropy coding: Deflate</a></li>
+                    <li><a href="#conclusion">Conclusion</a></li>
+                    <li><a href="#references">References</a></li>
+                </ul>
+				</nav>
+            </aside>
 
             <div id="notescontent">
                 <div class="titleblock">
@@ -33,7 +59,7 @@
                         Part I: Concepts
                     </p>
                 </div>
-                <h1>Introduction</h1>
+                <h1 id="introduction">Introduction</h1>
                 <p>When we implement a data compression technique, one of the
                     first questions we might ask is “how well does it work?”  Looking at the ratio
                     of the sizes for input versus output (the <i>compression ratio</i>) gives us a
@@ -51,7 +77,7 @@
                     Communication” (Shannon, 1948).   </p>
 
 
-                <h1>Entropy</h1>
+                <h1 id="entropy">Entropy</h1>
 
                 <p>In the 1940s, Shannon developed a mathematically rigorous
                     treatment of the problem of transmitting digital data over a noisy
@@ -87,7 +113,7 @@
                     <a href="https://www.youtube.com/watch?v=YtebGVx-Fxw">Entropy (for Data Science) Clearly Explained!!!</a> on YouTube (Starmer, 2024).
                     I think you will find that the video lives up to its title</p>
 
-                <h2>The entropy calculation</h2>
+                <h2 id="entropy-calculation">The entropy calculation</h2>
 
                 <p>Let’s look at Shannon’s entropy calculation. Consider a
                     text to be a data set <img alt="data set" src="EntropyMetricForDataCompression_files/image001.png" style="vertical-align:top">
@@ -99,7 +125,8 @@
                     any information that can be serialized and encoded.  For our purposes, we can
                     write Shannon’s entropy equation as</p>
 
-                <img class="imageCentered" alt="Shannon's entropy formula first-order" width="195" height="63" src="EntropyMetricForDataCompression_files/EntropyFormula.png">
+                <img class="imageCentered" alt="Shannon's entropy formula first-order" 
+				width="195" height="63" src="EntropyMetricForDataCompression_files/EntropyFormula.png">
 
 
                 <p>Because we are interested in digital applications, we use
@@ -114,7 +141,7 @@
                     (Wikipedia, 2024a). Shannon himself claimed that he chose the term <i>entropy</i>
                     based on the suggestion of <a href="https://en.wikipedia.org/wiki/John_von_Neumann">John von Neumann</a> (Soni &amp; Goodman, p. 162).</p>
 
-                <h2>Applying entropy</h2>
+                <h2 id="applying-entropy">Applying entropy</h2>
 
                 <p>To illustrate the entropy concept, let’s consider a couple of applications.</p>
 
@@ -134,7 +161,7 @@
                     data types, such as integers or even floating-point values. Examples of this approach
                     are given in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II of this article</a>.</p>
 
-                <h2>Higher order models for entropy and conditional probability</h2>
+                <h2 id="higher-order-models">Higher order models for entropy and conditional probability</h2>
 
                 <p>The entropy specification presented above does not
                     consider the order of symbols. It treats the probability of any particular
@@ -175,13 +202,13 @@
                 <img  class="imageCentered" alt="Third-order entropy formula"  width="349" height="63" src="EntropyMetricForDataCompression_files/EntropyFormulaThirdOrder.png">
 
 
-                <h2>Entropy coding, the Huffman technique, and efficient data compression</h2>
+                <h2 id="entropy-coding">Entropy coding, the Huffman technique, and efficient data compression</h2>
                 <p>The term <a href="https://en.wikipedia.org/wiki/Entropy_coding">entropy coding</a> refers to "any lossless data compression method
                     that "attempts to approach the lower bound declared by Shannon's source coding theorem" (Wikipedia, 2023).
                     Entropy coding techniques include Huffman coding, arithmetic coding,
                     and asymmetric numeral systems. The simplest and most widely used of these is Huffman coding.</p>
 
-                <h3>Huffman coding</h3>
+                <h3 id="huffman-coding">Huffman coding</h3>
                 <p><a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a> (Huffman, 1952) uses
                     variable-length bit sequences to encode individual entries in a symbol set (alphabet, etc.). 
                     The encoding for each symbol is based on the frequency of its occurrence within
@@ -213,7 +240,7 @@
 
 
 
-                <h3>Implementation details and overhead</h3>
+                <h3 id="implementation-details">Implementation details and overhead</h3>
                 <p>Of course, if we wish to use Huffman coding to compress a data set, we will also want
                     to have some method to extract the original information later on. So, most Huffman compressors
                     include some method to encode the structure of the Huffman tree. This requirement adds overhead to a compressed
@@ -258,7 +285,7 @@
                     data.  If an implementation is suitable to a data set, even a data set with a high
                     entropy value will produce a good efficiency score. </p>
 
-                <h2>Beyond entropy coding: the Deflate algorithm</h2>
+                <h2 id="deflate">Beyond entropy coding: the Deflate algorithm</h2>
 
                 <p>Because the Huffman technique does not consider the order
                     of symbols within the text, it cannot take advantage of sequences of symbols
@@ -300,7 +327,7 @@
                 </figure>
 
 
-                <h1> Conclusion</h1>
+                <h1 id="conclusion">Conclusion</h1>
 
                 <p>By providing insight into the complexity of a data source,
                     the entropy metric provides a tool for evaluating the effectiveness of a data
@@ -312,7 +339,7 @@
                     of specific data sets are provided in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II</a>
                     of this article.</p>
 
-                <h1>References</h1>
+                <h1 id="references">References</h1>
                 <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, USA: Research Laboratory of Electronics at MIT.</p>
                 <p>Huffman, D. (1952). A method for the construction of minimum-redundancy Codes. <i>Proceedings of the IRE. 40 (9)</i>: 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
                 <p>MIT editors. (2001, July 1). Claude Shannon: reluctant father of the digital age. <i>MIT Technology Review</i>.
