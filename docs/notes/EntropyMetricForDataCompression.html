@@ -18,7 +18,7 @@
                     <li>|</li>
                     <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
                     <li>|</li>
-                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Application Notes</a></li>
+                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
                     <li><a href="EntropyMetricForDataCompressionCaseStudies.html">Part II: Case Studies</a></li>
                     <li>|</li>
@@ -101,8 +101,8 @@
                     unpredictable. Shannon provided a way of quantifying this process using a
                     metric he named <i>entropy.</i></p>
 
-                <p>Shannon also demonstrated that the entropy metric represents the lowest bound to which
-                    a text could be compressed without loss of information. This result is known as the
+                <p>Shannon also demonstrated that the entropy metric provides a lower bound for 
+                    the average code length of a lossless representation. This result is known as the
                     <i>source coding theorem</i> (Wikipedia 2024c). It applies in cases where a variable-length
                     binary code is assigned to each unique symbol in an arbitrary text or sequence of numeric values.
                     In such cases, the theorem allows us to use the entropy calculation as a way of
@@ -232,7 +232,7 @@
                     sequence for the encoded text is 111000.</p>
 
                 <figure>
-                    <img width="518" height=""304" src="EntropyMetricForDataCompression_files/image011.png">
+                    <img width="518" height="304" src="EntropyMetricForDataCompression_files/image011.png">
                     <figcaption>Figure 1 &ndash; Huffman tree for &quot;tree&quot; (Image source:
 					<a href="https://huffman-coding-online.vercel.app/#encoding-tool"> Huffman Coding Online</a>,
 					Ydelo, 2021).</figcaption>
@@ -250,7 +250,8 @@
                     Even so, it usually produces good results.</p>
 
                 <p>In practice, we accept a Huffman implementation
-                    as efficient if it is close to the entropy value. One way to define efficiency is using the formula below:</p>
+                    as efficient if it is close to the entropy bound for the source model being used.
+                    One way to define efficiency is using the formula below:</p>
 
 
                 <img  class="imageCentered" alt="Efficiency formula" width="351" height="43" src="EntropyMetricForDataCompression_files/image015.png">
@@ -307,10 +308,10 @@
                 </pre>
 
 
-                <p>The entropy definition is a useful diagnostic metric for Deflate, 
-					but it is not a strict lower-bound model for the algorithm.
-					In fact, the bits-per-symbol averages
-                    obtained from Deflate may be less than the computed entropy rates. So, in the
+                <p>Entropy is a useful diagnostic metric for Deflate, but it is not a strict 
+				   lower bound for this class of compressors because they improve on Huffman by
+				   exploiting context and repeated patterns. In fact, the bits-per-symbol averages
+                    obtained from Deflate are often less than the computed first-order entropy rates. So, in the
                     case of Deflate, the entropy rate does not represent a lower bound for the
                     compression technique. Even so, there is often a loose coupling between the
                     entropy for a data source and the relative size of Deflate-compressed product.
@@ -340,8 +341,10 @@
                     of this article.</p>
 
                 <h1 id="references">References</h1>
-                <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, USA: Research Laboratory of Electronics at MIT.</p>
-                <p>Huffman, D. (1952). A method for the construction of minimum-redundancy Codes. <i>Proceedings of the IRE. 40 (9)</i>: 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
+                <p>Fano, R.M. (1949). The transmission of information.  <i>Technical Report No. 65. Cambridge (Mass.)</i>, 
+				USA: Research Laboratory of Electronics at MIT.</p>
+                <p>Huffman, D. (1952). A method for the construction of minimum-redundancy Codes. 
+				<i>Proceedings of the IRE. 40 (9)</i>: 1098–1101. doi:10.1109/JRPROC.1952.273898.</p>
                 <p>MIT editors. (2001, July 1). Claude Shannon: reluctant father of the digital age. <i>MIT Technology Review</i>.
 				Accessed from https://www.technologyreview.com/2001/07/01/235669/claude-shannon-reluctant-father-of-the-digital-age/</p>
 				
@@ -355,12 +358,18 @@
                    <a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">
                    https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf</a> (accessed November 2024).</p>
 				   
-			    <p>Soni, J., & Goodman, R. (2017). <i>A mind at play: how Claude Shannon invented the information age</i> (First Simon & Schuster hardcover edition.). Simon & Schuster.</p>
-                <p>Starmer, J. [Stat Quest] (2024). <i>Entropy (for Data Science): Clearly Explained!!!</i> [Video]. YouTube. https://www.youtube.com/watch?v=YtebGVx-Fxw</p>
-                <p>Wikipedia contributors. (2023, November 15). Entropy coding. In Wikipedia, The Free Encyclopedia. Retrieved 18:06, November 27, 2024, from https://en.wikipedia.org/w/index.php?title=Entropy_coding&oldid=1185288022</p>
-                <p>Wikipedia contributors. (2024a, October 3). Josiah Willard Gibbs. In <i>Wikipedia, The Free Encyclopedia.</i> Retrieved 17:02, October 15, 2024, from https://en.wikipedia.org/w/index.php?title=Josiah_Willard_Gibbs&oldid=1249234374</p>
-                <p>Wikipedia contributors. (2024b, October 14). Huffman coding. <i>In Wikipedia, The Free Encyclopedia.</i> Retrieved 18:03, October 14, 2024, from https://en.wikipedia.org/w/index.php?title=Huffman_coding&oldid=1245054267</p>
-                <p>Wikipedia contributors. (2024c, May 2). Shannon's source coding theorem. In <i>Wikipedia, The Free Encyclopedia.</i> Retrieved 13:01, October 3, 2024, from https://en.wikipedia.org/w/index.php?title=Shannon%27s_source_coding_theorem&oldid=1221844320 </p>
+			    <p>Soni, J., & Goodman, R. (2017). <i>A mind at play: how Claude Shannon invented the information age</i> 
+				(First Simon & Schuster hardcover edition.). Simon & Schuster.</p>
+                <p>Starmer, J. [Stat Quest] (2024). <i>Entropy (for Data Science): Clearly Explained!!!</i> [Video].
+				YouTube. https://www.youtube.com/watch?v=YtebGVx-Fxw</p>
+                <p>Wikipedia contributors. (2023, November 15). Entropy coding. In Wikipedia, The Free Encyclopedia.
+				Retrieved 18:06, November 27, 2024, from https://en.wikipedia.org/w/index.php?title=Entropy_coding&oldid=1185288022</p>
+                <p>Wikipedia contributors. (2024a, October 3). Josiah Willard Gibbs. In <i>Wikipedia, The Free Encyclopedia.</i> 
+				Retrieved 17:02, October 15, 2024, from https://en.wikipedia.org/w/index.php?title=Josiah_Willard_Gibbs&oldid=1249234374</p>
+                <p>Wikipedia contributors. (2024b, October 14). Huffman coding. <i>In Wikipedia, The Free Encyclopedia.</i> 
+				Retrieved 18:03, October 14, 2024, from https://en.wikipedia.org/w/index.php?title=Huffman_coding&oldid=1245054267</p>
+                <p>Wikipedia contributors. (2024c, May 2). Shannon's source coding theorem. In <i>Wikipedia, The Free Encyclopedia.</i> 
+				Retrieved 13:01, October 3, 2024, from https://en.wikipedia.org/w/index.php?title=Shannon%27s_source_coding_theorem&oldid=1221844320 </p>
                 <p>Ydelo, A. (2021). Huffman coding online (Web Page).  Accessed October 14 from https://huffman-coding-online.vercel.app</p>
 
 
