@@ -65,15 +65,15 @@
                     of the sizes for input versus output (the <i>compression ratio</i>) gives us a
                     place to start. But the answer it provides is incomplete. The compression ratio
                     depends as much on the nature of the input data as it does the effectiveness of
-                    the compression technique.  A very simple input set – one that consists of a
-                    single data value repeated multiple times – will yield a high compression ratio
-                    for virtually any implementation. A complex data set, or one consisting of highly
-                    random values, may resist even the best compression techniques.</p>
+                    the compression technique.  A trivial input set consisting of a
+                    single symbol repeated multiple times will yield a high compression ratio
+                    for virtually any implementation. A complex data set, or one consisting of a highly
+                    random selection of symbols, may resist even the best compression techniques.</p>
 
                 <p>To understand the effectiveness of a compression technique,
                     we need a way to assess the complexity of an input data set.  One tool for
                     doing so is provided by the <i>information entropy</i> metric introduced by
-                    Claude Shannon in his ground-breaking paper “A Mathematical Theory of
+                    Claude Shannon in his groundbreaking paper “A Mathematical Theory of
                     Communication” (Shannon, 1948).   </p>
 
 
@@ -86,8 +86,8 @@
                     century” (MIT, 2001). Its primary focus was establishing a mathematics-based
                     framework for error-free communications. But, in doing so, the paper provided
                     the theoretical underpinnings modern data compression. Part of that was the
-                    introduction of the concept of entropy. What was the lowest bound to which a
-                    data source could be encoded without a loss of information?  Indeed, how could we
+                    introduction of the concept of entropy. What is the lowest bound to which a
+                    data source can be encoded without a loss of information?  Indeed, how can we
                     even define the idea of information?</p>
 
                 <p>Shannon realized that the information content of a text
@@ -119,7 +119,7 @@
                     text to be a data set <img alt="data set" src="EntropyMetricForDataCompression_files/image001.png" style="vertical-align:top">
                     that consists of a set of unique values
                     <img alt="Values" src="EntropyMetricForDataCompression_files/image002.png" style="vertical-align:top" >
-                    each occurring in the body of the text with a distinct probability
+                    each occurring with a distinct probability
                     <img alt="Probability" src="EntropyMetricForDataCompression_files/image003.png" style="vertical-align:top" >.
                     These values may be letters of the alphabet, numerical values for a raster data product, or
                     any information that can be serialized and encoded.  For our purposes, we can
@@ -147,9 +147,9 @@
 
                 <p><b>Natural language text:</b> The probability for each
                     symbol in the alphabet is computed based on the number of times it occurs in
-                    the text divided by the total number of symbols in the text. In western
+                    the text divided by the total number of symbols in the text. In Western
                     languages the vowel ‘e’ occurs more frequently than the character ‘q’. So the
-                    character ‘e’ has a high probability and the character ‘q’ a low probability.
+                    character ‘e’ has a high probability and the character ‘q’ has a low probability.
                     Using that approach to evaluate a text extract from this document produces an
                     entropy value of approximately 4.79.</p>
 
@@ -157,7 +157,7 @@
                     Since a byte can take on 256 separate values (typically, 0 to 255), this approach
                     limits the maximum number of unique symbols in a data stream and simplifies
                     the process of counting symbols and computing probabilities. Shannon's
-                    definition of entropy is broad enough to accommodate symbol sets consisting of alternate
+                    definition of entropy is broad enough to accommodate symbol sets consisting of alternative
                     data types, such as integers or even floating-point values. Examples of this approach
                     are given in <a href="EntropyMetricForDataCompressionCaseStudies.html">Part II of this article</a>.</p>
 
@@ -179,8 +179,8 @@
                 <p>Since Shannon’s original publication, investigators have
                     established definitions for entropy that treat symbol sequences based on
                     conditional probability. For example, the second-order model for entropy
-                    couples the probability of a particular symbol to the value of the symbol that
-                    preceded it.</p>
+                    links the probability of a particular symbol to the value of the symbol 
+                    immediately preceding it.</p>
 
 
 
@@ -217,7 +217,7 @@
                     the order of symbols within a text, the first-order entropy equation is sufficient
                     to provide a lower bound for its compressed output.</p>
 
-                <p>The Huffman coding technique can be conceptualized as a
+                <p>The Huffman coding technique can be modeled as a
                     binary tree. The process for decoding a bit sequence begins with the root node
                     of the tree and traverses left or right depending on the value of each bit in
                     the encoded sequence. When the process reaches a terminal node (a “leaf” node),
@@ -245,9 +245,9 @@
                     to have some method to extract the original information later on. So, most Huffman compressors
                     include some method to encode the structure of the Huffman tree. This requirement adds overhead to a compressed
                     product. Even discounting the overhead, the Huffman code often does not reach the lower-bound
-                    established by the first-order entropy computation. This shortfall occurs because the Huffman coding can
+                    implied by the first-order entropy computation. This shortfall occurs because the Huffman coding can
                     only represent probabilities as integral powers of two and must approximate the probabilities for many symbol sets.
-                    Even so, it usually produces good results.</p>
+                    Even so, it usually performs well in practice.</p>
 
                 <p>In practice, we accept a Huffman implementation
                     as efficient if it is close to the entropy bound for the source model being used.
@@ -268,7 +268,7 @@
         Unique symbols in text:  88
         Entropy:                  4.79 bits/symbol
 
-        Huffman tree overhead:     887 bytes, 10.08 bits per unique symbol
+        Huffman tree overhead:     887 bytes, 10.08 bits-per-unique-symbol
         Encoded size
             Including overhead: 4.86 bits/symbol
             Excluding overhead: 4.82 bits/symbol
@@ -297,7 +297,7 @@
 
                 <p>The Deflate technique is used in the zip utility, the PNG
                     image format, and in many other software products.  It usually outperforms
-                    Huffman. In fact, the bits-per-symbol value for a Deflate compressed text is
+                    Huffman. In fact, the bits-per-symbol value for a Deflate-compressed text is
                     often lower than either the first or second-order entropy rates. For the sample
                     text cited above, we have the following results:</p>
 
@@ -314,7 +314,7 @@
                     obtained from Deflate are often less than the computed first-order entropy rates. So, in the
                     case of Deflate, the entropy rate does not represent a lower bound for the
                     compression technique. Even so, there is often a loose coupling between the
-                    entropy for a data source and the relative size of Deflate-compressed product.
+                    entropy for a data source and the relative size of the Deflate-compressed product.
                     The figure below compares bit rates for terrestrial elevation data taken from
                     the Shuttle Radar Topography Mission (NASA, 2020). The original elevation data
                     was stored as integer values in raster data files (TIFF format) without data
