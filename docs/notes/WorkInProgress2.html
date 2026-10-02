@@ -6,6 +6,7 @@
         <title>Case studies for entropy and data compression</title>
         <link rel="stylesheet" href="css/text.css" >
         <link rel="stylesheet" href="css/layout.css" >
+        <link rel="stylesheet" href="../css/style.css" >
     </head>
 
 
@@ -24,6 +25,26 @@
                 </ul>
                 <p>&nbsp;</p>
             </div>
+
+            <!-- Sidebar navigation (uses ../css/style.css) -->
+            <aside id="sidebar">
+                <nav>
+                    <h2>On this page</h2>
+                    <ul class="sidebar-nav">
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#entropy-calculation">Entropy calculation</a></li>
+                        <li><a href="#case-study-1">Case study 1: ETOPO1</a>
+                            <ul>
+                                <li><a href="#case-study-1a">1.a Data compression</a></li>
+                                <li><a href="#case-study-1b">1.b Differencing transform</a></li>
+                                <li><a href="#case-study-1c">1.c Statistical variation</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#case-study-2">Case study 2: ETOPO 2022</a></li>
+                        <li><a href="#references">References</a></li>
+                    </ul>
+                </nav>
+            </aside>
 
 
             <div id="notescontent">
@@ -259,7 +280,7 @@
                     because the Deflate technique usually outperforms Huffman by a substantial margin.
                     Seeking a reason for this result, we posted a notice on Stackoverflow asking
                     <a href="https://stackoverflow.com/questions/79231561/when-would-huffman-coding-outperform-deflate">
-					When would Huffman coding outperform Deflate?</a>.
+                    When would Huffman coding outperform Deflate?</a>.
                     Mark Adler analyzed our sample data and determined that, while Deflate's
                     internal Lempel-Ziv (LZ77) string matching found
                     a large number of repeated sequences in the sample, most of them were of a very
@@ -349,10 +370,10 @@
                 <p>NOAA National Centers for Environmental Information. 2022: <i>ETOPO 2022 15 Arc-Second Global Relief Model.</i>
                     NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 15 November 2024.
 
-                <p>Shannon, C. (July 1948). A mathematical theory of communication (PDF). <i>Bell System Technical Journal.</i> 
-				27 (3): 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
-				Reprint with corrections hosted by the Harvard University Mathematics Department at
-				https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
+                <p>Shannon, C. (July 1948). A mathematical theory of communication��(PDF). <i>Bell System Technical Journal.</i> 
+                27 (3): 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
+                Reprint with corrections hosted by the Harvard University Mathematics Department at
+                https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
 
 
 
