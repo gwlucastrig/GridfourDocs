@@ -61,9 +61,9 @@
                     described the use of Shannon entropy as
                     a tool for evaluating the <i>information content</i> of a data set and
                     assessing the effectiveness of data compression techniques.
-                    This article will take a look at various data products
-                    and discuss how the entropy of the source data relates to the
-                    data compression statistics for the results. </p>
+                    This article examines several data products
+                    and discusses how the entropy of the source data relates to the
+                    compression statistics for the results. </p>
 
                 <p class="blockquote"><b>Note:</b> This article is under construction.  Additional
                     information and case studies will be coming soon.</p>
@@ -134,7 +134,7 @@
                     But we do know that a lot of the byte content of the source data is just filler
                     (either 0x00 if the elevation value is positive, or 0xff if the elevation is negative).</p>
 
-                <p>The entropy rate computation is driven by unpredictability in a data set.
+                <p>The entropy-rate computation is driven by unpredictability in a data set.
                     And, because the filler bytes are highly predictable, they tend to reduce
                     the overall value of the entropy rate calculation. For example, if we compute the entropy
                     on a byte-by-byte basis for the source data, we find an entropy rate of 4.822 bits/symbol
@@ -173,7 +173,7 @@
                     Also, the higher entropy for the 2-byte case gives us an <i>intuition</i> that its
                     content might be more significant than the content of the 4-byte case.
                     For the ETOPO1 example, we know that that difference is due to the presence
-                    of unnecessary filler bytes.  For other cases and other data products
+                    of unnecessary filler bytes.  For other cases and data products
                     that may not necessarily be true. But, in practice, if we encounter anomalous or unexpected
                     entropy rates, it may indicate that there are factors in the data that require
                     further investigation.</p>
@@ -182,10 +182,10 @@
                 <p>In some cases, we can improve data compression by applying simple transformations
                     on raster data. In the case of ETOPO1 elevation/bathymetry data, we observe that even though
                     there is a considerable range of values (-19132 to 8333 meters), we expect that the difference between
-                    to neighboring values is much smaller. In fact, the average absolute value of the difference between
+                    neighboring values is much smaller. In fact, the average absolute value of the difference between
                     adjacent grid cells is 21.23 meters. A number of implementations, including the TIFF, NetCDF,
                     and Gridfour software libraries take advantage of this observation to improve data compression
-                    for raster products. Rather than storing the literal values from the source data, these implementation
+                    for raster products. Rather than storing the literal values from the source data, these implementations
                     store the differences between adjacent values. In effect, this differencing operation is
                     a fully invertible transformation that converts the data into a form that has lower entropy
                     and is more readily compressed</p>
@@ -233,7 +233,7 @@
                     in features such as slope and surface roughness, we can also find variations in entropy.
                     Figure 1. below shows a graph of entropy rates across the globe.  Not surprising, the map shows
                     the highest entropy rates in areas of steepest slope such as mountain ranges, the mid-Atlantic ridge,
-                    Pacific ocean trenches, and the fall off of the Continental Shelf. The ETOPO1 data set does not carry bathymetry
+                    Pacific ocean trenches, and the falloff of the Continental Shelf. The ETOPO1 data set does not carry bathymetry
                     data for <a href="https://en.wikipedia.org/wiki/Lake_Victoria">Lake Victoria</a>, one of the African Great Lakes,
                     so it is treated as essentially flat and shows up as a black
                     area on the map. On the other hand, ETOPO1 does include bathymetry for the Great Lakes of North America,
@@ -285,7 +285,7 @@
                     When would Huffman coding outperform Deflate?</a>.
                     Mark Adler analyzed our sample data and determined that, while Deflate's
                     internal Lempel-Ziv (LZ77) string matching found
-                    a large number of repeated sequences in the sample, most of them were of a very
+                    many repeated sequences in the sample, most of them were of a very
                     short length and led to a "negative gain" in compression.  In such cases,
                     the Deflate library does implement the ability to internally revert to Huffman coding.
                     But the Java API we used for testing did not automatically support that option.
@@ -303,7 +303,7 @@
                 <p>Claude Shannon's definition of entropy is broad enough to include a variety of different data types.
                     So far, we've considered character sets, bytes, and integers.  Now we'll turn our attention to 32-bit floating-point data.</p>
                 <p>The ETOPO 2022 family is a successor to ETOPO1 (NOAA, 2022).  It features raster data products configured to various resolutions,
-                including a one minute of arc product with the same dimensions as ETOPO1. In addition to updating the overall
+                including a one-minute-of-arc product with the same dimensions as ETOPO1. In addition to updating the overall
                 data collection from ETOPO1, ETOPO 2022 introduces the use of non-integral floating-point data for elevations.</p>
 
                 <p>Obtaining the set of probabilities for the entropy calculation for floating-point data is more involved than it
@@ -319,7 +319,7 @@
                         Raster Data</a>).  Both the Java and C versions of the Gridfour library include a module named EntropyTabulator that computes
                     entropy using the following steps:</p>
                 <ol>
-                    <li>Accept as input a GVRS-packaged version of the source-data product (such as ETOPO1 2022)</li>
+                    <li>Accept as input a GVRS-packaged version of the source-data product (such as ETOPO 2022)</li>
                     <li>Create a temporary virtual raster file with dimensions 65536-by-65536 (the range of an unsigned two byte integer)</li>
                     <li>For each value in the input file
                         <ol>
@@ -370,9 +370,9 @@
                     NOAA National Centers for Environmental Information. Accessed 15 November 2024.</p>
 
                 <p>NOAA National Centers for Environmental Information. 2022: <i>ETOPO 2022 15 Arc-Second Global Relief Model.</i>
-                    NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 15 November 2024.
+                    NOAA National Centers for Environmental Information. DOI: 10.25921/fd45-gt74. Accessed 15 November 2024.</p>
 
-                <p>Shannon, C. (July 1948). A mathematical theory of communication��(PDF). <i>Bell System Technical Journal.</i> 
+                <p>Shannon, C. (July 1948). A mathematical theory of communication. (PDF). <i>Bell System Technical Journal.</i> 
                 27 (3): 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x. hdl:11858/00-001M-0000-002C-4314-2.
                 Reprint with corrections hosted by the Harvard University Mathematics Department at
                 https://en.wikipedia.org/wiki/Harvard_University (accessed November 2024).</p>
