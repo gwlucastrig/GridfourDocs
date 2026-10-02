@@ -271,10 +271,12 @@ tr:hover {
 figure   {
   display: block;
   justify-content: center;
+  text-align: center;
 }
 
 figcaption {
 	text-align: left;
+	display: inline-block;
 }
 
 
