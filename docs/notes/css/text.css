@@ -17,30 +17,22 @@ code {
     font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace;
 }
 
-p.title {
-	font:30px/1.25  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
-	font-weight: bold;
-	color: #4F81BD;
-	margin-top: 60px;
-	margin-left: 30px;
-	margin-bottom: 90px;
-}
- 
+
 div.titleblock {
-	font:16px/1.1  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
+	font:24px/1.25  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
 	font-weight: bold;
 	color: #4F81BD;
-	margin-top: 60px;
+	margin-top: 40px;
 	margin-left: 30px;
 	margin-bottom: 30px;
 }
 
 p.blocktitle {
-	 font-size: 32px;
+	 font-size: 24px;
 }
 p.blockauthor {
 	margin-top: 10px;
-	 font-size: 16px;
+	 font-size: 14px;
 } 
 
 
@@ -55,11 +47,11 @@ hr {
 ----------------------------------------------------------------------------------------------------*/
  
 h1 {
-    font-size: 23px;
+    font-size: 22px;
 }
 
 h2 {
-    font-size: 21px;
+    font-size: 20px;
 }
 
 h3 {
