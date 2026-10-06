@@ -10,28 +10,28 @@ code {
 
 
 div.titleblock {
-	font:24px/1.25  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
-	font-weight: bold;
-	color: #4F81BD;
-	margin-top: 40px;
-	margin-left: 30px;
-	margin-bottom: 30px;
+    font:24px/1.25  "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
+    font-weight: bold;
+    color: #4F81BD;
+    margin-top: 40px;
+    margin-left: 30px;
+    margin-bottom: 30px;
 }
 
 p.blocktitle {
-	 font-size: 24px;
+     font-size: 24px;
 }
 p.blockauthor {
-	margin-top: 10px;
-	 font-size: 14px;
+    margin-top: 10px;
+     font-size: 14px;
 } 
 
 p.title {
-	 font-size: 24px;
+     font-size: 24px;
 }
 p.author {
-	margin-top: 10px;
-	font-size: 14px;
+    margin-top: 10px;
+    font-size: 14px;
 } 
 
 
@@ -92,15 +92,15 @@ table,
 address,
 fieldset,
 figure {
-	margin-top: 5px;
+    margin-top: 5px;
     margin-bottom: 15px;
 }
 
 h1,
 h2 {
-	color: #4F81BD;
-	margin-top: 40px;
-	margin-bottom: 1px;
+    color: #4F81BD;
+    margin-top: 40px;
+    margin-bottom: 1px;
 }
 
 
@@ -108,27 +108,27 @@ h3,
 h4,
 h5,
 h6 {
-	color: #4F81BD;
-	margin-top: 30px;
-	margin-bottom: 1px;
+    color: #4F81BD;
+    margin-top: 30px;
+    margin-bottom: 1px;
 }
 
 
 p.blockquote {
-	margin-left: 30px;
-	margin-right:30px;
+    margin-left: 30px;
+    margin-right:30px;
 }
  
 p.mathtext {
-	text-indent: 2em;
+    text-indent: 2em;
 }
 
 img.mathimage {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 img.imageInText {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 
@@ -178,34 +178,34 @@ a.box-link:hover{
     font:  16px/1.25 "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
     list-style-type: none;
     overflow: hidden;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
+    margin: 0;
+    padding: 0;
 }
  
 
 .link-bar li {
     font-weight:normal;
     display: inline; 
-    padding: 0px 0px 0px 0px;
-	 margin-left: 5px;
-	 margin-right: 5px;
+    padding: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .link-bar ul {
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
+    margin: 0;
+    padding: 0;
 }
 
 .link-bar li:first-of-type {
     font-weight:normal;
-    padding: 0px 0px 0px 0px;
-		 margin-left: 0px;
-	 margin-right: 5px;
+    padding: 0;
+    margin-left: 0px;
+    margin-right: 5px;
 }
 
 .link-bar a {
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
+    margin: 0;
+    padding: 0;
     color: #0366d6;  
     text-decoration:none;
 }
@@ -238,37 +238,109 @@ a.top-link:hover{
 
 
 table, th, td {
-	border-collapse:collapse;
-	border: 1px solid #ddd;
-	padding:10px;
-	margin-bottom: 10px;
-	caption-side:top;
+    border-collapse:collapse;
+    border: 1px solid #ddd;
+    padding:10px;
+    margin-bottom: 10px;
+    caption-side:top;
 }
 
-table.tight-table, th, td{
-	border-collapse:collapse;
-	border: 1px solid #ddd;
-	padding:2px 10px 2px 10px;
-	caption-side:top;
-	margin-left:10%;
+table.tight-table, table.tight-table th, table.tight-table td  {
+    border-collapse:collapse;
+    border: 1px solid #ddd;
+    padding:2px 10px 2px 10px;
+    caption-side:top;
+    margin-left:10%;
 }
 
+
+table.tight {
+    border-collapse:collapse;
+    border: 1px solid #ddd;
+    padding:2px;
+    margin-bottom: 2px;
+    margin-left:50px;
+    caption-side:top;
+}
+
+td.tight {
+    border-collapse:collapse;
+    padding:2px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+    caption-side:top;
+}
+
+td.num {
+    border-collapse:collapse;
+    padding:2px;
+    margin-bottom:2px;
+    margin-left:2px;
+    margin-right:10px;
+    caption-side:top;
+    text-align:right
+}
+td.cen {
+    border-collapse:collapse;
+    padding:2px;
+    margin-bottom:2px;
+    margin-left:5px;
+    margin-right:5px;
+    caption-side:top;
+    text-align:center
+}
+
+
+th.tight{
+    font-weight: bold;
+        padding:2px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+    caption-side:top;
+}
 
 td.tdright {
-	text-align:right;
+    text-align:right;
 }
 
 tr:hover {
-	background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
+
+table.math {
+    border-collapse:collapse;
+    border: none;
+    padding:2px;
+    margin-bottom: 2px;
+    margin-left:50px;
+    caption-side:top;
+}
+td.math1 {
+    width: 400px;
+    border-collapse:collapse;
+    border: none;
+    padding:2px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+    caption-side:top;
+}
+td.math2 {
+    border-collapse:collapse;
+    border: none;
+    padding:2px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+    caption-side:top;
+}
+
+
 
 figure   {
   display: block;
-  justify-content: center;
   text-align: center;
 }
 
 figcaption {
-	text-align: left;
-	display: inline-block;
+    text-align: left;
+    display: inline-block;
 }
