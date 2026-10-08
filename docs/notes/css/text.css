@@ -90,10 +90,14 @@ ul,
 pre,
 table,
 address,
-fieldset,
-figure {
+fieldset  {
     margin-top: 5px;
     margin-bottom: 15px;
+}
+
+figure {
+	margin-top:    20px;
+	margin-bottom: 20px;
 }
 
 h1,
@@ -187,8 +191,8 @@ a.box-link:hover{
     font-weight:normal;
     display: inline; 
     padding: 0;
-    margin-left: 5px;
-    margin-right: 5px;
+     margin-left: 5px;
+     margin-right: 5px;
 }
 
 .link-bar ul {
@@ -199,8 +203,8 @@ a.box-link:hover{
 .link-bar li:first-of-type {
     font-weight:normal;
     padding: 0;
-    margin-left: 0px;
-    margin-right: 5px;
+         margin-left: 0px;
+     margin-right: 5px;
 }
 
 .link-bar a {

@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -48,7 +48,7 @@
                     their own data compression logic for floating-point data</p>
 
 
-                <h1>Performance Testing</h1>
+                <h1>Performance testing</h1>
 
                 <p>The effectiveness of the Gridfour floating-point data compression algorithms was tested
                     using elevation and ocean bottom depth data taken from the U.S Geological Survey
@@ -76,7 +76,7 @@
                     However, there are other, commercially available data compression implementations
                     that outperform Gridfour. Improving the Gridfour data compression ratios is an area of continuing research.</p>
 
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>Data Set</th>
@@ -171,7 +171,7 @@
                     The entropy values shown in the table above were computed using the EntropyTabulator class which is
                     provided in the Gridfour project software distribution. </p>
 
-                <h1>The Gridfour Technique</h1>
+                <h1>The Gridfour technique</h1>
                 <p>Floating-point data presents special problems for data compression implementations. Many of the
                     techniques that produce good results for integer forms exhibit lackluster performance for
                     real-valued raster products. This characteristic led the Gridfour project to implement special procedures
@@ -275,7 +275,7 @@
                     of the mantissa.  But because these separate components have different statistical properties,
                     combining them diminishes the ability of the compressor to reduce their size.</p>
 
-                <h2>Gridfour Refinements</h2>
+                <h2>Gridfour refinements</h2>
                 <p>The Gridfour implementation refines the TIFF approach by dividing the components into 5 separate groups:</p>
 
                 <ol>
@@ -296,15 +296,8 @@
 
                 <p>Each of the 5 sequences of bytes is processed through Deflate separately. Differencing is applied
                     only to some of the sequences. Where differencing is applied, the Gridfour floating-point encoder follows the
-                    pattern that is used for its integer-based counterparts (see <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">GVRS Compression Algorithms</a>).
-
-
-
-
-
-
-
-
+                    pattern that is used for its integer-based counterparts 
+					(see <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">GVRS Compression Algorithms</a>).
                     In particular, differencing is used for all values sequence in the data and is not
                     limited to the length of a single row as it is in TIFF. Instead, the transition from row to row is handled
                     by referring the first value in the row to the previous row.</p>
@@ -345,7 +338,7 @@
                     choice is not based on any formal theory of data compression. It was established through plain old
                     trial-and-error. In view of that, the choices made for Gridfour may not be the optimal solution for all data sets.</p>
 
-                <h2>Implementation Details</h2>
+                <h2>Implementation details</h2>
                 <p>Details of the implementation including byte order, bit packing, and byte-sequence encoding can be
                     found by referring to the CodecFloat.java class included in the Gridfour source code distribution
                     under the <i>core</i> module (see <a href="https://github.com/gwlucastrig/gridfour">The Gridfour Project Page</a>).</p>

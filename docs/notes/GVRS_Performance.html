@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -26,7 +26,7 @@
 
 				<div class="titleblock">
 					<p class="blocktitle">
-							GVRS Performance for Data Reading, Writing, and Compression
+							GVRS Performance for reading, writing, and compressing data
 					</p>
 					<p class="blockauthor">by The Gridfour Software Project<br>Posted January 2022.</p>
 				</div>
@@ -59,20 +59,20 @@
 
                 <p>A discussion of the results from the testing are given in the sections listed below:</p>
                 <ul>
-                    <li><a href="#performance-tests">Data-Access Time</a>
+                    <li><a href="#performance-tests">Data-access time</a>
                         <ul>
-                            <li><a href="#performance-at-a-glance">Performance at a Glance</a></li>
-                            <li><a href="#writing-the-data">Writing the Data</a></li>
-                            <li><a href="#reading-the-data">Reading the Data</a></li>
+                            <li><a href="#performance-at-a-glance">Performance at a glance</a></li>
+                            <li><a href="#writing-the-data">Writing the data</a></li>
+                            <li><a href="#reading-the-data">Reading the data</a></li>
                             <li><a href="#gvrs-versus-netcdf">Access times for GVRS versus NetCDF</a>
-                            <li><a href="#memory-mapped-file-access">Why GVRS does not use Memory-Mapped File Access</a></li>
+                            <li><a href="#memory-mapped-file-access">Why GVRS does not use memory-mapped file access</a></li>
                         </ul>
                     </li>
-                    <li><a href="#data-compression">Data Compression</a></li>
-                    <li><a href="#future-work">Future Work</a></li>
+                    <li><a href="#data-compression">Data compression</a></li>
+                    <li><a href="#future-work">Future work</a></li>
                 </ul>
 
-                <h2 id="test-data">The Test Data</h2>
+                <h2 id="test-data">The test data</h2>
                 <p>We evaluated GVRS performance using two well-known and easily obtained
                     geophysical data sets: ETOPO1 and GEBCO_2019.
                     These products provide world-wide elevation and ocean bottom depth information.
@@ -85,7 +85,7 @@
 
                 <p>The following table gives physical details for the test data files. Grid dimensions
                     are given in number of rows by number of columns.</p>
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -121,7 +121,7 @@
                     just over 3 bytes for each data value.
                     Its values range from -10880.588 meters to 8613.156 meters.</p>
 
-                <h1 id="performance-tests">Data-Access Time</h1>
+                <h1 id="performance-tests">Data-access time</h1>
                 <h2 id="performance-at-a-glance">Performance at a Glance</h2>
                 <p>We'll begin our discussion of GVRS performance by providing some of our most useful
                     information first. The table below is intended to sense of how fast GVRS can
@@ -130,7 +130,7 @@
                     for other raster based data sources used in Java applications.</p>
 
 
-                <table>
+                <table class="tight-table">
                     <caption>Transfer rates in millions of grid cells per second (M/s)</caption>
                     <thead>
                         <tr>
@@ -174,7 +174,7 @@
                         includes support for the integer-based compression used for the ETOPO1 data set.
                         At this time, GVRS does not implement an effective multi-threaded enhancement for
                         the data compression used when writing floating-point formats.</p>
-                    <table>
+                    <table class="tight-table">
                         <caption>Transfer rates using multiple threads</caption>
                         <thead>
                             <tr>
@@ -202,7 +202,7 @@
                             Using Multiple Threads to Speed Processing</a>
                     </p>
 
-                    <h2 id="writing-the-data">Writing the Data</h2>
+                    <h2 id="writing-the-data">Writing the data</h2>
                     <p>The GVRS API can be used to simplify storage operations in data collection or analysis applications.
                         In those applications, it serves as a small part of a larger work flow. So it is reasonable
                         to require that the API does not make an undue contribution to the processing time for the overall job.
@@ -215,7 +215,7 @@
                         The time required to read data from the NetCDF source files was evaluated using a separate program
                         and removed from the data-writing statistics shown in the table below.</p>
 
-                    <table>
+                    <table class="tight-table">
                         <thead>
                             <tr>
                                 <th>Test Set</th>
@@ -248,7 +248,7 @@
                        in that form. NetCDF also supports short-integer formats. The selection of the larger or smaller
                        representations were matters of convenience and do not reflect on the capabilities of either product.</p>
 
-                    <h2 id="reading-the-data">Reading the Data</h2>
+                    <h2 id="reading-the-data">Reading the data</h2>
                     <p>Both of the test data products are distributed in the well-known NetCDF data format.
                         The data in the products is stored in row-major order, so the most efficient
                         pattern of access for reading them is one-row-at-a-time.</p>
@@ -270,7 +270,7 @@
                         of access when reading all data in the indicated files. Times are given in seconds.
                         Results are given for both the standard (non-compressed) variations of the GVRS
                         files and the compressed forms.</p>
-                    <table>
+                    <table class="tight-table">
                         <caption>Read operations using different access patterns (times in seconds)</caption>
                         <thead>
                             <tr>
@@ -321,7 +321,7 @@
                         </tbody>
                     </table>
 
-                    <h2 id="row-blocks-versus-row-major">Reading Data in Row-Major Order versus Blocks</h2>
+                    <h2 id="row-blocks-versus-row-major">Reading data in row-major order versus block access</h2>
                     <p>The Row-Major test reads the data one grid cell at a time traversing
                         the grid in row-major order.  The following code snippet illustrates the
                         process.  In this example, a GvrsElement named "z" is obtained from
@@ -329,6 +329,7 @@
                         then uses that element to access data from the file. Because there
                         are 233 million grid cells in ETOPO1, this operation requires
                         233 million calls to the readValueInt() method.</p>
+						
                     <pre><code>
                 GvrsElement zElement = gvrs.getElement("z");
                 for (int iRow = 0; iRow &lt; nRowsInRaster; iRow++) {
@@ -383,17 +384,19 @@
                         pattern required more file seek-and-fetch operations than the
                         Row-Major alternative.</p>
 
-                    <h2 id="the-cost-of-reading-data-from-the-file">The Cost of Reading Data from the File</h2>
+                    <h2 id="the-cost-of-reading-data-from-the-file">The Cost of reading data from the file</h2>
                     <p>The Tile Load test retrieves just one point for tile. Thus the run time for
                         the test is essentially just the time required to load read the individual tiles from
                         the data file.  The Tile Block test follows the same pattern as Tile Load,
                         but loads the entire content of the tile using the readBlock() method.
                         So the difference in time for the tests is just the overhead of indexing
                         and copying the data from the tile to the result array.</p>
+						
                     <p>At present, the Tile Block read times are significantly lower than those
                         of the Row Block test. Again, this result suggests that there may be
                         opportunities to optimize the access code for the read routines.</p>
-                    <h2 id="gvrs-versus-netcdf">Access Times for GVRS versus NetCDF</h2>
+						
+                    <h2 id="gvrs-versus-netcdf">Access times for GVRS versus NetCDF</h2>
                     <p>As mentioned above, the source data used for the performance tests
                         described in these notes is distributed in a format called NetCDF.
                         GVRS is not intended to compete with NetCDF. The two data formats
@@ -402,6 +405,7 @@
                         module and, as such, provides a good standard for speed of access.
                         Any raster-based file implementation should be able to operate with performance that
                         is at least as good as NetCDF. </p>
+						
                     <p>The table below gives accessing times for reading the <em>entire</em> data set for
                         ETOPO1 and GEBCO_2019, using the Java API for NetCDF and GVRS file formats.
                         Both files can be accessed in random order, but the most efficient way of retrieving
@@ -415,7 +419,8 @@
                         more relevant than the uncompressed version. Finally, to clarify the
                         differences in behavior between the two API&#39;s, the table repeats the
                         GVRS timing data for row-major access.</p>
-                    <table>
+						
+                    <table class="tight-table">
                         <caption>Read operations for different data formats (times in seconds)</caption>
                         <thead>
                             <tr>
@@ -446,6 +451,7 @@
                             </tr>
                         </tbody>
                     </table>
+					
                     <p>The differences in timing reflect the differences in the intention of the
                         two packages. NetCDF is a widely used standard for distributing data
                         (it also has support for a number of languages besides Java, including C/C++, C#, and Python).
@@ -464,7 +470,7 @@
                         pattern for a very large number of data points, we could have achieved equally
                         bad performance for both.</p>
 
-                    <h2 id="memory-mapped-file-access">Why GVRS does not use Memory Mapped File Access</h2>
+                    <h2 id="memory-mapped-file-access">Why GVRS does not use memory-mapped file access</h2>
                     <p>The GVRS API does not use Java&#39;s memory-mapped file access. Instead, it
                         uses old-school file read-and-write operations. The reason for this
                         is based on known problems in Java. First, Java does not support
@@ -474,7 +480,8 @@
                         always close memory mapped files and clean up resources when
                         running under Windows. Thus, for the initial implementation,
                         we decided to avoid memory mapped files.</p>
-                    <h1 id="data-compression">Data Compression</h1>
+						
+                    <h1 id="data-compression">Data compression</h1>
                     <p>Although there are many good general-purpose data compression utilities
                         available to the software community, raster-based data files tend to
                         compress only moderately well. For example, consider the compression results for
@@ -483,7 +490,8 @@
                         a two-byte short integer. There are just over 233 million sample points in ETOPO1.
                         Storing them as short integers leads to a storage size of 466,560,000 bytes.
                         Using Zip and 7z compressors on that data yields the following results.</p>
-                    <table>
+						
+                    <table class="tight-table">
                         <thead>
                             <tr>
                                 <th>Product</th>
@@ -513,10 +521,12 @@
                             </tr>
                         </tbody>
                     </table>
+					
                     <p>It is also worth nothing that general-purpose compression has the disadvantage
                         that in order to access any of the data in the file, it is necessary to decompress the whole
                         thing. For many grid-based applications, only a small portion of a raster file is needed
                         at any particular time.</p>
+						
                     <p>The GVRS API uses standard compression techniques (Huffman coding, Deflate),
                         but transforms the data so that it is more readily compressed and yields
                         better compression ratios. Each tile is compressed individually, so
@@ -530,12 +540,13 @@
                         <li>Integer-coded Float (floating-point values scaled and stored as integers)</li>
                     </ol>
 
-                    <p>The GEBCO data is expressed in a non-integral form. While the data can be stored
+                    <p>The GEBCO 2019 data is expressed in a non-integral form. While the data can be stored
                         as integer-coded-floats, the integer coding requires some loss of precision.
                         So, to store the data in a lossless form, it needs to be represented using
                         the 4-byte floating-point format.  While the floating-point representation of the
                         data preserves all the precision in the original, it requires a different approach
                         to data compression than the integer forms.</p>
+						
                     <p>Unfortunately, the GVRS floating-point implementation does not achieve quite
                         as favorable compression ratios as the integer-based compressors. Floating-point
                         numbers simply do not present the kind of redundancy in their form that facilitates
@@ -550,7 +561,7 @@
                         the scaling operation truncates some of the fractional part of the original
                         values and, thus, discards some of the information in the original product.</p>
 
-                    <table>
+                    <table class="tight-table">
                         <thead>
                             <tr>
                                 <th>Product</th>
@@ -597,7 +608,8 @@
                         for metadata and file-management elements. As table above shows, GVRS data compression reduces
                         the raw data for ETOPO1 from 16 bits per sample to 4.46 bits per sample.  So the storage
                         required for the data is reduced to about 27.9 % of the original size. </p>
-                    <p>When deciding whether to use the native floating-point representation of the GEBCO data
+						
+                    <p>When deciding whether to use the native floating-point representation of the GEBCO 2019 data
                         or the more compact integer-scaled float representation,  the main consideration is
                         how much precision is required for the application that uses it. One can reasonably
                         ask just how much precision the GEBCO data really requires.  For example, a scaling
@@ -612,7 +624,8 @@
                         the converted data. So we applied various
                         scaling factors as shown in the results above.</p>
 
-                    <h1 id="future-work">Future Work</h1>
+                    <h1 id="future-work">Future work</h1>
+					
                     <p>When data compression is applied to a GVRS file, it adds a considerable amount
                         of processing overhead to the data-writing operation. In future work, it may be
                         possible to improve the throughput of write operations by using a multi-threaded
@@ -620,10 +633,12 @@
                         to a single thread, the structure of its internal data cache could be adapted to
                         support multiple threads without major revision. A multi-threaded implementation
                         may be considered for future investigations.</p>
+						
                     <p>One item that was not fully explored in this article is the effect of disk speed in read
                         operations. The testing was, after all, conducted using a system equiped with
                         a fast solid-state drive. A future investigation will use an USB external disk drive to
                         see how much extra access time a slower disk requires.</p>
+						
                     <p>Some of the test results above suggest that there may still be opportunities
                         to improve the access speeds, especially for the block-based file access routines.
                         Future work will involve a careful review of the code used for the readBlock()
@@ -634,6 +649,7 @@
                         the kind of performance an application designer can expect using the
                         GVRS API. It also gives an indication of the resources that would be needed
                         to process and store data in GVRS format.</p>
+						
                     <p>As with any API, the design of GVRS makes assumptions about the way it will
                         be accessed. Our hope is that those assumptions are broad enough that
                         GVRS will provide acceptable performance for most applications.</p>

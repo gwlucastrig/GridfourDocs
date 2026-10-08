@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -50,8 +50,6 @@
                     as part of its software library, the Gridfour project hopes to direct some overdue attention
                     to this under appreciated technique.</p>
 
-
-
                 <p>The algorithm used by Smith and Lewis was published in <i>Computers &#38; Geosciences</i> (Smith &#38; Lewis, 1994),
                     but an earlier version of their paper (Lewis &#38; Smith, 1993) may be obtained without fee from the
                     <a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">Cartography and Geographic Information Society website</a>.
@@ -59,7 +57,7 @@
                     also published an "overview" paper that gives much useful background on the ideas used
                     for data compression (see Kidner &#38; Smith, 2003).</p>
 
-                <h2>How this Article is Organized</h2>
+                <h2>How this article is organized</h2>
                 <p>This article is organized into three parts. The first part discusses the Optimal Predictor
                     technique itself. The second discusses implementation details for a Java-based API
                     that is available through the Gridfour Software Project. One of the goals of the
@@ -101,7 +99,7 @@
                 <a id="Part_1"><br></a>
                 <h1>Part 1: Optimal Predictors</h1>
 
-                <h2 id="predictors">Predictors and Data Compression</h2>
+                <h2 id="predictors">Predictors and data compression</h2>
                 <p>The idea of using a predictor to improve data compression is a well known concept.
                     Basically, we consider that a function which could predict the values in a
                     data set with perfect accuracy could represent its content with almost no
@@ -145,7 +143,7 @@
                     The earlier work provided a useful basis of comparison for evaluating the Gridfour results
                     during our investigation</p>
 
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -205,7 +203,7 @@
                     proved to be the most effective predictor in 90.1 % of the tiles for ETOPO1 and 53.7 % of the tiles for GEBCO_2020.
                     For SRTM, the method of Optimal Predictors was used in almost all cases</p>
 
-                <h3>Total Reduction for Storage Size</h3>
+                <h3>Total reduction for storage size</h3>
                 <p>The table above showed the savings when the supplemental Optimal Predictors technique was
                     added to the standard suite of predictors used to compress data in the Gridfour system.
                     But you may be wondering how well the Gridfour system does overall when compressing files.
@@ -216,7 +214,7 @@
                     But the raw ETOPO1 data set uses four-byte integers. So its file size is actually twice as large as it needs to
                     be. To give a fair comparison, I divided the size of the ETOPO1 source file by two.</p>
 
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -288,7 +286,7 @@
                     of the data set.</p>
 
 
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>Data Area</th>
@@ -308,7 +306,7 @@
                     </tbody>
                 </table>
 
-                <h2>Access Speed</h2>
+                <h2>Access speed</h2>
                 <p>The mechanics of reading raw bytes from a data file are roughly the same
                     whether a Gridfour file is stored with or without the LSOP enhancement.
                     But the decompression operations for LSOP require a much larger number of floating-point
@@ -353,7 +351,7 @@
                     To see how Smith and Lewis’ Optimal Predictors work, we will begin with a simpler technique,
                     the Triangle Predictor, which was introduced by Kidner and Smith in 1993.</p>
 
-                <h3>The Triangle Predictor</h3>
+                <h3>The triangle predictor</h3>
 
                 <p>The Triangle Predictor estimates the value for a grid point, P, by assuming that it lies on a
                     plane surface determined by the coordinates of its three neighbors A, B, and C.  The geometry
@@ -382,8 +380,8 @@
                     <figcaption>Figure 1 - Terrain with ridges rendered using Gridfour DemoCOG application, land-cover from Patterson (2020).</figcaption>
                 </figure>
 
-                <h3>Lagrange Multipliers</h3>
-                <p>The method of Lagrange Multipliers resembles that of the method of Ordinary Least Squares.
+                <h3>Lagrange multipliers</h3>
+                <p>The method of Lagrange multipliers resembles that of the method of Ordinary Least Squares.
                     Because the least-squares technique is better known than Lagrange, we will begin with that
                     method before moving to Lagrange Multipliers.</p>
 
@@ -411,7 +409,7 @@
                     that contain the desired coefficients as variables. Solving for those variables yields the parameters for an
                     estimator function that minimizes the sum of the squared errors.</p>
 
-                <h3>Adding Constraints for Optimization</h3>
+                <h3>Adding constraints for optimization</h3>
                 <p>The method of Lagrange Multipliers extends the Ordinary Least Squares
                     technique by permitting the specification of one or more constraints
                     on the minimization result. The method makes a tradeoff, permitting the overall sum of the squared errors
@@ -453,7 +451,7 @@
                     So we see that the output from Optimal Predictors is better suited for the
                     Huffman encoding than the output from Ordinary Least Squares.</p>
 
-                <h3>Configuration and Performance of Optimal Predictors</h3>
+                <h3>Configuration and performance of Optimal Predictors</h3>
                 <p>In addition to the three-coefficient Optimal Predictor described above, Smith and Lewis also implemented an
                     eight-coefficient variation. Later, Kidner &#38; Smith added 12 and 24-coefficient variations.
                     The layout for these predictors is shown below.</p>
@@ -466,7 +464,7 @@
                 <p>The following table gives some general statistics for the prediction using the 12-coefficient configuration
                     over the ETOPO1 and GEBCO 2020 data sets and a selected SRTM file.</p>
 
-                <table>
+                <table class="tight-table">
                     <thead>
                         <tr>
                             <th>&nbsp;</th>
@@ -534,9 +532,9 @@
                     discussed in detail in <a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">Lewis &#38; Smith (1993).</a>
 
                     <a id="Part_2" ><br></a>
-                <h1>Part 2: Implementation Details</h1>
+                <h1>Part 2: Implementation details</h1>
 
-                <h2>Modules and Dependencies in the Java Implementation</h2>
+                <h2>Modules and dependencies in the Java implementation</h2>
                 <p>The current implementation policy for the Gridfour project is to ensure that the <i>core</i> Gridfour module (GridfourCore.jar)
                     has no external dependencies beyond the standard Java API. Determining coefficients for a 12-coefficient Optimal Predictor
                     requires solving a system of 13 linear equations. The linear algebra and matrix operations required to find
@@ -545,7 +543,7 @@
                     <i>JAMA Java Matrix Project </i>(NIST, 2012). I note, however, that the matrix operations were required
                     only for the compression operation. The decompression operation did not require any non-core Java math operations.</p>
 
-                <h2 id="design-and-layout">Design Choices and Storage Layout</h2>
+                <h2 id="design-and-layout">Design choices and storage layout</h2>
 
                 <p>As noted above, the current Gridfour implementation uses the 12-coefficient variation. If you refer to the source code
                     for the implementation, you will note that the data elements and predictor coefficients are assigned
@@ -553,7 +551,7 @@
 
                 <img alt="Layout for neighbor values" src="images/OptimalPredictors/SLGrid_12x12.png" />
 
-                <p>One issue when working with any of the optimal predictor patterns is that they cannot be used to populate all
+                <p>One issue when working with any of the Optimal Predictor patterns is that they cannot be used to populate all
                     the cells in the grid. For example, to compute the value at the prediction point P, the 12-coefficient
                     pattern requires that there be two columns of populated cells to the left of P. But the first column in the
                     grid does not have <i>any</i> populated cells to its left. And the second column only has one. So values for
@@ -596,7 +594,7 @@
                     two sets of residuals separately almost always improved the overall reduction
                     compared to compressing them as a single group.</p>
 
-                <h3>Gridfour Processing Statistics</h3>
+                <h3>Gridfour Processing statistics</h3>
 
                 <p>When designing a data compression implementation or specifying data compression
                     parameters, it is often useful to review the summary data available from
@@ -656,7 +654,7 @@
     Minimum number of bits to encode range: 9 bits
                 </pre>
 
-                <h3 id="floating-point">Floating-point Operations</h3>
+                <h3 id="floating-point">Floating-point operations</h3>
                 <p>The predictor used in the LSOP compressor is based on floating-point arithmetic. Writing the code
                     for the LSOP predictor, encoder, and decoder, required strict attention to the way computer
                     systems and the Java programming language perform floating-point operations.
@@ -672,7 +670,7 @@
                     Similar capabilities are available for most modern development environments and programming languages.</p>
 
 
-                <h3>Configuring a File to use Optimal Predictors</h3>
+                <h3>Configuring a file to use Optimal Predictors</h3>
                 <p>During construction of a GVRS file, the parameters for a file are specified using the GvrsFileSpecification class
                     (see <a href="https://github.com/gwlucastrig/gridfour/wiki/How-to-Package-Data-Using-the-GVRS-Library">How to Package Data Using the GVRS Library</a>).
                     A Java application can specify the use of the Optimal Predictors compressor, using the approach shown in the
@@ -694,11 +692,11 @@
                     language would not have to implement a matrix algebra package in order to read LSOP-compressed data.</p>
 
                 <a id="Part_3"><br></a>
-                <h1>Future Work</h1>
+                <h1>Future work</h1>
                 <p>Future work on Optimal Predictors would include potential improvements to the compression
                     ratios as well as speed improvements for the decoding modules.</p>
 
-                <h2>The 24-Point Predictor</h2>
+                <h2>The 24-point predictor</h2>
                 <p>Kidner and Smith (2003) reported that the 24-point variation of the Optimal Predictor (see above)
                     usually produced better compression ratios than the 12-point variation used for the Gridfour Project.
                     At this time, I have not implemented the 24-point variation. Clearly, the inclusion of additional
@@ -714,7 +712,7 @@
                     to find out is, of course, through implementation and testing. Such an implementation
                     is a candidate for future work.</p>
 
-                <h2>Potential Replacements for Huffman Coding</h2>
+                <h2>Potential replacements for Huffman coding</h2>
                 <p class="blocknote">
                     <i>Entropy encoding</i> techniques compress symbols according to a model of their expected
                     frequencies, with common symbols being represented by fewer bytes than rare ones (Gibbons, 2019).
@@ -726,6 +724,7 @@
                     that often achieve better compression ratios than Huffman: arithmetic coding and range-based Asymmetric Numeral Systems
                     (rANS) encoding. Preliminary investigations into using these alternate systems were inconclusive.
                     Future investigation may include a in-depth look at these encodings.</p>
+					
                 <h3>Motivation</h3>
                 <p>Entropy encodings are based on probability. The more frequently a particular symbol (data value) appears
                     in a message sequence, the higher the probability that the next member in a sequence will be that symbol.
@@ -744,6 +743,7 @@
                     encoding (as defined by Shannon's entropy equation).  Methods such as arithmetic coding and rANS
                     attempt to improve compression ratios by using alternate ways to embed knowledge about probabilities
                     into a bit sequence.</p>
+					
                 <h3>Results</h3>
 
                 <p>Kidner and Smith (2003) reported using arithmetic coding as their preferred method for compressing
@@ -798,40 +798,47 @@
 
 
                 <h1 id="references">References</h1>
+				
                 <p>Gibbons, Jeremy. (2019). "Coding with Asymmetric Numeral Systems (long version)". Accessed November 2019
-                    from <a href="http://www.cs.ox.ac.uk/jeremy.gibbons/publications/asymm-long.pdf">http://www.cs.ox.ac.uk/jeremy.gibbons/publications/asymm-long.pdf</a></p>
+                    from <a href="http://www.cs.ox.ac.uk/jeremy.gibbons/publications/asymm-long.pdf">
+					http://www.cs.ox.ac.uk/jeremy.gibbons/publications/asymm-long.pdf</a></p>
 
                 <p>Kidner, David &#38; Smith, Derek. (2003). "Advances in the data compression of digital elevation models".<br>
                     <i>Computers &#38; Geosciences. 29. 985-1002.</i></p>
 
-                <p>Lewis, M., &#38; Smith, D.H. (1993). "Optimal predictors for the data compression of digital
+                <p>Lewis, M., &#38; Smith, D.H. (1993). "Optimal Predictors for the data compression of digital
                     elevation models using the method of Lagrange multipliers". In <i>Auto-Carto XI Proceedings of the
                         International Symposium on Computer-Assisted Cartography</i>, Oct 30-Nov 1, 1993. PDF document accessed
                     August, 2020 from
                     <a href="https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf">
                         https://cartogis.org/docs/proceedings/archive/auto-carto-11/pdf/optimal-predictors-for-the-data-compression-of-digital-elevation-models-using-the-method-of-lagrange-multipliers.pdf</a></p>
 
-                <p>National Aeronautics and Space Administration [NASA]. (2020). <i>Shuttle Radar Topography Mission (SRTM)</i>
+                <p>National Aeronautics and Space Administration [NASA]. (2020).
+				<i>Shuttle Radar Topography Mission (SRTM)</i>
                     <a href="https://www2.jpl.nasa.gov/srtm/">https://www2.jpl.nasa.gov/srtm/</a>
                     Data was downloaded from the USGS Earth Explorer web site at <a href="https://earthexplorer.usgs.gov/">https://earthexplorer.usgs.gov/</a>.
                 </p>
 
-                <p>National Institute of Standards and Technology [NIST]. 2012. <i>JAMA: A Java Matrix Package</i>. Accessed December 2020 from
+                <p>National Institute of Standards and Technology [NIST]. 2012.
+				<i>JAMA: A Java Matrix Package</i>. Accessed December 2020 from
                     <a href="https://math.nist.gov/javanumerics/jama/">https://math.nist.gov/javanumerics/jama/</a>
 
-                <p>Patterson, Tom. (2020). <i>100-meter Natural Earth Map Data</i>. Accessed September 2020 from <a href="http://shadedrelief.com/NE_100m/">http://shadedrelief.com/NE_100m/</a>
+                <p>Patterson, Tom. (2020). <i>100-meter Natural Earth Map Data</i>.
+				Accessed September 2020 from <a href="http://shadedrelief.com/NE_100m/">http://shadedrelief.com/NE_100m/</a>
 
-                <p>Project Nayuki. (2020). <i>Reference arithmetic coding</i>. Accessed September 2020 from https://www.nayuki.io/page/reference-arithmetic-coding.</p>
+                <p>Project Nayuki. (2020). <i>Reference arithmetic coding</i>.
+				Accessed September 2020 from https://www.nayuki.io/page/reference-arithmetic-coding.</p>
 
-                <p>Shannon, C.E., &#38; Weaver, W. (1949). <i>The mathematical theory of communication.</i> Urbana: University of Illinois Press.</p>
+                <p>Shannon, C.E., &#38; Weaver, W. (1949). <i>The mathematical theory of communication.</i>
+				Urbana: University of Illinois Press.</p>
 
-                <p>Smith, Derek H., &#38; Lewis, Michael. (1994). Optimal predictors for compression of digital elevation models.<br>
+                <p>Smith, Derek H., &#38; Lewis, Michael. (1994). Optimal Predictors for compression of digital elevation models.<br>
                     <i>Computers &#38; Geosciences, Volume 20, Issues 7-8,</i> August-October 1994, 1137-1141
                 </p>
 
                 <h1>Notes</h1>
-                <p><a id="note1">&#91;1&#93;</a> As of Java version 17, the strictfp is considered obsolete. All floating-point
-                computations are performed using strict semantics.</p>
+                <p><a id="note1">&#91;1&#93;</a> As of Java version 17, the strictfp is considered obsolete.
+				All floating-point computations are performed using strict semantics.</p>
 
 
             </div>

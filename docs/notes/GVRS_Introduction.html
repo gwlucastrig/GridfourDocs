@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>The GVRS API for Raster Data</title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -27,7 +27,7 @@
 
 			<div class="titleblock">
 				<p class="blocktitle">
-					    GVRS: A Fast, File-Backed API for Managing Raster Data
+					    GVRS: A fast, file-backed API for managing raster data
 				</p>
 				<p class="blockauthor">by The Gridfour Software Project<br>Posted January 2022.</p>
 			</div>
@@ -54,7 +54,7 @@
                     is available from the <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a>.
                 </p>
 
-                <h2>Sample Data</h2>
+                <h2>Sample data</h2>
                 <p>An article that describes an API that manipulates and stores raster data
                     would surely benefit from have a good source of data to use as an example.
                     We are fortunate to have two: ETOPO1 and GEBCO_2019. These products
@@ -73,7 +73,7 @@
                     of computers with sufficient memory to hold that much data, it wouldn't leave
                     much room for anything else.</p>
 
-                <h2>A Tiling Scheme</h2>
+                <h2>Tiling scheme</h2>
                 <p>Fortunately, when dealing with such large data sets, applications seldom
                     need to access the entire collection all at once. So an obvious solution
                     to the problem of memory use is to store the data on a file and load
@@ -88,7 +88,7 @@
 
 
                 <figure>
-                    <img src="images/General/TilingScheme.png">
+                    <img src="images/General/TilingScheme.png" alt="Tiling scheme">
                     <figcaption>Figure 1 &ndash; A tiling scheme divides a master grid into uniformly sized sub-gribs.</figcaption>
                 </figure>
 
@@ -143,7 +143,7 @@
                 </ol>
 
 
-                <h2>Creating a GVRS File</h2>
+                <h2>Creating a GVRS file</h2>
                 <p>The GVRS library is a tool for both creating raster files and accessing them.
                     Writing a GVRS file is a 3 step process:</p>
 
@@ -167,13 +167,14 @@
                     demonstration application and other example applications in the Gridfour <i>demo</i> module.</p>
 
                 <h3>What if you don't want to keep a GVRS file after you're done with it?</h3>
+				
                 While GVRS needs a file to support its virtual raster operations, applications do not have
                 to store the file after they are finished with it. The main GvrsFile API provides a constructor
                 that allows an application tell GVRS to use a temporary file.  Temporary files are removed from
                 the file system when the application closes the file. See the GVRS Javadoc for more information.</p>
 
 
-                <h2>Data Compression</h2>
+                <h2>Data compression</h2>
                 <p>Data compression is an interesting topic and is discussed in more
                     detail elsewhere in these notes (see
                     <a href="https://gwlucastrig.github.io/GridfourDocs/notes/GridfourDataCompressionAlgorithms.html">Gridfour Raster Data Compression Algorithms</a>
@@ -192,7 +193,7 @@
                     The larger scaling factor increases the amount of information to be stored
                     in the output file, and thus the bits-per-sample values increases.</p>
 
-                <table>
+                <table class="tight-table">
                     <tr>
                         <th>Product</th>
                         <th>Size (bits/sample)</th>
@@ -243,7 +244,7 @@
                     ratios can be attained.</p>
 
 
-                <h2>Adding Supplemental Content with Metadata Records</h2>
+                <h2>Adding supplemental content with metadata records</h2>
                 <p>In order to maintain a simple design, the GVRS API presents a deliberately
                     minimal feature set. Even so, we recognize that many users have application-specific
                     requirements for the product. In some cases, users may wish to attach supplemental
