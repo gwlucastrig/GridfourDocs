@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Elevation GeoTIFF Part 1 &#8211; Shaded Relief </title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <title>Elevation GeoTIFF Part 1 &#8211; Shaded Relief</title>
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -88,7 +88,7 @@
                 the surface illumination models used to create shading and lighting effects
                 from elevation data.</li>
                 
-                <li><a class="box-link" href="#additional-resources">Additional resources</a> Provides links
+                <li><a class="box-link" href="#additional-resources">Additional resources</a> provides links
                 to additional information on shaded-relief techniques and locations
                 where you can obtain the USGS Cloud Optimized GeoTIFF data.</li>
                 
@@ -117,7 +117,7 @@
                     factor of 12. To give a better sense of the quality of the source data, the figure below shows
                     a close-up view of the image rendered at its full resolution. The figure shows a small section
                     of the overall data set taken from the lower-right corner of the image.
-                    The lake and river features are derived from a surface-water Shapefile. But the road features
+                    The lake and river features are derived from a surface-water shapefile. But the road features
                     and building footprints that are visible in the image are derived purely from the elevation data.
                     Their presence gives some idea of the true resolution of the USGS data set.
                 </p>
@@ -142,7 +142,7 @@
                     <li>Covers a one-degree square area from 33N/117W to 34N/118W.</li>
                     <li>Grid spacing is one-third second of arc (about 10.3 meters between rows, 8.5 meters between columns)</li>
                     <li>Grid dimensions are 10812 rows by 10812 columns, or about 117 million raster cells.</li>
-                    <li>Elevations range from 70.3 meters (230 ft) below mean sea level to 3291.5 meters (10799 ft) above</li> 
+                    <li>Elevations range from 70.3 meters (230 ft) below mean sea level to 3291.5 meters (10799 ft) above mean sea level</li> 
                     <li>Average elevation is 763 meters (2503 ft) MSL</li>
                     </ul>
                     
@@ -162,8 +162,8 @@
                     each of which can have a different data representation and color model. This
                     flexibility means that there can be quite a lot of variation in organization
                     from TIFF to TIFF or, by extension, from GeoTIFF to GeoTIFF. Most GeoTIFFs contain
-                    imagery products such as aerial photographs or digital maps. But the US
-                    Geological Survey’s elevation GeoTIFF products don’t include any imagery at
+                    imagery products such as aerial photographs or digital maps. But the
+                    U.S. Geological Survey’s elevation GeoTIFF products don’t include any imagery at
                     all. Instead, they provide a grid of floating-point elevation values. </p>
 
                 <p>In order to manage multiple images in a single file, a TIFF
@@ -214,8 +214,8 @@
                     products with data from other sources. For example, the picture below shows a
                     section of the shaded-relief imagery from the USGS GeoTIFF overlaid with a set
                     of road data from a completely independent data source, the TIGER/Line roads
-                    Shapefile (U.S. Census Bureau, 2019). The fact that the imagery from the
-                    GeoTIFF fits so neatly with the line data from the Shapefile is due in large
+                    shapefile (U.S. Census Bureau, 2019). The fact that the imagery from the
+                    GeoTIFF fits so neatly with the line data from the shapefile is due in large
                     part to the metadata that was bundled with the GeoTIFF.  </p>
 
 
@@ -233,7 +233,7 @@
                     as 256 (Image Width) and 257 (Image Height), describe basic parameters from
                     image-processing.  These tags, which are defined in the TIFF specification
                     (Adobe 1992), also include elements such color model and data format
-                    that could can be found in many other graphics formats.
+                    that can be found in many other graphics formats.
                     But the real advantage of the TIFF specification is that it permits applications
                     to add their own custom tags to TIFF files. The GeoTIFF specification (OGC,
                     2019) identifies the following custom elements that are used in Cloud Optimized
@@ -270,7 +270,7 @@
                         <td>ModelTiepointTag (33922)</td>
                         <td>Double [6xN]</td>
                         <td>N sets of 6 elements (i, j, k, x, y, z), associating raster or pixel
-                                coordinates (i, j, j) to Cartesian “model” coordinates (x, y, z).  In the
+                                coordinates (i, j, k) to Cartesian “model” coordinates (x, y, z).  In the
                                 GeoTIFF raster space, the i coordinate refers to column and the j coordinate
                                 refers to row. For rotated or distorted images, multiple tie points may be
                                 required. Only one tiepoint is used for Cloud Optimized GeoTIFF products.</td>
@@ -313,7 +313,7 @@
                     Coordinate System (GCS). In other words, the associated Earth-surface
                     coordinates for each pixel are given in the form of latitude and longitude
                     coordinates. Geographic coordinates are the simplest system available for
-                    GeoTIFFs.   When a GeoTIFF uses geographic coordinates, the only elements we
+                    GeoTIFFs. When a GeoTIFF uses geographic coordinates, the only elements we
                     need in order to interpret the pixel positions are the ModelTiepointTag and
                     ModelPixelScaleTag.</p>
 
@@ -341,19 +341,19 @@ ModelPixelScaleTag
    2.  0.0000000000e+00
                 </pre>
 
-                <p>A “tiepoint” is gives the position of a single point in in
+                <p>A “tiepoint” gives the position of a single point in in
                     the GeoTIFF using both the raster and model coordinate systems.  Thus it ties
                     the two coordinate systems together. You may have noticed that tiepoint values
                     for entries 3 and 4 give values very close to the longitude (-117) and latitude
                     (34) of the upper-left corner of the survey area.  GeoTIFF files may include
                     multiple tiepoints, but the USGS files use only a single point taken at the
                     upper-left corner of the image or raster. The first 3 parameters in the
-                    ModelPixelTiepointTag are the i, j, and k coordinates for the raster coordinate
+                    ModelTiepointTag are the i, j, and k coordinates for the raster coordinate
                     system and specify, respectively, the column, row, and an unused third-axis
                     coordinate for the tiepoint.  The column is specified by the variable i, not j
                     as it is in many other graphics applications. Although the coordinates (i, j,
                     k) extracted here are all zero, those values are not necessarily always the
-                    case. The second three parameters in the ModelPixelTiepointTag are the model
+                    case. The second three parameters in the ModelTiepointTag are the model
                     coordinates x, y, and z. The z coordinate is not used and always set to zero.
                     The tiepoint coordinates are not quite integral values because the USGS data
                     actually includes 6 rows and columns that overlap adjacent one degree squares. </p>
@@ -362,7 +362,7 @@ ModelPixelScaleTag
                     columns and rows in the horizontal and vertical direction (again, for this
                     product, z is not used).  Because the USGS Cloud Optimized GeoTIFFs use geographic
                     coordinates, the interval is an angular measure, in this case corresponding to one
-                    third second of arc. One second of arc is 1/3600 of a degree. So 1/3<sup>rd</sup>
+                    third second of arc. One second of arc is 1/3600 of a degree. So one-third
                     of a second is 1/10800 of a degree or 9.259259269e-05 degrees which is the
                     value that shows up in the ModelPixelScale specification.    A one degree grid
                     would include 10800 rows and columns but, again, the Cloud Optimized GeoTIFF
@@ -428,8 +428,7 @@ ModelPixelScaleTag
                     when building a shaded-relief image, the overall shape of the image is narrowed
                     to reflect the convergence of the meridians. Although the horizontal spacing
                     changes at each row, we simplify things by approximating the spacing using an
-                    adjustment based on the cosine of the latitude for the middle row (33.5 North
-                    ).
+                    adjustment based on the cosine of the latitude for the middle row (33.5&deg; N).
                 </p>
 
                 <h2 id="shaded-relief-algorithm">The shaded-relief algorithm</h2>
@@ -438,8 +437,8 @@ ModelPixelScaleTag
                     elevation data with a simple diffuse illumination model.  In the model, we
                     assume that the scene is illuminated by a light source at sufficient distance
                     so that all incident rays of light can be treated as parallel. We also assume
-                    that the surface scatters incoming light equally in all directions so that the
-                    reflect light reaches the viewer’s eye with equal intensity no matter what
+                    that the surface scatters incoming light equally in all directions so that
+                    reflected light reaches the viewer’s eye with equal intensity no matter what
                     direction it is viewed from. So, the only factor governing the intensity of
                     illumination is the cosine of the angle between the surface and the incoming
                     light (“Lambertian Reflectance”, n.d.). We can compute this cosine by taking
@@ -466,7 +465,7 @@ ModelPixelScaleTag
                     of five.  The effects of this exaggeration can be seen in the two image panels
                     below. The panel on the left is a reduced-scale version of the image that was
                     shown at the beginning of this article.  It includes the fivefold exaggeration
-                    factor. The panel on the right is the results of the same data using the same
+                    factor. The panel on the right show the same data using the same
                     lighting model, but without the factor-of-five multiplication. </p>
 
 
@@ -514,7 +513,8 @@ ModelPixelScaleTag
 
                 <p>The unit normal vector to the surface is computed from the
                     cross product of the tangent vectors:</p>
-                    <p class="mathtext"><img width=4 height=25 src="ElevationGeoTiff1_files/image017.png"></p>
+					
+                <p class="mathtext"><img width=4 height=25 src="ElevationGeoTiff1_files/image017.png"></p>
 
                 <p class="mathtext"><img width=289 height=56 src="ElevationGeoTiff1_files/image018.png"></p>
 
@@ -580,7 +580,7 @@ ModelPixelScaleTag
                     elevation information from a cloud optimized GeoTIFF. We touched on the way
                     GeoTIFFs use metadata to tie their data and imagery to real-world locations.
                     And we introduced the algorithms used to create shaded-relief rendering from
-                    numeric elevations data.</p>
+                    numeric elevation data.</p>
 
                 <p>So far, most of our pictures have been in black-and-white. You
                     may be wondering about ways to add color to elevation-derived imagery. In
@@ -592,7 +592,7 @@ ModelPixelScaleTag
                     rather than elevation samples. Also, they are based on a projected coordinate
                     system that maps the surface of the Earth to a plane rather than the spheroid-based
                     geographic coordinate system that was used for the USGS GeoTIFFs.  Working with
-                    these two kinds of GeoTIFF product will give a well-rounded introduction to
+                    these two kinds of GeoTIFF products will give a well-rounded introduction to
                     this technology.</p>
 
                 <h1>References</h1>
@@ -612,27 +612,30 @@ ModelPixelScaleTag
                     See also PDF document accessed May 2020 from <a
                         href="https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf">https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf</a></p>
 
-                <p>Patterson, Tom. (2019). Shaded Relief. Website accessed December 2020 from <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a>.
+                <p>Patterson, Tom. (2019). Shaded Relief. Website accessed December 2020 from 
+				<a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></p>
 
                 <p>U.S. Census Bureau. (2019). Tiger/Line® Shapefiles: Roads.
-                    Website accessed May 2020 from <a
-                        href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads">https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads</a></p>
+                    Website accessed May 2020 from 
+					    <a href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads">
+						https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads</a></p>
 
                 <p>U.S. Geological Survey [USGS]. (2019). USGS Digital
                     Elevation Models (DEM) Switching to New Distribution Format.  Retrieved May,
-                    2020 from <a
-                        href="https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format">https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format</a>
+                    2020 from <a href="https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format">
+					https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format</a>
                 </p>
 
                 <h2 id="additional-resources">Additional resources</h2>
 
                 <p>The following pages discuss the shaded-relief algorithm. They provide tutorials, example images,
-                    and additional links to useful data sources.
+                    and additional links to useful data sources.</p>
 
                 <ul>
                     <li>You can find more information about the art of
                     shaded-relief rendering as well as a collection of truly beautiful images at Tom
                     Patterson’s <i>Shaded Relief</i> website at <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></li>
+					
                     <li>The <i>Relief Shading</i> website provides additional examples of cartographic techniques at
                     <a href="http://www.reliefshading.com/">http://www.reliefshading.com/</a>. The website also
                     provides a large number of references to other on-line articles describing algorithms for shaded relief rendering.</li>
@@ -640,7 +643,7 @@ ModelPixelScaleTag
 
                 <h2>Data sources</h2>
 
-                <p>The USGS Cloud Optimized GeoTIFF elevation data sources are located at the following sites:
+                <p>The USGS Cloud Optimized GeoTIFF elevation data sources are located at the following sites:</p>
                 <ul>
                     <li>Via FTP: <a href="ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/Elevation/13/TIFF/">
                             ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/Elevation/13/TIFF/</a></li>
