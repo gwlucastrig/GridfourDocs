@@ -26,7 +26,7 @@
 
 			<div class="titleblock">
 				<p class="blocktitle">
-					Lossless Compression for Raster Data using Optimal Predictors
+					Lossless compression for raster data using Optimal Predictors
 				</p>
 				<p class="blockauthor">by G.W. Lucas<br>Posted June 2022.</p>
 			</div>
@@ -264,7 +264,7 @@
                     as part of their data quality assurance and filtering processes. So the features that do remain
                     are generally significant and should not be neglected by a data compression implementation.</p>
 
-                <h3>Compressability for high-density data from the SRTM survey</h3>
+                <h3>Compressibility for high-density data from the SRTM survey</h3>
 
                 <p>I will conclude the discussion of the Optimal Predictor's performance with a little more
                     detail about the SRTM data set. In 2000, NASA's Shuttle Radar Topography Mission (SRTM)
@@ -357,12 +357,12 @@
                     plane surface determined by the coordinates of its three neighbors A, B, and C.  The geometry
                     for the points used in the computation is specified as shown in the figure below:</p>
 
-                <img alt="Geometry for Triangle predictor" src="images/OptimalPredictors/SLGrid_3x3.png" />
+                <img alt="Geometry for Triangle predictor" src="images/OptimalPredictors/SLGrid_3x3.png" >
 
                 <p>Given a grid with uniform spacing and sample points A, B, and C, the predicted value
                     for point P is simply</p>
 
-                <img alt="Variables for Triangle predictor" src="images/OptimalPredictors/image001.png" />
+                <img alt="Variables for Triangle predictor" src="images/OptimalPredictors/image001.png" >
 
                 <p>The equation above assigns coefficients of 1 (or -1) to each of the source data values.
                     It is natural to wonder if there might be a different set of weighting coefficients that
@@ -386,24 +386,23 @@
                     method before moving to Lagrange Multipliers.</p>
 
                 <p>For the three-point case, we wish to find suitable
-                    coefficients  <img alt="Variables for Triangle predictor" src="images/OptimalPredictors/image003.png" style="vertical-align:middle"/> for a predictor in the form</p>
+                    coefficients  <img alt="Variables for Triangle predictor" src="images/OptimalPredictors/image003.png" style="vertical-align:middle"> for a predictor in the form</p>
 
-                <img src = "images/OptimalPredictors/image004.png" alt="Estimator for i,j" />
+                <img src = "images/OptimalPredictors/image004.png" alt="Estimator for i,j" >
 
-                <p>The error term, or residual, <img alt="Residual" src="images/OptimalPredictors/image005.png" style="vertical-align:middle" /> is given as<p>
+                <p>The error term, or residual, <img alt="Residual" src="images/OptimalPredictors/image005.png" style="vertical-align:middle" > is given as</p>
 
-                    <img alt="Residual calculation" src="images/OptimalPredictors/image006.png" />
-                <p>
-                    The classic least-squares estimator attempts to find the set of coefficients
-                    <img alt="Coefficients for predictor" src="images/OptimalPredictors/image003.png" style="vertical-align:middle" /> that would minimize
+                    <img alt="Residual calculation" src="images/OptimalPredictors/image006.png" >
+                <p>The classic least-squares estimator attempts to find the set of coefficients
+                    <img alt="Coefficients for predictor" src="images/OptimalPredictors/image003.png" style="vertical-align:middle" > that would minimize
                     the sum of the squares of the</p>
 
-                <img alt="Sum of the squared errors" src="images/OptimalPredictors/image008.png" />
+                <img alt="Sum of the squared errors" src="images/OptimalPredictors/image008.png" >
 
                 <p>From calculus, we know that for the choice of coefficients that results in the minimum of
                     the error function, the partial derivatives with respect to each of the coefficients will be equal to zero:</p>
 
-                <img alt="Calculus based minimization" src="images/OptimalPredictors/image009.png" />
+                <img alt="Calculus based minimization" src="images/OptimalPredictors/image009.png" >
 
                 <p>Based on these observations, we can combine the partial derivatives to construct a system of linear equations
                     that contain the desired coefficients as variables. Solving for those variables yields the parameters for an
@@ -417,7 +416,7 @@
                     In the case of the Optimal Predictors technique, Smith and Lewis specified the constraint condition
                     that the mean error for the predictors must equal zero</p>
 
-                <img alt="Mean error" src="images/OptimalPredictors/image011.png" />
+                <img alt="Mean error" src="images/OptimalPredictors/image011.png" >
 
                 <p>This additional constraint is the key to the success of the Optimal Predictors method.
                     While Ordinary Least Squares minimizes the overall sum of the squared errors,
@@ -430,7 +429,7 @@
                     The mean-error-of-zero constraint improves the overall redundancy in the set of residuals
                     produced by the predictor. This increase in redundancy, in turn, leads to better compressibility.</p>
 
-                <p>To get a sense of why this improvement occurs, let’s consider an example where we are
+                <p>To get a sense of why this improvement occurs, let's consider an example where we are
                     storing data using the Huffman coding compression technique. Huffman coding works best
                     when the frequency distribution for symbols in an encoded data set is strongly non-uniform.
                     So if a predictor could produce a set of residuals in which the value zero occurs much more
@@ -456,7 +455,7 @@
                     eight-coefficient variation. Later, Kidner &#38; Smith added 12 and 24-coefficient variations.
                     The layout for these predictors is shown below.</p>
 
-                <img alt="Layout for predictor coefficients" src="images/OptimalPredictors/lsgroups.png" />
+                <img alt="Layout for predictor coefficients" src="images/OptimalPredictors/lsgroups.png" >
 
                 <p>Currently, the Gridfour implementation uses the 12 coefficient variation as the primary
                     predictor for the LSOP implementation.</p>
@@ -549,7 +548,7 @@
                     for the implementation, you will note that the data elements and predictor coefficients are assigned
                     variables named according to their position relative to the data cell of interest as shown below (for example u1, u2, u3, etc.)</p>
 
-                <img alt="Layout for neighbor values" src="images/OptimalPredictors/SLGrid_12x12.png" />
+                <img alt="Layout for neighbor values" src="images/OptimalPredictors/SLGrid_12x12.png" >
 
                 <p>One issue when working with any of the Optimal Predictor patterns is that they cannot be used to populate all
                     the cells in the grid. For example, to compute the value at the prediction point P, the 12-coefficient
@@ -566,7 +565,7 @@
                     and two columns to the right are all uncovered. Therefore, an implementation of Optimal Predictors
                     must include alternate logic to pre-populate those cells before applying the 12-coefficient predictor.</p>
 
-                <img alt="Uncovered cells" src="images/OptimalPredictors/SLGrid_CoveredAndUncoveredCells.png" />
+                <img alt="Uncovered cells" src="images/OptimalPredictors/SLGrid_CoveredAndUncoveredCells.png" >
 
                 <p>The Gridfour implementation of the Smith and Lewis algorithm begins processing using
                     its simpler predictors to prepopulate the first two rows and first two columns of the grid.
@@ -607,7 +606,7 @@
                     In this case, the source grid was partitioned into 400 tiles of size
                     180-by-180 grid cells. Each tile was compressed separately.</p>
 
-                <p>When the predictor operates over the code, the residuals are serialized
+                <p>When the predictor operates on the data, the residuals are serialized
                     into streams of bytes. The bytes are then processed by a conventional data
                     compression technique such as Huffman or Deflate.  The choice of compressor
                     is determined by compressing the data using both techniques and then selecting
@@ -625,7 +624,7 @@
                 <p>The overall entropy for the source data is given at the bottom of the printout.
                     This value, 6.64, represents the state of the data before the predictors are applied.
                     By using the predictors, the entropy in the data is reduced from 6.64 (pre-predictor)
-                    to and average of about 1.9 (post-predictor, pre-Huffman/Deflate compression).</p>
+                    to an average of about 1.9 (post-predictor, pre-Huffman/Deflate compression).</p>
 
                 <pre>
     Codec Gvrs_LSOP12                    Compression Output           Predictor Residuals
@@ -660,7 +659,7 @@
                     systems and the Java programming language perform floating-point operations.
                     One of the most important considerations in the design of the GVRS file format is that data created on one
                     system, or in one development environment (Java, C/C++, .NET, etc.), can be accessed by software
-                    running on another. In order to support that goal, it essential that the floating-point
+                    running on another. In order to support that goal, it is essential that the floating-point
                     arithmetic needed for the Optimal Predictor be reproducible in a consistent manner.</p>
 
                 <p>In order to ensure consistency, LSOP uses 4-byte, single-precision floating point arithmetic for
@@ -701,7 +700,7 @@
                     usually produced better compression ratios than the 12-point variation used for the Gridfour Project.
                     At this time, I have not implemented the 24-point variation. Clearly, the inclusion of additional
                     sample points would lead to a more successful predictor. It is, however, possible that the reduction
-                    in data size due to better predictors would be degraded by the additional overhead due required
+                    in data size due to better predictors would be degraded by the additional overhead that is required
                     for the 24-point predictor. The requirement for 24 predictor coefficients, rather than the 12 used by
                     the current implementation, would add 48 additional bytes of overhead. Additionally, the larger
                     predictor has a larger number of uncovered grid cells and would require 3 rows and 6 columns
@@ -730,9 +729,9 @@
                     in a message sequence, the higher the probability that the next member in a sequence will be that symbol.
                     Higher probability symbols are encoded with shorter sequences, so the overall length of the output is reduced.
                     The Huffman coding algorithm uses symbol probabilities to create an encoding that can be represented
-                    using a binary tree structure.  When decoding a Huffman encoded message, bits in a sequence
+                    using a binary tree structure. When decoding a Huffman encoded message, bits in a sequence
                     indicate which branch of the tree to follow (typically, 0 for left, 1 for right). As bits are read,
-                    the branches of the tree are followed until a termal node (i.e. a leaf) is reached, at which time
+                    the branches of the tree are followed until a terminal node (i.e. a leaf) is reached, at which time
                     the output symbol is identified. Because traversing a tree is a lightweight software process,
                     decompressing a Huffman-coded message tends to be very fast. </p>
 
@@ -752,7 +751,7 @@
                     (Project Nayuki, 2020).</p>
 
                 <p>In testing, arithmetic coding yielded only small improvements in data compression. For ETOPO1, the
-                    Huffman-variation cited above required and average of 3.6547 bits per symbol. The arithmetic coding variation
+                    Huffman-variation cited above required an average of 3.6547 bits per symbol. The arithmetic coding variation
                     required 3.6531 bits per symbol. However, the arithmetic coding process is slower than Huffman.
                     While the standard implementation required 122 seconds to compress the ETOPO1 data set, replacing
                     Huffman with arithmetic coding increased the processing time to 234 seconds.</p>
@@ -779,11 +778,11 @@
                     frequency table for its symbol set into the encoded output. With shorter data sequences, the overhead is more significant.
                     In fact, when I increased the tile size from 90-by-120 (10800 raster cells) to 120-by-240 (43200 raster cells),
                     the rANS technique resulted in an improved compression ratio of 1 percent. However, a larger
-                    tile size isn't necessarily a panacea for improving compression ratios. As the tiles sizes increased,
+                    tile size isn't necessarily a panacea for improving compression ratios. As the tile sizes increased,
                     the geographic area that they covered also increased. And the larger geographic areas often covered
-                    a more varied set of terrain. With more variation, there was less redundancy. And redundancy is, of course,
+                    a more varied set of terrain. With more variation, there was less redundancy. And, of course, redundancy is
                     the thing that makes data compression possible. So, as the tile sized increased, the rANS technique
-                    had an advantage over Huffman, but the end result was not significantly smaller because the input residual data was less
+                    had an advantage over Huffman. But the end result was not significantly smaller because the input residual data was less
                     suitable for data compression.</p>
 
 
@@ -792,7 +791,7 @@
                     This consideration gave Huffman an advantage the generic implementations for arithmetic coding
                     and rANS did not have. For example, Gridfour takes a
                     moderately innovative approach to Huffman by encoding the tree directly rather than storing
-                    a frequency table as so many implementations do (for ETOPO1, the Huffman tree required only
+                    a frequency table as many implementations do (for ETOPO1, the Huffman tree required only
                     10 bits per symbol). It is possible that with similar customizations, improvements to the results
                     for both arithmetic coding and rANS could be achieved.</p>
 
@@ -821,10 +820,10 @@
 
                 <p>National Institute of Standards and Technology [NIST]. 2012.
 				<i>JAMA: A Java Matrix Package</i>. Accessed December 2020 from
-                    <a href="https://math.nist.gov/javanumerics/jama/">https://math.nist.gov/javanumerics/jama/</a>
+                    <a href="https://math.nist.gov/javanumerics/jama/">https://math.nist.gov/javanumerics/jama/</a></p>
 
                 <p>Patterson, Tom. (2020). <i>100-meter Natural Earth Map Data</i>.
-				Accessed September 2020 from <a href="http://shadedrelief.com/NE_100m/">http://shadedrelief.com/NE_100m/</a>
+				Accessed September 2020 from <a href="http://shadedrelief.com/NE_100m/">http://shadedrelief.com/NE_100m/</a></p>
 
                 <p>Project Nayuki. (2020). <i>Reference arithmetic coding</i>.
 				Accessed September 2020 from https://www.nayuki.io/page/reference-arithmetic-coding.</p>
