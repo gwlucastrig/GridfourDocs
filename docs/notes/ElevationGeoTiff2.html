@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Elevation GeoTIFF Part 2 &#8211; Color, Land-Cover, and Surface Water </title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -17,7 +17,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -70,7 +70,7 @@
 
 
                    <p>But before we get started, let’s take a
-                    look at the kind of result we can expect. </p>
+                    look at the kind of result we can expect.</p>
 
                 <p>The picture below shows a color-enhanced rendering of the
                     same San Jacinto sample area that was featured in the previous article. The sample
@@ -100,7 +100,7 @@
                     The assignment of terrestrial coloration was taken from a raster-based
                     land-cover data set provided by the 100-Meter Natural Earth Data product (Patterson, 2020).
                     The land-cover product will be discussed below. The surface-water
-                    features come from Shapefile (polygon) data sources downloaded from the U.S.
+                    features come from shapefile (polygon) data sources downloaded from the U.S.
                     Geological Survey National Atlas (USGS, 2020).</p>
 
                 <h2 id="assigning-color-by-elevation">Assigning color by elevation</h2>
@@ -109,7 +109,7 @@
                     to add color to a shaded-relief image strictly on the basis of elevation. To do
                     so, we specify a palette tied to elevation intervals and apply it to the image
                     processing.  In the pictures below, I used a palette that was developed by the
-                    National Oceanic and Atmospheric and Administration (NOAA) for its global-scale
+                    National Oceanic and Atmospheric Administration (NOAA) for its global-scale
                     ETOPO1 elevation and bathymetry data set (NOAA, 2020).  In the ETOPO1 palette,
                     elevations at or below sea level are shown in shades of blue. Lower elevations
                     are shown in green. And higher elevations are shown in tan or white.</p>
@@ -135,7 +135,7 @@
                     in dry land being colored in shades of blue.  Consequently, much of the arid Coachella
                     Valley appears to be covered with water.  If the rendering were to be believed,
                     the town of Coachella itself, which lies at 21 meters below sea level, would be
-                    entirely submerged. </p>
+                    entirely submerged.</p>
 
                 <p>Of course, it is possible to adjust the palette so that the
                     water colors start at a lower elevation. For the panel below on the right, I
@@ -151,7 +151,7 @@
                     fit a particular sample area is feasible, it is tedious at best and still prone
                     to error. It also fails to capture any lakes or reservoirs that may occur at
                     higher elevations. For that purpose, we need additional data sources such as
-                    the surface-water Shapefiles that will be discussed below.</p>
+                    the surface-water shapefiles that will be discussed below.</p>
 
 
 
@@ -186,13 +186,13 @@
                     transformed to an imaging plane using a map projection.  The advantage to this
                     approach is that the projected image can preserve important features such as
                     area, distance, or shape that are not well represented by geographic coordinate
-                    systems. </p>
+                    systems.</p>
 
                 <p>You may recall that for the elevation data set we used in
                     Part 1, we needed to narrow the image area in order to preserve the shape of
                     features on the surface of the Earth. A projected coordinate system does the
                     same kind of thing, but it does it using a much more accurate (and complex)
-                    transformation. </p>
+                    transformation.</p>
 
                 <p>Let’s look briefly at the content of the GeoKeyDirectoryTag
                     for the file W_CONUS_100m_NE_LC.tif</p>
@@ -216,7 +216,7 @@
                     coordinate reference system geo key) refers to the European Petroleum Survey
                     Group (EPSG) map projection database specification number 5070 (EPSG, 2020). 
                     Although this particular GeoTIFF does not give a full set of parameters for the
-                    map projection it uses, we can look it up the necessary elements from external
+                    map projection it uses, we can look up the necessary elements from external
                     sources. The EPSG system is well known and its specifications are readily
                     available on the Internet. EPSG map projection 5070 is an Albers Equal Area
                     Conic map projection optimized for depicting features in the Contiguous United
@@ -321,15 +321,15 @@
                     GeoTIFF is adequate for land-cover. But most surface water features included on
                     maps are drawn at a much higher resolution than that. Omitting surface water
                     from the Land-Cover depiction leaves developers and cartographers free to use
-                    other sources. And, because surface water data in the form of Shapefile
+                    other sources. And, because surface water data in the form of shapefile
                     (polygon) data products is easy to come by, omitting it from a land-cover
                     product is not an obstacle for its users. Mr. Patterson himself recommends
-                    surface water Shapefile products from the USGS National Atlas (USGS, 2020).    </p>
+                    surface water shapefile products from the USGS National Atlas (USGS, 2020).    </p>
 
-                <p>A Shapefile is an industry standard GIS data format that
+                <p>A shapefile is an industry standard GIS data format that
                     represents an area-based feature such as lake as a polygon defined by a series
-                    of using spatial coordinates that define its vertices. For this article,
-                    Shapefiles from the National Atlas were downloaded from the Earth Explorer
+                    of vertices specified using various spatial coordinate systems. For this article,
+                    shapefiles from the National Atlas were downloaded from the Earth Explorer
                     website (USGS, 2020).  To extract data from these files for rendering, the
                     demonstration application uses an API from the open-source Tinfour software
                     product (Tinfour, 2020).   The results were shown in the larger-scale image
@@ -341,7 +341,7 @@
                     (Red-Green-Blue) color model. If you look through the DemoCOG code, you may be
                     surprised by the complexity of the color processing used to interpolate those
                     RGB values to populate the output image. The DemoCOG application uses an alternate
-                    color model known as CIELAB (“CIELAB color space”, Wikipedia,  n.d.).  While the RGB color
+                    color model known as CIELAB ("CIELAB color space", Wikipedia,  n.d.).  While the RGB color
                     model is well suited for the implementation of computer monitors and display
                     hardware, the CIELAB model is a closer match for the way the human eye perceives color.
                     Thus the CIELAB model can produce better results when blending colors.  The
@@ -352,9 +352,9 @@
 
                 <p>That being said, I do not wish to overstate the case for
                     using the alternate CIELAB model rather than working directly from RGB. The
-                    color palette used to the Natural Earth Land-Cover imagery works well in both
+                    color palette used for the Natural Earth Land-Cover imagery works well in both
                     systems. As the panels below show, the CIELAB treatment produces somewhat richer
-                    colors and enhanced contrast. But the differences are subtle. </p>
+                    colors and enhanced contrast. But the differences are subtle.</p>
 
                 <figure>
                     <img width=750 height=473  src="ElevationGeoTiff2_files/image006.jpg">
@@ -373,20 +373,20 @@
                     at West Point, the town of Sleepy Hollow in New York, the Connecticut cities of
                     Norwalk, Danbury and Waterbury, as well as Lake Candlewood and numerous other
                     lakes and rivers. The blue strip on the left side of the image is the Hudson
-                    River. </p>
+                    River.</p>
 
                 <p>New York and Connecticut receive reasonably regular rainfall
                     and snow. Consequently, the land-cover depiction is much greener than for the
                     area near the San Jacinto mountain range. The Northeast U.S. area shown above
                     is also much more urbanized than the San Jacinto area. The Natural Earth Land
                     Cover data set uses gray tints to show built-up areas, so most of the coastal
-                    area from Connecticut is drawn in gray. </p>
+                    area from Connecticut is drawn in gray.</p>
 
                 <p>Geologically, the Western Connecticut sample area is much
                     older than the San Jacinto area. Its hilly terrain is the result of millions of
                     years of weathering and was significantly modified by glaciation during the ice
                     age. Some of the effects of that modification are revealed by the shaded-relief
-                    rendering, most notably the shaping of the north-south orientated ridges and
+                    rendering, most notably the shaping of the north-south-oriented ridges and
                     valleys across the region.  </p>
 
                 <figure>
@@ -399,13 +399,13 @@
                     not extend into the ocean area. Where the land-cover information ends, the tint
                     imagery supplies white pixel values. In most cases, the DemoCOG application
                     assigns output pixels a blue color where elevations lie at or below sea level. But
-                    because of the elevation raster has so much greater resolution than the
+                    because of the elevation raster has much greater resolution than the
                     land-cover imagery, there are occasional conflicts in the data. Sometimes,
                     pixels with elevations indicating that they should be land positions happen to
                     fall over the white area in the Natural Earth product. Because they are
                     identified as land pixels, the rendering application would ordinarily take the
                     color value from Natural Earth. But if it were to do so, the result would be a
-                    speckling of white pixels along the shore line as shown in the panels below.  To
+                    speckling of white pixels along the shoreline as shown in the panels below.  To
                     correct for such cases, DemoCOG implements logic to extend land tints outward
                     from the coastline.</p>
 
@@ -421,7 +421,7 @@
                     products provide a valuable source of high-resolution elevation data that can
                     be downloaded free-of-charge. There are many potential applications for the
                     USGS elevation data. This article focuses on one of them: the creation of
-                    shaded-relief map imagery. </p>
+                    shaded-relief map imagery.</p>
 
                 <p>Discussing shaded-relief imagery gave us an opportunity to
                     explore the underlying concepts used in GeoTIFF files. It also gave us an
@@ -437,7 +437,7 @@
                     source code for the DemoCOG application is available from the Gridfour Software
                     Project. Although DemoCOG is implemented in the Java programming language, its
                     code includes plenty of comments and is written to be accessible to readers who
-                    are unfamiliar with Java.  </p>
+                    are unfamiliar with Java.</p>
 
                 <p>I hope you’ve found this series of articles useful. Although
                     the GeoTIFF format can seem overwhelmingly complex at first, it is based on a
@@ -484,14 +484,14 @@
 
                 <p>Shapefiles providing coastlines, surface-water features, political boundaries, etc.
                     are available from the U.S. Geological Survey (USGS) <a href="https://earthexplorer.usgs.gov/">EarthExplorer</a> website.
-                    Data at a map scale of 1:1 million that was collected for the discontinued U.S. National Atlas may be downloaded using
+                    Data at a map scale of 1:1 million that was collected for the discontinued U.S. National Atlas may be downloaded
                     using the following procedure that is taken from Tom Patterson's Shaded Relief website:</p>
 					
                 <p class="blocknote">Click the "Data Sets" tab then select Digital Maps/National Atlas.
                     Then click the "Additional Criteria" tab and specify Collection/1:1,000,000-scale
                     before clicking the "Results" button in the lower right (Patterson, 2020).</p>
                 <p>Shapefiles and land-cover GeoTIFFs providing data for the entire Earth at 1:10 million scale
-                    is available at the <a href="http://naturalearthdata.com/">Natural Earth</a> website.</p>
+                    are available at the <a href="http://naturalearthdata.com/">Natural Earth</a> website.</p>
 
 
             </div>
