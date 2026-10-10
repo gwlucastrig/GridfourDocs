@@ -1,0 +1,92 @@
+/* Sidebar Navigation Styles */
+
+.sidebar {
+    float: left;
+    width: 200px;
+    margin-right: 20px;
+    background-color: #f6f8fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 15px 0;
+}
+
+.sidebar-section {
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-section ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-section li {
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #24292e;
+    padding: 10px 15px;
+    margin: 10px 0 5px 0;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 8px 15px;
+    color: #0366d6;
+    text-decoration: none;
+    font-size: 14px;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover {
+    background-color: #f0f2f5;
+    text-decoration: underline;
+    border-left-color: #0366d6;
+}
+
+.sidebar-link.active {
+    background-color: #fff3cd;
+    border-left-color: #0366d6;
+    font-weight: bold;
+}
+
+.sidebar-link.nested {
+    padding-left: 30px;
+    font-size: 13px;
+}
+
+/* Layout adjustments for sidebar */
+div#notescontainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+div#notesheader {
+    width: 100%;
+    flex-basis: 100%;
+}
+
+div#notescontent {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+        display: none;
+    }
+    
+    div#notescontent {
+        flex: 1 1 100%;
+    }
+}
