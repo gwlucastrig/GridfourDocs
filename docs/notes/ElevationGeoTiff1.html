@@ -14,13 +14,15 @@
         <div id="sidebar">
             <nav aria-label="Sidebar navigation">
                 <ul>
-                    <li><a href="https://gwlucastrig.github.io/gridfour/">Home</a></li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
-                    <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
-                    <li><a href="ElevationGeoTiff2.html">Elevation GeoTIFFs: Part 2</a></li>
+                    <li><a href="#introduction">Introduction</a></li>
                     <li><a href="#san-jacinto">San Jacinto data sample</a></li>
-                    <li><a href="#tiff-file-format">The GeoTIFF format</a></li>
+                    <li><a href="#tiff-file-format">The GeoTIFF format</a>
+                    <ul>
+                    <li><a href="#metadata-and-mapping">Metadata &amp; mapping</a></li>
+                    <li><a href="#metadata-for-georeferencing">Georeferencing tags</a></li>
+                    </ul>
                     <li><a href="#shaded-relief-algorithm">Shaded-relief algorithm</a></li>
+                    <li><a href="#optimized_how">What makes <i>optimized</i>?</a></li>
                     <li><a href="#additional-resources">Additional resources</a></li>
                 </ul>
             </nav>
@@ -42,18 +44,18 @@
 
             <div id="notescontent">
 
-			<div class="titleblock">
-				<p class="blocktitle">
-				  Elevation Data from Cloud-Optimized GeoTIFFs<br>
+            <div class="titleblock">
+                <p class="blocktitle">
+                  Elevation Data from Cloud-Optimized GeoTIFFs<br>
                       Part 1: Shaded-Relief Techniques
-				</p>
-				<p class="blockauthor">by G.W. Lucas<br>Posted March 2022.</p>
-			</div>
+                </p>
+                <p class="blockauthor">by G.W. Lucas<br>Posted March 2022.</p>
+            </div>
 
 
 
 
-                <h1>Introduction</h1>
+                <h1 id="introduction">Introduction</h1>
 
                 <p>The GeoTIFF specification (OGC, 2019) has long been
                     recognized as a standard for distributing georeferenced imagery. But it is also
@@ -211,12 +213,12 @@
                     wouldn’t leave a lot of room for other images or data processing. In practice
                     most application developers would prefer to read the source data a piece at a
                     time for processing.  Fortunately, a design for efficient piecewise access is
-                    just what the “optimized” in Cloud Optimized GeoTIFF is all about.  And any
+                    just what the "optimized" in Cloud Optimized GeoTIFF is all about.  And any
                     reasonably complete software library, such as the Commons Imaging API, will be
                     able to take advantage of this organization to support memory-conserving access
                     of large images. </p>
 
-                <h3>Metadata and mapping</h3>
+                <h3 id="metadata-and-mapping">Metadata and mapping</h3>
 
                 <p>The TIFF file format has been around for a long time. And
                     even though it has been superseded by more modern standards (JPEG, PNG, etc.),
@@ -241,7 +243,7 @@
                 </figure>
 
 
-                <h3>GeoTIFF metadata for georeferencing</h3>
+                <h3 id="metadata-for-georeferencing">GeoTIFF metadata for georeferencing</h3>
 
                 <p>The metadata in a TIFF file include sets of data primitives
                     (integer, floating-point, and ASCII text elements) which are identified by
@@ -529,7 +531,7 @@ ModelPixelScaleTag
 
                 <p>The unit normal vector to the surface is computed from the
                     cross product of the tangent vectors:</p>
-					
+                    
                 <p class="mathtext"><img width=4 height=25 src="ElevationGeoTiff1_files/image017.png"></p>
 
                 <p class="mathtext"><img width=289 height=56 src="ElevationGeoTiff1_files/image018.png"></p>
@@ -560,8 +562,7 @@ ModelPixelScaleTag
                     shaded-relief rendering, we simply multiply the RGB values for each pixel by
                     its corresponding illumination coefficient.</p>
 
-                <a id="optimized_how"></a>
-                <h1>What makes it an <i>Optimized</i> GeoTIFF?</h1>
+                <h1 id="optimized_how">What makes it an <i>optimized</i> GeoTIFF?</h1>
                 <p>There are two aspects of the USGS's elevation GeoTIFF products
                     that are optimized for use in cloud-based applications. First, the
                     files are organized in sub-sections (internal tiles) of 256-by-256
@@ -629,17 +630,17 @@ ModelPixelScaleTag
                         href="https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf">https://cdn.earthdata.nasa.gov/conduit/upload/12428/19-008r4.pdf</a></p>
 
                 <p>Patterson, Tom. (2019). Shaded Relief. Website accessed December 2020 from 
-				<a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></p>
+                <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></p>
 
                 <p>U.S. Census Bureau. (2019). Tiger/Line® Shapefiles: Roads.
                     Website accessed May 2020 from 
-				    <a href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads">
-					https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads</a></p>
+                    <a href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads">
+                    https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2019&amp;layergroup=Roads</a></p>
 
                 <p>U.S. Geological Survey [USGS]. (2019). USGS Digital
                     Elevation Models (DEM) Switching to New Distribution Format.  Retrieved May,
                     2020 from <a href="https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format">
-					https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format</a>
+                    https://www.usgs.gov/news/usgs-digital-elevation-models-dem-switching-new-distribution-format</a>
                 </p>
 
                 <h2 id="additional-resources">Additional resources</h2>
@@ -651,7 +652,7 @@ ModelPixelScaleTag
                     <li>You can find more information about the art of
                     shaded-relief rendering as well as a collection of truly beautiful images at Tom
                     Patterson’s <i>Shaded Relief</i> website at <a href="http://www.shadedrelief.com/">http://www.shadedrelief.com/</a></li>
-					
+                    
                     <li>The <i>Relief Shading</i> website provides additional examples of cartographic techniques at
                     <a href="http://www.reliefshading.com/">http://www.reliefshading.com/</a>. The website also
                     provides a large number of references to other on-line articles describing algorithms for shaded relief rendering.</li>
