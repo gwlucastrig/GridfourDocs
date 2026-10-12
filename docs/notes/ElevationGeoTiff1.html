@@ -20,8 +20,13 @@
                     <ul>
                     <li><a href="#metadata-and-mapping">Metadata &amp; mapping</a></li>
                     <li><a href="#metadata-for-georeferencing">Georeferencing tags</a></li>
+					<li><a href="#calculations-for-spatial-coordinates">Pixel &amp; spatial coordinates</a></li>
                     </ul>
-                    <li><a href="#shaded-relief-algorithm">Shaded-relief algorithm</a></li>
+                    <li><a href="#shaded-relief-algorithm">Shaded-relief algorithm</a>
+						<ul>
+						<li><a href="#lighting-computations">Calculations for lighting</a></li>
+						</ul>
+					</li>
                     <li><a href="#optimized_how">What makes <i>optimized</i>?</a></li>
                     <li><a href="#additional-resources">Additional resources</a></li>
                 </ul>
@@ -393,6 +398,7 @@ ModelPixelScaleTag
                     ModelPixelScaleTag to be given as a negative number. By long-standing
                     convention, however, they are given as positive values.  </p>
 
+				<h3 id="calculations-for-spatial-coordinates">Calculations for pixel &amp; spatial coordinates</h3>
                 <p>Armed with these facts, we can specify the following
                     relationships:</p>
 
@@ -493,7 +499,7 @@ ModelPixelScaleTag
                 </figure>
 
 
-                <h3>Coding the lighting model</h3>
+                <h3 id="lighting-computations">Calculations for the diffuse lighting model</h3>
 
                 <p>Coding a diffuse lighting model is easy provided that we
                     have a way of computing the surface normal at each pixel position. The DemoCOG
