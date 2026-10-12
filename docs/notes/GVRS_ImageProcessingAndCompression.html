@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>GVRS for Image Processing</title>
-        <link rel="stylesheet" href="css/text.css" />
-        <link rel="stylesheet" href="css/layout.css" />
+        <link rel="stylesheet" href="css/text.css" >
+        <link rel="stylesheet" href="css/layout.css" >
     </head>
 
 
@@ -15,7 +15,7 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (Github)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -28,7 +28,7 @@
 
                 <div class="titleblock">
                     <p class="blocktitle">
-                        An Investigation using Gridfour for Image Processing, Storage, and Data Compression
+                        An investigation using Gridfour for image processing, storage, and data compression
                     </p>
                     <p class="blockauthor">by G.W. Lucas</p>
                 </div>
@@ -68,7 +68,8 @@
                     available at <a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">The Gridfour Project Notes page</a>.
                     The source code for the application used for this article is available at the
                     <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a> in the file
-                    <a href="https://github.com/gwlucastrig/gridfour/blob/master/demo/src/main/java/org/gridfour/demo/imaging/ExperimentalImageStorage.java">ExperimentalImageStorage.java</a>.
+                    <a href="https://github.com/gwlucastrig/gridfour/blob/master/demo/src/main/java/org/gridfour/demo/imaging/ExperimentalImageStorage.java">
+					ExperimentalImageStorage.java</a></p>.
 
 
                 <h1 id="the_test_data">The test data</h1>
@@ -77,18 +78,18 @@
                     by a factor of 15-to-1. The pixel spacing in the original image scale was 1 foot (0.3 meter) per pixel.
                     The paved area and structures at the lower-left corner of the image belong to University Park Airport
                     near The Pennsylvania State University. The source data was stored in a geo-referenced TIFF image
-                    (e.g. a "GeoTIFF") and included metadata that would allow it to be displayed on map-based applications.
+                    (e.g. a "GeoTIFF") and included metadata that would allow it to be displayed on map-based applications.</p>
 
 
                 <figure>
                     <img src="images/GVRS_ImageCompression/AerialPhoto26001840pan.jpg">
-                    <figcaption>Figure 1 &ndash; Aerial photograph taken over central Pennsylvania (source: Pennslyvania, 2007, file 26001840pan.tif).</figcaption>
+                    <figcaption>Figure 1 &ndash; Aerial photograph taken over central Pennsylvania (source: Pennsylvania, 2007, file 26001840pan.tif).</figcaption>
                 </figure>
 
 
                 <h1 id="processing">Processing Image Data using GVRS</h1>
                 <p>One of the most common ways to represent pixels is to store them as four-byte integers.
-                    And because the GVRS API implements an integer data format, it seems a natural for storing
+                    And because the GVRS API implements an integer data format, it seems natural for storing
                     pixel values. The example code that follows uses the Apache Commons Imaging library to
                     load data from the source image and then stores it in a GVRS file. Once the data is transcribed
                     to a GVRS file, it is available for access in whatever application code or image-processing
@@ -96,7 +97,8 @@
                     illustrates how to set up a virtual raster data store for custom processing.</p>
 
                 <p>If you would like a more detailed explanation of how to use the GVRS API, see the
-                    <a href="https://github.com/gwlucastrig/gridfour/wiki/GVRS-Jump-Start-01_Reading-GVRS-files">GVRS Jump Start Guide</a>
+                    <a href="https://github.com/gwlucastrig/gridfour/wiki/GVRS-Jump-Start-01_Reading-GVRS-files">GVRS Jump Start Guide</a></p>
+					
                 <pre>
     // Load the image and obtain its dimensions
     File input = new File("26001940pan.tif");
@@ -150,7 +152,7 @@
                     To save storage space, an application could use the GVRS API's optional data compression.</p>
 
                 <p>The following code snippet shows how data compression is enabled using the GVRS API.
-                    Note that the data compression option must  be specified as part of the GVRS file specification
+                    Note that the data compression option must be specified as part of the GVRS file specification
                     before the output file is created.</p>
 
                 <pre>
@@ -180,7 +182,7 @@
                     improve data compression ratios by separating the pixel values into their RGB components
                     and storing them separately. Compressing each sequence of components individually
                     reduces the size of the output by a substantial margin. We can also gain some reduction
-                    in output size by mapping the RGB components to an alternate color space based on the YCoCg-R system.<p>
+                    in output size by mapping the RGB components to an alternate color space based on the YCoCg-R system.</p>
 
                 <p>We will look at these two techniques in more detail below. Before we do, let's take
                     a sneak preview of what kind of results we can expect. The table gives storage size and
@@ -294,6 +296,7 @@
                     separated and stored in a GVRS file. The code specifies three separate GVRS elements, one for each
                     data field. These are populated and stored separately. Later, when data is read from the file they
                     can be reconstructed with some simple byte-shift operations.</p>
+					
                 <pre>
     GvrsFileSpecifiction fSpec = new GvrsFileSpecification(nRows, nCols);
     fSpec.setDataCompressionEnabled(true);
@@ -332,7 +335,7 @@
                 <h1 id="why_YCoCg">Improving compression using the YCoCg-R color space</h1>
                 <p>In effect, data compression schemes reduce the storage size for a product
                     by exploiting redundancies in the content. Sometimes, though, the redundancy
-                    is a data set is not immediately apparent to conventional compressors.
+                    in a data set is not immediately apparent to conventional compressors.
                     In such cases, it is possible that transforming the data to an alternate
                     form may expose redundancy that would otherwise be hidden.
                     That is exactly what is accomplished by mapping the RGB values for each pixel
@@ -412,7 +415,7 @@
                 <h1 id="conclusion">Conclusion</h1>
                 <p>This article presented results from a preliminary investigation into using GVRS to
                     process photographic imagery. While this effort barely scratches the surface of
-                    the deep topic that is image processing, it demonstrates the feasible of further investigations.<p>
+                    the deep topic that is image processing, it demonstrates the feasibility of further investigations.</p>
 
                 <p>In future work, the Gridfour project will explore improvements to the API to make it
                     more convenient for application developers to encode image data in a GVRS file.</p>
