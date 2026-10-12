@@ -6,12 +6,26 @@
         <title>Elevation GeoTIFF Part 2 &#8211; Color, Land-Cover, and Surface Water </title>
         <link rel="stylesheet" href="css/text.css" >
         <link rel="stylesheet" href="css/layout.css" >
+		<link rel="stylesheet" href="css/sidebar.css" >
     </head>
 
 
     <body>
 
+        <aside id="sidebar">
+            <nav aria-label="Sidebar navigation">
+				<ul>
+					<li><a href="#introduction">Introduction</a></li>
+					<li><a href="#assigning-color-by-elevation">Assigning color by elevation</a></li>
+					<li><a href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a></li>
+					<li><a href="#surface-water">Surface water and shapefiles</a></li>
+					<li><a href="#color-models">Color models</a></li>
+					<li><a href="#dealing-with-shoreline">Dealing with shoreline and coastal areas</a></li>
+				</ul>
+            </nav>
+        </aside>
 
+ 
         <div id="notescontainer">
             <div id="notesheader">
                 <ul class="link-bar">
@@ -36,7 +50,7 @@
 				<p class="blockauthor">by G.W. Lucas<br>Posted March 2022.</p>
 			</div>
 
-                <h1>Introduction</h1>
+                <h1 id="introduction">Introduction</h1>
 
                 <p><a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html">Part 1 of this series</a>
                     introduced the U.S. Geological Survey’s Cloud-Optimized GeoTIFF (COG) data product and showed how its
