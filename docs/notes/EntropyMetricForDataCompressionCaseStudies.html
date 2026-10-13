@@ -106,8 +106,8 @@
 
                 <h2 id="case-study-1a">Case study 1.a: Data compression</h2>
                 <p>If we compress the source ETOPO1 data file using the standard Deflate data-compression technique, 
-				   it reduces the size of the file to 288.4 MiB.
-                    Superficially, that appears to be roughly a factor of three improvement. 
+				   it reduces the size of the file to 377.8 MiB.
+                    Superficially, that appears to be roughly a factor of 2.3 improvement. 
 					But, looking at the range of values in the descriptive parameters given above,
                     we see that a great deal of the source file could easily be accommodated by 2-byte (short) integers 
 					rather than the four-byte format used by the source data.
@@ -220,7 +220,7 @@
 					so they do not appear as distinct features.</p>
 
                 <figure>
-                    <img src="EntropyMetricForDataCompression_files/entropyglobal2.png">
+                    <img src="EntropyMetricForDataCompression_files/entropyglobal2.png" alt="Global entropy rates for elevation data">
                     <figcaption>Figure 1 &ndash; Entropy rates in bits/elevation across the ETOPO1 data set.</figcaption>
                 </figure>
 
@@ -255,10 +255,10 @@
         Tile size:        90 x 120 (21600 tiles consisting of 10800 grid cells)
         Compression method usage:
             Deflate:  64 % of all tiles
-            Huffman:  36 %   ""     ""
+            Huffman:  36 % of all tiles
         Average entropy of source data as selected for method:
             Deflate:   6.16 bits/elevation
-            Huffman:   5.83   ""    ""
+            Huffman:   5.83 bits/elevation
                 </pre>
 
                 <p>The fact that the Huffman method was selected so often was unexpected, because the Deflate technique usually outperforms Huffman by a substantial margin.
@@ -289,7 +289,7 @@
 					use of non-integral floating-point data for elevations.</p>
 
                 <p>Obtaining the set of probabilities needed for entropy calculations on floating-point data is
-				more involved than it is for byte- and integer-based products.
+				    more involved than it is for products based on byte and integer data types.
                     To collect probabilities for a byte-based product, we simply created an array of 256 counting
 					elements and looped through the source data to tabulate the number of times each 
 					unique byte value appeared.
