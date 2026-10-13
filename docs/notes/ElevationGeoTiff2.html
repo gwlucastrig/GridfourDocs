@@ -6,7 +6,7 @@
         <title>Elevation GeoTIFF Part 2 &#8211; Color, Land-Cover, and Surface Water </title>
         <link rel="stylesheet" href="css/text.css" >
         <link rel="stylesheet" href="css/layout.css" >
-		<link rel="stylesheet" href="css/sidebar.css" >
+        <link rel="stylesheet" href="css/sidebar.css" >
     </head>
 
 
@@ -14,14 +14,14 @@
 
         <aside id="sidebar">
             <nav aria-label="Sidebar navigation">
-				<ul>
-					<li><a href="#introduction">Introduction</a></li>
-					<li><a href="#assigning-color-by-elevation">Assigning color by elevation</a></li>
-					<li><a href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a></li>
-					<li><a href="#surface-water">Surface water and shapefiles</a></li>
-					<li><a href="#color-models">Color models</a></li>
-					<li><a href="#dealing-with-shoreline">Dealing with shoreline and coastal areas</a></li>
-				</ul>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#assigning-color-by-elevation">Assigning color by elevation</a></li>
+                    <li><a href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a></li>
+                    <li><a href="#surface-water">Surface water and shapefiles</a></li>
+                    <li><a href="#color-models">Color models</a></li>
+                    <li><a href="#dealing-with-shoreline">Dealing with shoreline and coastal areas</a></li>
+                </ul>
             </nav>
         </aside>
 
@@ -42,13 +42,13 @@
 
             <div id="notescontent">
  
-			<div class="titleblock">
-				<p class="blocktitle">
-					  Elevation Data from Cloud-Optimized GeoTIFFs<br>
-                      Part 2: Color, Land Cover, and Surface Water
-				</p>
-				<p class="blockauthor">by G.W. Lucas<br>Posted March 2022.</p>
-			</div>
+            <div class="titleblock">
+                <p class="blocktitle">
+                      Elevation data from Cloud-Optimized GeoTIFFs<br>
+                      Part 2: Color, land cover, and surface water
+                </p>
+                <p class="blockauthor">by G.W. Lucas<br>Posted March 2022. Updated October 2026.</p>
+            </div>
 
                 <h1 id="introduction">Introduction</h1>
 
@@ -65,22 +65,22 @@
                     shaded-relief imagery through the use of simple elevation-based palettes as
                     well as more realistic techniques using supplemental data sources. We will take
                     these techniques one step at a time. The text that follows includes the following sections:</p>
-					<ul>
-					<li><a class="box-link" href="#assigning-color-by-elevation">Assigning color by elevation</a> examines
-					the pros and cons of assigning color to an image strictly on the basis of elevation.</li>
-					
-					<li><a class="box-link" href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a> shows
-					how using an external land-cover product can improve the appearance of a shaded-relief image.</li>
-					
-					<li><a class="box-link" href="#surface-water">Surface water and shapefiles</a> discusses ways to
-					improve the accuracy of surface water depiction by using supplemental shapefiles</li>
-					
-					<li><a class="box-link" href="#color-models">Color models</a> illustrates the effects of
-					applying different color models when blending colors.</li>
-					
-					<li><a class="box-link" href="#dealing-with-shoreline">Dealing with shoreline and coastal areas</a>
-					offers techniques for addressing some of the problems that can arise near the transition from land to sea.</li>
-					</ul>
+                    <ul>
+                    <li><a class="box-link" href="#assigning-color-by-elevation">Assigning color by elevation</a> examines
+                    the pros and cons of assigning color to an image strictly on the basis of elevation.</li>
+                    
+                    <li><a class="box-link" href="#land-cover-color">Adding land-cover color values from a GeoTIFF</a> shows
+                    how using an external land-cover product can improve the appearance of a shaded-relief image.</li>
+                    
+                    <li><a class="box-link" href="#surface-water">Surface water and shapefiles</a> discusses ways to
+                    improve the accuracy of surface water depiction by using supplemental shapefiles</li>
+                    
+                    <li><a class="box-link" href="#color-models">Color models</a> illustrates the effects of
+                    applying different color models when blending colors.</li>
+                    
+                    <li><a class="box-link" href="#dealing-with-shoreline">Dealing with shoreline and coastal areas</a>
+                    offers techniques for addressing some of the problems that can arise near the transition from land to sea.</li>
+                    </ul>
 
 
                    <p>But before we get started, let’s take a
@@ -158,7 +158,7 @@
                     saltwater lake. It can be interpreted as the elevation of the surface of that body of water.
                     But the elevation of 70.1 meters below MSL does not agree with any published value for the
                     surface of the Salton Sea that I was able to find. The value I used was obtained through several
-                    rounds of trial and error.
+                    rounds of trial and error.</p>
 
                 <p>So, as the panel shows, a custom palette can help improve the
                     accuracy of a color-coded elevation rendering. But, while creating a palette to
@@ -192,7 +192,7 @@
 
                 <p>The land-cover imagery is a much different kind of GeoTIFF
                     than the USGS elevation product that we discussed in 
-					<a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html">Part 1 of this series</a>.
+                    <a href="https://gwlucastrig.github.io/GridfourDocs/notes/ElevationGeoTiff1.html">Part 1 of this series</a>.
                     For one thing, it includes a conventional RGB image product rather than numerical elevation
                     data. It also uses a Projected Coordinate System (PCS) rather than the
                     Geographic Coordinate System (GCS) used by the USGS products. In a projected
@@ -317,7 +317,7 @@
                     Land-Cover GeoTIFF (left) and the result when the image is combined with shaded-relief
                     data created from the USGS elevation data set. One natural phenomenon that the
                     Natural Earth Land-Cover image doesn’t depict is surface water. We will discuss
-                    technique for adding that information next.</p>
+                    a technique for adding that information next.</p>
 
 
                 <figure>
@@ -330,7 +330,7 @@
 
                 <p>You may be wondering why Mr. Patterson decided to omit
                     surface water from his land-cover imagery. It turns out that removing
-                    surface-water features allows application to use alternate data sources that
+                    surface-water features allows applications to use alternate data sources that
                     can provide better results. The 100-meter pixel spacing for the Natural Earth
                     GeoTIFF is adequate for land-cover. But most surface water features included on
                     maps are drawn at a much higher resolution than that. Omitting surface water
@@ -341,8 +341,8 @@
                     surface water shapefile products from the USGS National Atlas (USGS, 2020).    </p>
 
                 <p>A shapefile is an industry standard GIS data format that
-                    represents an area-based feature such as lake as a polygon defined by a series
-                    of vertices specified using various spatial coordinate systems. For this article,
+                    represents an area-based feature such as lake as a polygon. Polygons are defined by a series
+                    of vertices specified using either geographic or projected coordinate systems. For this article,
                     shapefiles from the National Atlas were downloaded from the Earth Explorer
                     website (USGS, 2020).  To extract data from these files for rendering, the
                     demonstration application uses an API from the open-source Tinfour software
@@ -413,7 +413,7 @@
                     not extend into the ocean area. Where the land-cover information ends, the tint
                     imagery supplies white pixel values. In most cases, the DemoCOG application
                     assigns output pixels a blue color where elevations lie at or below sea level. But
-                    because of the elevation raster has much greater resolution than the
+                    because the elevation raster has much greater resolution than the
                     land-cover imagery, there are occasional conflicts in the data. Sometimes,
                     pixels with elevations indicating that they should be land positions happen to
                     fall over the white area in the Natural Earth product. Because they are
@@ -456,8 +456,8 @@
                 <p>I hope you’ve found this series of articles useful. Although
                     the GeoTIFF format can seem overwhelmingly complex at first, it is based on a
                     logical series of design choices that make it manageable once you delve into
-                    it. I wish you success in working with GeoTIFF products and the Apache Commons
-                    Image software library.</p>
+                    it. I wish you success in working with GeoTIFF products and the 
+                    Apache Commons Imaging software library.</p>
 
                 <h1>References</h1>
 
@@ -500,7 +500,7 @@
                     are available from the U.S. Geological Survey (USGS) <a href="https://earthexplorer.usgs.gov/">EarthExplorer</a> website.
                     Data at a map scale of 1:1 million that was collected for the discontinued U.S. National Atlas may be downloaded
                     using the following procedure that is taken from Tom Patterson's Shaded Relief website:</p>
-					
+                    
                 <p class="blocknote">Click the "Data Sets" tab then select Digital Maps/National Atlas.
                     Then click the "Additional Criteria" tab and specify Collection/1:1,000,000-scale
                     before clicking the "Results" button in the lower right (Patterson, 2020).</p>

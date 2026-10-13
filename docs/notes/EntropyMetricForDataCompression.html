@@ -54,7 +54,7 @@
             <div id="notescontent">
                 <div class="titleblock">
                     <p class="blocktitle">
-                        What Entropy tells us about Data Compression<br>
+                        What Entropy tells us about data compression<br>
                         Part I: Concepts
                     </p>
 					<p class="blockauthor">by G.W. Lucas<br>Posted August 2026</p>
@@ -245,9 +245,11 @@
                     to have some method to extract the original information later on. So, most Huffman compressors
                     include some method to encode the structure of the Huffman tree. This requirement adds overhead to a compressed
                     product. Even discounting the overhead, the Huffman code often does not reach the lower-bound
-                    implied by the first-order entropy computation. This shortfall occurs because the Huffman coding can
-                    only represent probabilities as integral powers of two and must approximate the probabilities for many symbol sets.
-                    Even so, it usually performs well in practice.</p>
+                    implied by the first-order entropy computation. This shortfall occurs because Huffman coding
+					assigns integer code lengths, so it approximates arbitrary symbol probabilities using integer
+					lengths rather than exact probabilities. The resulting approximations are limited
+					to integral powers of two (0.5, 0.25, 0.125, etc).  Even so, Huffman coding usually
+					performs well in practice.</p>
 
                 <p>In practice, we accept a Huffman implementation
                     as efficient if it is close to the entropy bound for the source model being used.

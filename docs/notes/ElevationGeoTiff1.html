@@ -17,14 +17,15 @@
                     <li><a href="#introduction">Introduction</a></li>
                     <li><a href="#san-jacinto">San Jacinto data sample</a></li>
                     <li><a href="#tiff-file-format">The GeoTIFF format</a>
-                    <ul>
-                    <li><a href="#metadata-and-mapping">Metadata &amp; mapping</a></li>
-                    <li><a href="#metadata-for-georeferencing">Georeferencing tags</a></li>
-					<li><a href="#calculations-for-spatial-coordinates">Pixel &amp; spatial coordinates</a></li>
-                    </ul>
+						<ul>
+							<li><a href="#metadata-and-mapping">Metadata &amp; mapping</a></li>
+							<li><a href="#metadata-for-georeferencing">Georeferencing tags</a></li>
+							<li><a href="#calculations-for-spatial-coordinates">Pixel &amp; spatial coordinates</a></li>
+						</ul>
+					</li>
                     <li><a href="#shaded-relief-algorithm">Shaded-relief algorithm</a>
 						<ul>
-						<li><a href="#lighting-computations">Calculations for lighting</a></li>
+							<li><a href="#lighting-computations">Calculations for lighting</a></li>
 						</ul>
 					</li>
                     <li><a href="#optimized_how">What makes <i>optimized</i>?</a></li>
@@ -51,10 +52,10 @@
 
             <div class="titleblock">
                 <p class="blocktitle">
-                  Elevation Data from Cloud-Optimized GeoTIFFs<br>
-                      Part 1: Shaded-Relief Techniques
+                  Elevation data from Cloud-Optimized GeoTIFFs<br>
+                      Part 1: Shaded-relief techniques
                 </p>
-                <p class="blockauthor">by G.W. Lucas<br>Posted March 2022.</p>
+                <p class="blockauthor">by G.W. Lucas<br>Posted March 2022. Updated October 2026</p>
             </div>
 
 
@@ -105,7 +106,7 @@
                 
                 <li><a class="box-link" href="#tiff-file-format">The GeoTIFF format</a> gives an introduction
                 to the GeoTIFF file format, the way it organizes imagery and metadata, and the
-                way the U.S. Geological Society uses it to distribute their data.</li>
+                way the U.S. Geological Survey uses it to distribute their data.</li>
                 
                 <li><a class="box-link" href="#shaded-relief-algorithm">The Shaded-relief algorithm</a> describes
                 the surface illumination models used to create shading and lighting effects
@@ -364,7 +365,7 @@ ModelPixelScaleTag
    2.  0.0000000000e+00
                 </pre>
 
-                <p>A “tiepoint” gives the position of a single point in in
+                <p>A <i>tiepoint</i> gives the position of a single point in
                     the GeoTIFF using both the raster and model coordinate systems.  Thus it ties
                     the two coordinate systems together. You may have noticed that tiepoint values
                     for entries 3 and 4 give values very close to the longitude (-117) and latitude
@@ -489,7 +490,7 @@ ModelPixelScaleTag
                     of five.  The effects of this exaggeration can be seen in the two image panels
                     below. The panel on the left is a reduced-scale version of the image that was
                     shown at the beginning of this article.  It includes the fivefold exaggeration
-                    factor. The panel on the right show the same data using the same
+                    factor. The panel on the right shows the same data using the same
                     lighting model, but without the factor-of-five multiplication. </p>
 
 
@@ -580,7 +581,7 @@ ModelPixelScaleTag
                     for an area that overlaps more than a single one-degree file
                     and must be stitched together using pieces from multiple files.</p>
 
-                <p>The second optimizing element is the overlap from one-degree file to the
+                <p>The second optimization is the overlap from one-degree file to the
                     next. Earlier in this article we mentioned that even though the one-third second
                     of arc resolution of the Cloud-Optimized GeoTIFF products would result in
                     a 10800-by-10800 raster grid for a one-degree tile, the actual resolution
