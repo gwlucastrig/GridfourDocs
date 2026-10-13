@@ -15,7 +15,9 @@
                 <ul class="link-bar">
                     <li> <a href="https://gwlucastrig.github.io/gridfour/">Home</a> </li>
                     <li>|</li>
-                    <li><a href="https://github.com/gwlucastrig/gridfour">Code (GitHub)</a></li>
+                    <li><a href="https://github.com/gwlucastrig/gridfour">Java API (GitHub)</a></li>
+                    <li>|</li>
+					<li><a href="https://github.com/gwlucastrig/GridfourC">C API (GitHub)</a></li>
                     <li>|</li>
                     <li><a href="https://gwlucastrig.github.io/GridfourDocs/notes/index.html">Project Notes</a></li>
                     <li>|</li>
@@ -36,7 +38,7 @@
                 <h1>Introduction</h1>
 
                 <p>The Gridfour Virtual Raster Store (GVRS) is a file-backed software module that
-                    helps Java applications manage raster (grid) data in situations
+                    helps Java and C/C++ applications manage raster (grid) data in situations
                     where the size of the data exceeds what could reasonably be kept in memory.  To do so,
                     it provides utilities that allow an application to seamlessly swap blocks of the grid
                     between memory and data files. The GVRS library and file format also provide a way of
@@ -45,13 +47,15 @@
                     transmission bandwidth is limited, GVRS provides built-in data compression
                     that can reduce storage requirements by at least a factor of four.</p>
 
-                <p>This article gives an introduction to the Java API for GVRS. It covers some of the
-                    basic ideas of the API and offers examples of how it may be used.
+                <p>This article gives an introduction to the Java and C/C++ APIs for GVRS. It covers some of the
+                    basic ideas used in both APIs and offers examples of how they may be used.
                     If you would like to use GVRS in your own applications, the
                     <a href="https://github.com/gwlucastrig/gridfour/wiki">Gridfour Project Wiki</a>
                     provides a "Jump Start" guide as well as other articles on both the GVRS API and
-                    the Gridfour software library in general. The open-source software for the API
+                    the Gridfour software library in general. The open-source software for the Java API
                     is available from the <a href="https://github.com/gwlucastrig/gridfour">Gridfour Software Project</a>.
+					The source code for the C API
+                    is available from the <a href="https://github.com/gwlucastrig/GridfourC">Gridfour C Project</a>.
                 </p>
 
                 <h2>Sample data</h2>
